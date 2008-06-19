@@ -1,0 +1,141 @@
+= iCalendar -- Internet calendaring, Ruby style
+
+This is a Ruby library for dealing with iCalendar files.  Rather than
+explaining myself, here is the introduction from RFC-2445, which
+defines the format:
+
+The use of calendaring and scheduling has grown considerably in the
+last decade. Enterprise and inter-enterprise business has become
+dependent on rapid scheduling of events and actions using this
+information technology. However, the longer term growth of calendaring
+and scheduling, is currently limited by the lack of Internet standards
+for the message content types that are central to these knowledgeware
+applications. This memo is intended to progress the level of
+interoperability possible between dissimilar calendaring and
+scheduling applications. This memo defines a MIME content type for
+exchanging electronic calendaring and scheduling information. The
+Internet Calendaring and Scheduling Core Object Specification, or
+iCalendar, allows for the capture and exchange of information normally
+stored within a calendaring and scheduling application; such as a
+Personal Information Manager (PIM) or a Group Scheduling product. 
+
+The iCalendar format is suitable as an exchange format between
+applications or systems. The format is defined in terms of a MIME
+content type. This will enable the object to be exchanged using
+several transports, including but not limited to SMTP, HTTP, a file
+system, desktop interactive protocols such as the use of a memory-
+based clipboard or drag/drop interactions, point-to-point asynchronous
+communication, wired-network transport, or some form of unwired
+transport such as infrared might also be used.
+
+Now for some examples:
+
+## Probably want to start with this
+
+  require 'rubygems' # Unless you install from the tarball or zip.
+  require 'icalendar'
+  require 'date'
+
+  include Icalendar # Probably do this in your class to limit namespace overlap
+
+## Creating calendars and events is easy.
+
+  # Create a calendar with an event (standard method)
+  cal = Calendar.new
+  cal.event do
+    dtstart       Date.new(2005, 04, 29)
+    dtend         Date.new(2005, 04, 28)
+    summary     "Meeting with the man."
+    description "Have a long lunch meeting and decide nothing..."
+    klass       "PRIVATE"
+  end
+
+  cal.publish
+
+## Or you can make events like this
+  event = Event.new
+  event.start = DateTime.civil(2006, 6, 23, 8, 30)
+  event.summary = "A great event!"
+  cal.add_event(event)
+
+  event2 = cal.event  # This automatically adds the event to the calendar
+  event2.start = DateTime.civil(2006, 6, 24, 8, 30)
+  event2.summary = "Another great event!"
+
+  # Now with support for property parameters
+  params = {"ALTREP" =>['"http://my.language.net"'], "LANGUAGE" => ["SPANISH"]}
+
+  cal.event do
+    dtstart Date.new(2005, 04, 29)
+    dtend   Date.new(2005, 04, 28)
+    summary "This is a summary with params.", params
+  end
+  
+  # We can output the calendar as a string to write to a file, 
+  # network port, database etc.
+  cal_string = cal.to_ical
+  puts cal_string
+  
+== Parsing iCalendars:
+  
+  # Open a file or pass a string to the parser
+  cal_file = File.open("single_event.ics")
+  
+  # Parser returns an array of calendars because a single file
+  # can have multiple calendars.
+  cals = Icalendar.parse(cal_file)
+  cal = cals.first
+  
+  # Now you can access the cal object in just the same way I created it
+  event = cal.events.first
+  
+  puts "start date-time: " + event.dtstart
+  puts "summary: " + event.summary
+
+== Finders:
+
+Often times in web apps and other interactive applications you'll need to
+lookup items in a calendar to make changes or get details.  Now you can find
+everything by the unique id automatically associated with all components.
+  
+  cal = Calendar.new
+  10.times { cal.event } # Create 10 events with only default data.
+  some_event = cal.events[5] # Grab it from the array of events
+
+  # Use the uid as the key in your app
+  key = some_event.uid
+
+  # so later you can find it.
+  same_event = cal.find_event(key)
+
+== Examples:
+
+Check the unit tests for examples of most things you'll want to do, but please
+send me example code or let me know what's missing.
+
+== Download
+
+The latest release version of this library can be found at
+
+* http://rubyforge.org/projects/icalendar/
+
+Documentation can be found at
+
+* http://icalendar.rubyforge.org/
+
+== Installation
+
+It's all about rubygems:
+
+$ sudo gem install icalendar
+
+== License
+
+This library is released under the same license as Ruby itself.
+
+== Support & Contributions
+
+The iCalendar library homepage is http://icalendar.rubyforge.org/ 
+
+There is an icalendar-devel@rubyforge.org mailing list that can be
+used for asking questions, making comments or submitting patches.
