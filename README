@@ -75,7 +75,75 @@ Now for some examples:
   # network port, database etc.
   cal_string = cal.to_ical
   puts cal_string
-  
+
+## Timezones
+	
+  # Create a timezone definition (previous convention)
+	cal = Calendar.new
+  timezone = Timezone.new
+	daylight = Daylight.new
+	standard = Standard.new
+	
+	timezone.timezone_id =						"America/Chicago"
+
+	daylight.timezone_offset_from =		"-0600"
+	daylight.timezone_offset_to =			"-0500"
+	daylight.timezone_name =					"CDT"
+	daylight.dtstart =								"19700308TO20000"
+	daylight.recurrence_rule =				"FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
+
+	standard.timezone_offset_from =		"-0500"
+	standard.timezone_offset_to =			"-0600"
+	standard.timezone_name =					"CST"
+	standard.dtstart =								"19701101T020000"
+	standard.recurrence_rule =				"YEARLY;BYMONTH=11;BYDAY=1SU"
+	
+	timezone.add(daylight)
+	timezone.add(standard)
+  cal.add(timezone)
+
+	# Now, you can make timezones like this
+	cal = Calendar.new
+	cal.timezone do
+		timezone_id							"America/Chicago"
+		
+		daylight do
+			timezone_offset_from	"-0600"
+			timezone_offset_to		"-0500"
+			timezone_name					"CDT"
+			dtstart								"19700308TO20000"
+			recurrence_rule				"FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
+		end
+		
+		standard do
+			timezone_offset_from	"-0500"
+			timezone_offset_to		"-0600"
+			timezone_name					"CST"
+			dtstart								"19701101T020000"
+			recurrence_rule				"YEARLY;BYMONTH=11;BYDAY=1SU"
+		end
+	end
+	
+	# Both conventions output
+	
+	# BEGIN:VTIMEZONE
+	# TZID:America/Chicago
+	# BEGIN:DAYLIGHT
+	# TZOFFSETFROM:-0600
+	# TZOFFSETTO:-0500
+	# TZNAME:CDT
+	# DTSTART:19700308T020000
+	# RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+	# END:DAYLIGHT
+	# BEGIN:STANDARD
+	# TZOFFSETFROM:-0500
+	# TZOFFSETTO:-0600
+	# TZNAME:CST
+	# DTSTART:19701101T020000
+	# RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+	# END:STANDARD
+	# END:VTIMEZONE
+
 == Parsing iCalendars:
   
   # Open a file or pass a string to the parser
