@@ -57,12 +57,30 @@ module Icalendar
 		  s
       end
     end
-
+    
 
     def initialize(name = "VTIMEZONE")
       super(name)
     end
+    
+    # Allow block syntax for declaration of standard and daylight components of timezone
+    def standard(&block)
+      e = Standard.new
+      self.add_component e
 
+      e.instance_eval &block if block
+
+      e
+    end
+
+    def daylight(&block)
+      e = Daylight.new
+      self.add_component e
+
+      e.instance_eval &block if block
+
+      e
+    end
   end
 
   # A Standard component is a sub-component of the Timezone component which
