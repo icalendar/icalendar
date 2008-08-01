@@ -31,7 +31,7 @@ module Icalendar
 
     # Multi properties
     ical_multiline_property :attendee, :attendee, :attendees
-    ical_multi_property :attach, :attachment, :attachments
+    ical_multiline_property :attach, :attachment, :attachments
 
     def initialize()
       super("VALARM")

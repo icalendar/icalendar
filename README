@@ -84,61 +84,51 @@ Now for some examples:
     # ...other event properties
     alarm do
       action        "EMAIL"
-      description   "This is an event reminder"
-      summary       "Alarm notification"
-      attendees     %w(mailto:me@my-domain.com mailto:me-too@my-domain.com)
+      description   "This is an event reminder"	# email body (required)
+      summary       "Alarm notification"				# email subject (required)
+      attendees     %w(mailto:me@my-domain.com mailto:me-too@my-domain.com) # one or more email recipients (required)
       add_attendee  "mailto:me-three@my-domain.com"
       remove_attendee "mailto:me@my-domain.com"
       trigger       "-PT15M" # 15 minutes before
+			add_attach		"ftp://host.com/novo-procs/felizano.exe", {"FMTTYPE" => "application/binary"} # email attachments (optional)
     end
-  end
-
-## and it will output
-
-  # BEGIN:VALARM
-  # ACTION:EMAIL
-  # TRIGGER:-PT15M
-  # SUMMARY:Alarm notification
-  # DESCRIPTION:This is an event reminder
-  # ATTENDEE:mailto:me-too@my-domain.com
-  # ATTENDEE:mailto:me-three@my-domain.com
-  # END:VALARM
-  
-## or you popup/display notification alarms like this...
-  cal.event do
-    # ...other event properties
+		
     alarm do
       action        "DISPLAY" # This line isn't necessary, it's the default
       summary       "Alarm notification"
       trigger       "-P1DT0H0M0S" # 1 day before
     end
-  end
-  
-## and it will output 
 
-  # BEGIN:VALARM
-  # ACTION:DISPLAY
-  # TRIGGER:-P1DT0H0M0S
-  # SUMMARY:Alarm notification
-  # END:VALARM
-
-## or an audio alarms like this...
-  cal.event do
-    # ...other event properties
     alarm do
-      action        "AUDIO"
-      trigger       "-PT15M"
-      add_attach    "Basso", {"VALUE" => ["URI"]}
+      action    		"AUDIO"
+      trigger  			"-PT15M"
+      add_attach		"Basso", {"VALUE" => ["URI"]}  # only one attach allowed (optional)
     end
   end
-  
-## and it wiqll output
 
-  # BEGIN:VALARM
-  # ACTION:AUDIO
-  # ATTACH;VALUE=URI:Basso
-  # TRIGGER:-PT15M
-  # END:VALARM
+	# Output
+
+	# BEGIN:VALARM
+	# ACTION:EMAIL
+	# ATTACH;FMTTYPE=application/binary:ftp://host.com/novo-procs/felizano.exe
+	# TRIGGER:-PT15M
+	# SUMMARY:Alarm notification
+	# DESCRIPTION:This is an event reminder
+	# ATTENDEE:mailto:me-too@my-domain.com
+	# ATTENDEE:mailto:me-three@my-domain.com
+	# END:VALARM
+	#
+	# BEGIN:VALARM
+	# ACTION:DISPLAY
+	# TRIGGER:-P1DT0H0M0S
+	# SUMMARY:Alarm notification
+	# END:VALARM
+	# 
+	# BEGIN:VALARM
+	# ACTION:AUDIO
+	# ATTACH;VALUE=URI:Basso
+	# TRIGGER:-PT15M
+	# END:VALARM
 
 ## Timezones
   

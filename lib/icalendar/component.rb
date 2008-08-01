@@ -137,7 +137,7 @@ module Icalendar
         end
 
         # Property name
-        unless multiline_property?(key) or multi_property?(key)
+        unless multiline_property?(key)
            prelude = "#{key.gsub(/_/, '-').upcase}" + 
 
            # Possible parameters
