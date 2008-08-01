@@ -76,74 +76,138 @@ Now for some examples:
   cal_string = cal.to_ical
   puts cal_string
 
+## ALARMS
+
+## Within an event, you can create e-mail notification alarms like this...
+
+  cal.event.do
+    # ...other event properties
+    alarm do
+      action        "EMAIL"
+      description   "This is an event reminder"
+      summary       "Alarm notification"
+      attendees     %w(mailto:me@my-domain.com mailto:me-too@my-domain.com)
+      add_attendee  "mailto:me-three@my-domain.com"
+      remove_attendee "mailto:me@my-domain.com"
+      trigger       "-PT15M" # 15 minutes before
+    end
+  end
+
+## and it will output
+
+  # BEGIN:VALARM
+  # ACTION:EMAIL
+  # TRIGGER:-PT15M
+  # SUMMARY:Alarm notification
+  # DESCRIPTION:This is an event reminder
+  # ATTENDEE:mailto:me-too@my-domain.com
+  # ATTENDEE:mailto:me-three@my-domain.com
+  # END:VALARM
+  
+## or you popup/display notification alarms like this...
+  cal.event do
+    # ...other event properties
+    alarm do
+      action        "DISPLAY" # This line isn't necessary, it's the default
+      summary       "Alarm notification"
+      trigger       "-P1DT0H0M0S" # 1 day before
+    end
+  end
+  
+## and it will output 
+
+  # BEGIN:VALARM
+  # ACTION:DISPLAY
+  # TRIGGER:-P1DT0H0M0S
+  # SUMMARY:Alarm notification
+  # END:VALARM
+
+## or an audio alarms like this...
+  cal.event do
+    # ...other event properties
+    alarm do
+      action        "AUDIO"
+      trigger       "-PT15M"
+      add_attach    "Basso", {"VALUE" => ["URI"]}
+    end
+  end
+  
+## and it wiqll output
+
+  # BEGIN:VALARM
+  # ACTION:AUDIO
+  # ATTACH;VALUE=URI:Basso
+  # TRIGGER:-PT15M
+  # END:VALARM
+
 ## Timezones
-	
+  
   # Create a timezone definition (previous convention)
-	cal = Calendar.new
+  cal = Calendar.new
   timezone = Timezone.new
-	daylight = Daylight.new
-	standard = Standard.new
-	
-	timezone.timezone_id =						"America/Chicago"
+  daylight = Daylight.new
+  standard = Standard.new
+  
+  timezone.timezone_id =            "America/Chicago"
 
-	daylight.timezone_offset_from =		"-0600"
-	daylight.timezone_offset_to =			"-0500"
-	daylight.timezone_name =					"CDT"
-	daylight.dtstart =								"19700308TO20000"
-	daylight.recurrence_rule =				"FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
+  daylight.timezone_offset_from =   "-0600"
+  daylight.timezone_offset_to =     "-0500"
+  daylight.timezone_name =          "CDT"
+  daylight.dtstart =                "19700308TO20000"
+  daylight.recurrence_rule =        "FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
 
-	standard.timezone_offset_from =		"-0500"
-	standard.timezone_offset_to =			"-0600"
-	standard.timezone_name =					"CST"
-	standard.dtstart =								"19701101T020000"
-	standard.recurrence_rule =				"YEARLY;BYMONTH=11;BYDAY=1SU"
-	
-	timezone.add(daylight)
-	timezone.add(standard)
+  standard.timezone_offset_from =   "-0500"
+  standard.timezone_offset_to =     "-0600"
+  standard.timezone_name =          "CST"
+  standard.dtstart =                "19701101T020000"
+  standard.recurrence_rule =        "YEARLY;BYMONTH=11;BYDAY=1SU"
+  
+  timezone.add(daylight)
+  timezone.add(standard)
   cal.add(timezone)
 
-	# Now, you can make timezones like this
-	cal = Calendar.new
-	cal.timezone do
-		timezone_id							"America/Chicago"
-		
-		daylight do
-			timezone_offset_from	"-0600"
-			timezone_offset_to		"-0500"
-			timezone_name					"CDT"
-			dtstart								"19700308TO20000"
-			recurrence_rule				"FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
-		end
-		
-		standard do
-			timezone_offset_from	"-0500"
-			timezone_offset_to		"-0600"
-			timezone_name					"CST"
-			dtstart								"19701101T020000"
-			recurrence_rule				"YEARLY;BYMONTH=11;BYDAY=1SU"
-		end
-	end
-	
-	# Both conventions output
-	
-	# BEGIN:VTIMEZONE
-	# TZID:America/Chicago
-	# BEGIN:DAYLIGHT
-	# TZOFFSETFROM:-0600
-	# TZOFFSETTO:-0500
-	# TZNAME:CDT
-	# DTSTART:19700308T020000
-	# RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
-	# END:DAYLIGHT
-	# BEGIN:STANDARD
-	# TZOFFSETFROM:-0500
-	# TZOFFSETTO:-0600
-	# TZNAME:CST
-	# DTSTART:19701101T020000
-	# RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
-	# END:STANDARD
-	# END:VTIMEZONE
-
+  # Now, you can make timezones like this
+  cal = Calendar.new
+  cal.timezone do
+    timezone_id             "America/Chicago"
+    
+    daylight do
+      timezone_offset_from  "-0600"
+      timezone_offset_to    "-0500"
+      timezone_name         "CDT"
+      dtstart               "19700308TO20000"
+      recurrence_rule       "FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
+    end
+    
+    standard do
+      timezone_offset_from  "-0500"
+      timezone_offset_to    "-0600"
+      timezone_name         "CST"
+      dtstart               "19701101T020000"
+      recurrence_rule       "YEARLY;BYMONTH=11;BYDAY=1SU"
+    end
+  end
+  
+  # Both conventions output
+  
+  # BEGIN:VTIMEZONE
+  # TZID:America/Chicago
+  # BEGIN:DAYLIGHT
+  # TZOFFSETFROM:-0600
+  # TZOFFSETTO:-0500
+  # TZNAME:CDT
+  # DTSTART:19700308T020000
+  # RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+  # END:DAYLIGHT
+  # BEGIN:STANDARD
+  # TZOFFSETFROM:-0500
+  # TZOFFSETTO:-0600
+  # TZNAME:CST
+  # DTSTART:19701101T020000
+  # RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+  # END:STANDARD
+  # END:VTIMEZONE
+  
 == Parsing iCalendars:
   
   # Open a file or pass a string to the parser
