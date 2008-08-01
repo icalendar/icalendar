@@ -18,7 +18,7 @@ LAST-MODIFIED:19960817T133000
 SEQUENCE:2
 ORGANIZER:mailto:joe@example.com?subject=Ruby
 UID:foobar
-X-TIME-OF-DAY:111736
+X-TIME-OF-DAY:101736
 CATEGORIES:foo\\,bar\\,baz
 GEO:46.01\\;8.57
 DESCRIPTION:desc
@@ -60,7 +60,7 @@ EOS
       timestamp DateTime.parse("2006-07-20T17:40:52+0200")
 
       # Time
-      x_time_of_day Time.at(123456)
+      x_time_of_day Time.at(123456).utc
 
       uid "foobar"
     end
