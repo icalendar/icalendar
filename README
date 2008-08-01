@@ -84,15 +84,15 @@ Now for some examples:
     # ...other event properties
     alarm do
       action        "EMAIL"
-      description   "This is an event reminder"	# email body (required)
-      summary       "Alarm notification"				# email subject (required)
+      description   "This is an event reminder" # email body (required)
+      summary       "Alarm notification"        # email subject (required)
       attendees     %w(mailto:me@my-domain.com mailto:me-too@my-domain.com) # one or more email recipients (required)
       add_attendee  "mailto:me-three@my-domain.com"
       remove_attendee "mailto:me@my-domain.com"
       trigger       "-PT15M" # 15 minutes before
-			add_attach		"ftp://host.com/novo-procs/felizano.exe", {"FMTTYPE" => "application/binary"} # email attachments (optional)
+      add_attach    "ftp://host.com/novo-procs/felizano.exe", {"FMTTYPE" => "application/binary"} # email attachments (optional)
     end
-		
+    
     alarm do
       action        "DISPLAY" # This line isn't necessary, it's the default
       summary       "Alarm notification"
@@ -100,58 +100,58 @@ Now for some examples:
     end
 
     alarm do
-      action    		"AUDIO"
-      trigger  			"-PT15M"
-      add_attach		"Basso", {"VALUE" => ["URI"]}  # only one attach allowed (optional)
+      action        "AUDIO"
+      trigger       "-PT15M"
+      add_attach    "Basso", {"VALUE" => ["URI"]}  # only one attach allowed (optional)
     end
   end
 
-	# Output
+  # Output
 
-	# BEGIN:VALARM
-	# ACTION:EMAIL
-	# ATTACH;FMTTYPE=application/binary:ftp://host.com/novo-procs/felizano.exe
-	# TRIGGER:-PT15M
-	# SUMMARY:Alarm notification
-	# DESCRIPTION:This is an event reminder
-	# ATTENDEE:mailto:me-too@my-domain.com
-	# ATTENDEE:mailto:me-three@my-domain.com
-	# END:VALARM
-	#
-	# BEGIN:VALARM
-	# ACTION:DISPLAY
-	# TRIGGER:-P1DT0H0M0S
-	# SUMMARY:Alarm notification
-	# END:VALARM
-	# 
-	# BEGIN:VALARM
-	# ACTION:AUDIO
-	# ATTACH;VALUE=URI:Basso
-	# TRIGGER:-PT15M
-	# END:VALARM
+  # BEGIN:VALARM
+  # ACTION:EMAIL
+  # ATTACH;FMTTYPE=application/binary:ftp://host.com/novo-procs/felizano.exe
+  # TRIGGER:-PT15M
+  # SUMMARY:Alarm notification
+  # DESCRIPTION:This is an event reminder
+  # ATTENDEE:mailto:me-too@my-domain.com
+  # ATTENDEE:mailto:me-three@my-domain.com
+  # END:VALARM
+  #
+  # BEGIN:VALARM
+  # ACTION:DISPLAY
+  # TRIGGER:-P1DT0H0M0S
+  # SUMMARY:Alarm notification
+  # END:VALARM
+  # 
+  # BEGIN:VALARM
+  # ACTION:AUDIO
+  # ATTACH;VALUE=URI:Basso
+  # TRIGGER:-PT15M
+  # END:VALARM
 
 ## Timezones
   
   # Create a timezone definition (previous convention)
   cal = Calendar.new
-  timezone = Timezone.new
-  daylight = Daylight.new
-  standard = Standard.new
-  
+  timezone = Icalendar::Timezone.new
+  daylight = Icalendar::Daylight.new
+  standard = Icalendar::Standard.new
+
   timezone.timezone_id =            "America/Chicago"
 
   daylight.timezone_offset_from =   "-0600"
   daylight.timezone_offset_to =     "-0500"
   daylight.timezone_name =          "CDT"
   daylight.dtstart =                "19700308TO20000"
-  daylight.recurrence_rule =        "FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
+  daylight.recurrence_rules =       ["FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"]
 
   standard.timezone_offset_from =   "-0500"
   standard.timezone_offset_to =     "-0600"
   standard.timezone_name =          "CST"
   standard.dtstart =                "19701101T020000"
-  standard.recurrence_rule =        "YEARLY;BYMONTH=11;BYDAY=1SU"
-  
+  standard.recurrence_rules =       ["YEARLY;BYMONTH=11;BYDAY=1SU"]
+
   timezone.add(daylight)
   timezone.add(standard)
   cal.add(timezone)
@@ -160,21 +160,21 @@ Now for some examples:
   cal = Calendar.new
   cal.timezone do
     timezone_id             "America/Chicago"
-    
+
     daylight do
       timezone_offset_from  "-0600"
       timezone_offset_to    "-0500"
       timezone_name         "CDT"
       dtstart               "19700308TO20000"
-      recurrence_rule       "FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
+      add_recurrence_rule   "FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
     end
-    
+
     standard do
       timezone_offset_from  "-0500"
       timezone_offset_to    "-0600"
       timezone_name         "CST"
       dtstart               "19701101T020000"
-      recurrence_rule       "YEARLY;BYMONTH=11;BYDAY=1SU"
+      add_recurrence_rule   "YEARLY;BYMONTH=11;BYDAY=1SU"
     end
   end
   
