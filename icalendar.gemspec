@@ -6,9 +6,8 @@ platform: ""
 authors: 
 - Jeff Rose
 autorequire: icalendar
-bindir: bin
 cert_chain: 
-date: 2007-11-24 00:00:00 -06:00
+date: 2008-08-06 00:00:00 -06:00
 default_executable: 
 dependencies: []
 
@@ -80,7 +79,6 @@ rdoc_options:
 - --main
 - README
 require_paths: 
-- bin
 - lib
 required_ruby_version: !ruby/object:Gem::Requirement 
   requirements: 
