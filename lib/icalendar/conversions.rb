@@ -16,6 +16,12 @@ require 'date'
 #   end
 # end
 
+module Icalendar
+  module TzidSupport
+    attr_accessor :icalendar_tzid
+  end
+end
+
 require 'uri/generic'
 
 class String
@@ -53,7 +59,10 @@ module URI
 end
 
 class DateTime < Date
-  def to_ical(utc = false)
+  
+  include Icalendar::TzidSupport
+  
+  def to_ical
     s = ""
     
     # 4 digit year
@@ -82,7 +91,7 @@ class DateTime < Date
     s << self.sec.to_s
 
     # UTC time gets a Z suffix
-    if utc
+    if icalendar_tzid == "UTC"
       s << "Z"
     end
 

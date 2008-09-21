@@ -317,7 +317,14 @@ module Icalendar
     # NOTE: invalid dates & times will be returned as strings...
     def parse_datetime(name, params, value)
       begin
-        DateTime.parse(value)
+        result = DateTime.parse(value)
+        if /Z$/ =~ value
+          timezone = "UTC"
+        else
+          timezone = params["TZID"].first if params["TZID"]
+        end
+        result.icalendar_tzid = timezone
+        result
       rescue Exception
         value
       end
