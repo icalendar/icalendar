@@ -12,6 +12,91 @@ require 'uri'
 require 'stringio'
 
 module Icalendar
+  class RRule
+    
+    class Weekday
+      def initialize(day, position)
+        @day, @position = day, position
+      end
+      
+      def to_s
+        "#{@position}#{day}"
+      end
+    end
+    
+    def initialize(name, params, value, parser)
+      frequency_match = value.match(/FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY)/)
+      raise Icalendar::InvalidPropertyValue.new("FREQ must be specified for RRULE values") unless frequency_match
+      @frequency = frequency_match[1]
+      @until = parse_date_val("UNTIL", value)
+      @count = parse_int_val("COUNT", value)
+      raise Icalendar::InvalidPropertyValue.new("UNTIL and COUNT must not both be specified for RRULE values") if [@until, @count].compact.length > 1
+      @interval = parse_int_val("INTERVAL", value)
+      @by_list = {:bysecond => parse_int_list("BYSECOND", value)}
+      @by_list[:byminute] = parse_int_list("BYMINUTE",value)
+      @by_list[:byhour] = parse_int_list("BYHOUR", value)
+      @by_list[:byday] = parse_weekday_list("BYDAY", value)
+      @by_list[:bymonthday] = parse_int_list("BYMONTHDAY", value)
+      @by_list[:byyearday] = parse_int_list("BYYEARDAY", value)
+      @by_list[:byweekno] = parse_int_list("BYWEEKNO", value)
+      @by_list[:bymonth] = parse_int_list("BYMONTH", value)
+      @by_list[:bysetpos] = parse_int_list("BYSETPOS", value)
+      @wkst = parse_wkstart(value)
+    end
+    
+    def to_ical
+      result = ["FREQ=#{@frequency}"]
+      result << ";UNTIL=#{@until.to_ical}" if @until
+      result << ";COUNT=#{@count}" if @count
+      result << ";INTERVAL=#{@interval}" if @interval
+      @by_list.each do |key, value|
+        result << ";#{key.to_s.upcase}=#{value}" if value
+      end
+      result << ";WKST=#{@wkst}" if @wkst
+      result.join
+    end
+    
+    def parse_date_val(name, string)
+      match = string.match(/;#{name}=(.*?)(;|$)/)
+      match ? DateTime.parse(match[1]) : nil
+    end
+    
+    def parse_int_val(name, string)
+      match = string.match(/;#{name}=(\d+)(;|$)/)
+      match ? match[1].to_i : nil
+    end
+    
+    def parse_int_list(name, string)
+      match = string.match(/;#{name}=([+-]?.*?)(;|$)/)
+      if match
+        match[1].split(",").map {|int| int.to_i}
+      else
+        nil
+      end
+    end
+    
+    def parse_weekday_list(name, string)
+      match = string.match(/;#{name}=(.*?)(;|$)/)
+      if match
+        match[1].split(",").map {|weekday| 
+          wd_match = weekday.match(/([+-]?\d*)(SU|MO|TU|WE|TH|FR|SA)/)
+          Weekday.new(wd_match[2], wd_match[1])
+          }
+      else
+        nil
+      end
+    end
+    
+    def parse_wkstart(string)
+      match = string.match(/;WKSTART=(SU|MO|TU|WE|TH|FR|SA)(;|$)/)
+      if match
+        %w{SU MO TU WE TH FR SA}.index(match[1])
+      else
+        nil
+      end
+    end
+  end
+  
   def Icalendar.parse(src, single = false)
     cals = Icalendar::Parser.new(src).parse
 
@@ -153,6 +238,7 @@ module Icalendar
 
           # Lookup the property name to see if we have a string to
           # object parser for this property type.
+          orig_value = value
           if @parsers.has_key?(name)
             value = @parsers[name].call(name, params, value)
           end
@@ -298,6 +384,11 @@ module Icalendar
       # GEO
       m = self.method(:parse_geo)
       @parsers["GEO"] = m
+      
+      #RECUR
+      m = self.method(:parse_recur)
+      @parsers["RRULE"] = m
+      @parsers["EXRULE"] = m
 
     end
 
@@ -328,7 +419,10 @@ module Icalendar
       rescue Exception
         value
       end
-
+    end
+    
+    def parse_recur(name, params, value)
+      ::Icalendar::RRule.new(name, params, value, self)
     end
 
     # Durations
