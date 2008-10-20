@@ -95,6 +95,15 @@ module Icalendar
         nil
       end
     end
+    
+    def occurrences_of_event_starting(event, datetime)
+      initial_start = event.dtstart
+      (0...@count).map {|day_offset| 
+              occurrence = event.clone
+              occurrence.dtstart = initial_start + day_offset
+              occurrence.clone
+              }
+    end
   end
   
   def Icalendar.parse(src, single = false)

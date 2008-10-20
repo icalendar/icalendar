@@ -3,6 +3,14 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 require 'test/unit'
 require 'icalendar'
 
+unless defined? 1.days
+  class Integer
+    def days
+      self * 60 * 60 * 24
+    end
+  end
+end
+
 # Define a test event
 testEvent = <<EOS
 BEGIN:VEVENT
@@ -158,4 +166,55 @@ EOS
     assert_nil(@event.dtend.icalendar_tzid)
   end
   
+end 
+
+class TestRecurringEventWithCount < Test::Unit::TestCase 
+  # DTSTART;TZID=US-Eastern:19970902T090000
+  # RRULE:FREQ=DAILY;COUNT=10
+  # ==> (1997 9:00 AM EDT)September 2-11
+  
+  def setup
+    src = <<EOS
+BEGIN:VCALENDAR
+METHOD:PUBLISH
+CALSCALE:GREGORIAN
+VERSION:2.0
+BEGIN:VEVENT
+UID:19970901T130000Z-123401@host.com
+DTSTAMP:19970901T1300Z
+DTSTART:19970902T090000Z
+DTEND:19970902T100000Z
+RRULE:FREQ=DAILY;COUNT=10
+SUMMARY:Annual Employee Review
+CLASS:PRIVATE
+CATEGORIES:BUSINESS,HUMAN RESOURCES
+END:VEVENT
+END:VCALENDAR
+EOS
+    @calendar = Icalendar.parse(src).first
+    @event = @calendar.events.first
+  end
+  
+  def test_event_is_parsed
+    assert_not_nil(@event)
+  end
+  
+  def test_recurrence_rules_should_return_a_recurrence_rule_array
+    assert_equal 1, @event.recurrence_rules.length
+    assert_kind_of(Icalendar::RRule, @event.recurrence_rules.first)
+  end
+  
+  def test_occurrences_after_with_start_before_start_at_should_return_count_occurrences
+    assert_equal 10, @event.occurrences_starting(Time.utc(1997, 9, 2, 8, 30, 0, 0)).length
+  end
+                  
+  def test_occurrences_after_with_start_before_start_at_should_return_an_event_with_the_dtstart_as_the_first_event
+    assert_equal @event.dtstart.to_s, @event.occurrences_starting(Time.utc(1997, 9, 2, 8, 30, 0, 0)).first.dtstart.to_s
+  end
+  
+  def test_occurrences_after_with_start_before_start_at_should_return_events_with_the_correct_dtstart_values
+    expected = (0..9).map {|delta| (@event.dtstart + delta).to_s}
+    assert_equal expected, @event.occurrences_starting(Time.utc(1997, 9, 2, 8, 30, 0, 0)).map {|occurence| occurence.dtstart.to_s}
+  end
 end
+
