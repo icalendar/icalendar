@@ -59,9 +59,9 @@ module URI
 end
 
 class DateTime < Date
-  
+  attr_accessor :ical_params
   include Icalendar::TzidSupport
-  
+
   def to_ical
     s = ""
     
@@ -100,6 +100,7 @@ class DateTime < Date
 end
 
 class Date
+  attr_accessor :ical_params
   def to_ical(utc = false)
     s = ""
         
@@ -117,6 +118,7 @@ class Date
 end
 
 class Time
+  attr_accessor :ical_params
   def to_ical(utc = false)
     s = ""
 
