@@ -27,9 +27,16 @@ module Icalendar
 
     def event(&block)
       e = Event.new
+      # Note: I'm not sure this is the best way to pass this down, but it works
+      e.tzid = self.timezones[0].tzid
+     
       self.add_component e
 
-      e.instance_eval &block if block
+      if block
+        e.instance_eval &block
+        e.dtstart.ical_params = { "TZID" => e.tzid }
+        e.dtend.ical_params = { "TZID" => e.tzid }
+      end
 
       e
     end
