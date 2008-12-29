@@ -10,6 +10,8 @@
 # intent on making it very easy to load in tzinfo data for generating
 # ical events.  With this you can do the following:
 #
+#   require "icalendar/tzinfo"
+#
 #   estart = DateTime.new(2008, 12, 29, 8, 0, 0)
 #   eend = DateTime.new(2008, 12, 29, 11, 0, 0)
 #   tstring = "America/Chicago"
@@ -36,7 +38,8 @@
 # seems to work fine (tested in Mozilla Thunderbird + Lightning).
 # Future goal would be making this better.
 
-require "tzinfo"
+# require "rubygems"
+# require "tzinfo"
 
 module TZInfo
     class Timezone

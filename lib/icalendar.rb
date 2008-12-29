@@ -35,4 +35,4 @@ require 'icalendar/component/alarm'
 require 'icalendar/parser'
 
 # TZINFO support
-require 'icalendar/tzinfo'
+# require 'icalendar/tzinfo'

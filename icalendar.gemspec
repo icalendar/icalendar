@@ -1,6 +1,6 @@
 Gem::Specification.new do |s| 
   s.name = "icalendar" 
-  s.version = "1.0.2.2"
+  s.version = "1.0.2.3"
   s.homepage = "http://icalendar.rubyforge.org/" 
   s.platform = Gem::Platform::RUBY 
   s.summary = "A ruby implementation of the iCalendar specification (RFC-2445)." 
@@ -47,8 +47,6 @@ Gem::Specification.new do |s|
   s.has_rdoc = true 
   s.extra_rdoc_files = ["README", "COPYING", "GPL"]
   s.rdoc_options.concat ['--main', 'README']
-
-  s.add_dependency("tzinfo", ["> 0.0.0"])
 
   s.author = "Sean Dague" 
   s.email = "sean@dague.net" 
