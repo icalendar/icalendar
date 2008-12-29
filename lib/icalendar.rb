@@ -34,3 +34,5 @@ require 'icalendar/component/alarm'
 # Calendar parser
 require 'icalendar/parser'
 
+# TZINFO support
+require 'icalendar/tzinfo'

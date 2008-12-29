@@ -1,6 +1,6 @@
 Gem::Specification.new do |s| 
   s.name = "icalendar" 
-  s.version = "1.0.2.1"
+  s.version = "1.0.2.2"
   s.homepage = "http://icalendar.rubyforge.org/" 
   s.platform = Gem::Platform::RUBY 
   s.summary = "A ruby implementation of the iCalendar specification (RFC-2445)." 
@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
                  "lib/icalendar/component/timezone.rb",
                  "lib/icalendar/component/freebusy.rb",
                  "lib/icalendar/conversions.rb",
+                 "lib/icalendar/tzinfo.rb",
                  "lib/icalendar/helpers.rb", "lib/meta.rb",
                  "lib/icalendar.rb", "lib/hash_attrs.rb", "docs/rfcs",
                  "docs/rfcs/rfc2446.pdf", "docs/rfcs/rfc2426.pdf",
@@ -47,7 +48,9 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ["README", "COPYING", "GPL"]
   s.rdoc_options.concat ['--main', 'README']
 
-  s.author = "Jeff Rose" 
-  s.email = "rosejn@gmail.com" 
+  s.add_dependency("tzinfo", ["> 0.0.0"])
+
+  s.author = "Sean Dague" 
+  s.email = "sean@dague.net" 
 end 
 

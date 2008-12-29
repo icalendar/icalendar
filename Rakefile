@@ -5,7 +5,7 @@ require 'rake/rdoctask'
 require 'rake/clean'
 require 'rake/contrib/sshpublisher'
 
-PKG_VERSION = "1.0.2"
+PKG_VERSION = "1.0.2.2"
 
 $VERBOSE = nil
 TEST_CHANGES_SINCE = Time.now - 600 # Recent tests = changed in last 10 minutes
@@ -74,8 +74,10 @@ spec = Gem::Specification.new do |s|
   s.extra_rdoc_files = ["README", "COPYING", "GPL"]
   s.rdoc_options.concat ['--main', 'README']
 
-  s.author = "Jeff Rose" 
-  s.email = "rosejn@gmail.com" 
+  s.add_dependency("tzinfo", ["> 0.0.0"])
+
+  s.author = "Sean Dague" 
+  s.email = "sean@dague.net" 
 end 
 
 Rake::GemPackageTask.new(spec) do |pkg| 
