@@ -50,11 +50,11 @@ module Icalendar
     # of components.
     def to_ical
       print_component do
-		  s = ""
+      s = ""
         @components.each_value do |comp|
           s << comp.to_ical
         end
-		  s
+      s
       end
     end
     

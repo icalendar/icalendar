@@ -20,7 +20,7 @@ module Icalendar
       end
       
       def to_s
-        "#{@position}#{day}"
+        "#{@position}#{@day}"
       end
     end
     
@@ -96,6 +96,7 @@ module Icalendar
       end
     end
     
+    # TODO: Incomplete
     def occurrences_of_event_starting(event, datetime)
       initial_start = event.dtstart
       (0...@count).map {|day_offset| 
@@ -318,7 +319,7 @@ module Icalendar
         pname = $1
         pvals = $3
 
-        # If their isn't an '=' sign then we need to do some custom
+        # If there isn't an '=' sign then we need to do some custom
         # business.  Defaults to 'type'
         if $2 == ""
           pvals = $1
@@ -417,13 +418,17 @@ module Icalendar
     # NOTE: invalid dates & times will be returned as strings...
     def parse_datetime(name, params, value)
       begin
-        result = DateTime.parse(value)
-        if /Z$/ =~ value
-          timezone = "UTC"
+        if params["VALUE"] && params["VALUE"].first == "DATE"
+          result = Date.parse(value)
         else
-          timezone = params["TZID"].first if params["TZID"]
+          result = DateTime.parse(value)
+          if /Z$/ =~ value
+            timezone = "UTC"
+          else
+            timezone = params["TZID"].first if params["TZID"]
+          end
+          result.icalendar_tzid = timezone
         end
-        result.icalendar_tzid = timezone
         result
       rescue Exception
         value

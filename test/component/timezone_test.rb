@@ -9,7 +9,7 @@ class TestTimezone < Test::Unit::TestCase
   def setup
     @cal = Icalendar::Calendar.new
     # Define a test timezone
-    @testTimezone = %Q(BEGIN:VTIMEZONE\r\nTZID:America/Chicago\r\nBEGIN:STANDARD\r\nTZOFFSETTO:-0600\r\nRRULE:YEARLY\\;BYMONTH=11\\;BYDAY=1SU\r\nTZOFFSETFROM:-0500\r\nDTSTART:19701101T020000\r\nTZNAME:CST\r\nEND:STANDARD\r\nBEGIN:DAYLIGHT\r\nTZOFFSETTO:-0500\r\nRRULE:FREQ=YEARLY\\;BYMONTH=3\\;BYDAY=2SU\r\nTZOFFSETFROM:-0600\r\nDTSTART:19700308TO20000\r\nTZNAME:CDT\r\nEND:DAYLIGHT\r\nEND:VTIMEZONE\r\n)
+    @testTimezone = %Q(BEGIN:VTIMEZONE\r\nTZID:America/Chicago\r\nBEGIN:STANDARD\r\nTZOFFSETTO:-0600\r\nRRULE:FREQ=YEARLY\\;BYMONTH=11\\;BYDAY=1SU\r\nTZOFFSETFROM:-0500\r\nDTSTART:19701101T020000\r\nTZNAME:CST\r\nEND:STANDARD\r\nBEGIN:DAYLIGHT\r\nTZOFFSETTO:-0500\r\nRRULE:FREQ=YEARLY\\;BYMONTH=3\\;BYDAY=2SU\r\nTZOFFSETFROM:-0600\r\nDTSTART:19700308TO20000\r\nTZNAME:CDT\r\nEND:DAYLIGHT\r\nEND:VTIMEZONE\r\n)
   end
 
   def test_new
@@ -34,10 +34,10 @@ class TestTimezone < Test::Unit::TestCase
     standard.timezone_offset_to =     "-0600"
     standard.timezone_name =          "CST"
     standard.dtstart =                "19701101T020000"
-    standard.recurrence_rules =       ["YEARLY;BYMONTH=11;BYDAY=1SU"]
+    standard.recurrence_rules =       ["FREQ=YEARLY;BYMONTH=11;BYDAY=1SU"]
 
-    timezone.add(daylight)
     timezone.add(standard)
+    timezone.add(daylight)
     @cal.add(timezone)
     assert_equal(@testTimezone, @cal.timezones.first.to_ical)
   end
@@ -59,7 +59,7 @@ class TestTimezone < Test::Unit::TestCase
         timezone_offset_to    "-0600"
         timezone_name         "CST"
         dtstart               "19701101T020000"
-        add_recurrence_rule   "YEARLY;BYMONTH=11;BYDAY=1SU"
+        add_recurrence_rule   "FREQ=YEARLY;BYMONTH=11;BYDAY=1SU"
       end
     end
     assert_equal(@testTimezone, @cal.timezones.first.to_ical)
