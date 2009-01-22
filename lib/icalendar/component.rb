@@ -164,7 +164,7 @@ module Icalendar
 
     def add_sliced_text(add_to,escaped)
       escaped = escaped.split('') # split is unicdoe-aware when `$KCODE = 'u'`
-      add_to << escaped.shift(MAX_LINE_LENGTH).to_s << "\r\n " while escaped.length != 0
+      add_to << escaped.slice!(0,MAX_LINE_LENGTH).to_s << "\r\n " while escaped.length != 0 # shift(MAX_LINE_LENGTH) does not work with ruby 1.8.6
       add_to.gsub!(/ *$/, '')
     end
 
