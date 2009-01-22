@@ -145,23 +145,27 @@ module Icalendar
 
            # Property value
            value = ":#{val.to_ical}" 
-           escaped = prelude + value.gsub("\\", "\\\\").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
-           s << escaped.slice!(0, MAX_LINE_LENGTH) << "\r\n " while escaped.size > MAX_LINE_LENGTH
-           s << escaped << "\r\n"
-           s.gsub!(/ *$/, '')
+           add_sliced_text(s,prelude+escape_chars(value))
          else 
            prelude = "#{key.gsub(/_/, '-').upcase}" 
             val.each do |v| 
                params = print_parameters(v)
                value = ":#{v.to_ical}"
-               escaped = prelude + params + value.gsub("\\", "\\\\").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
-               s << escaped.slice!(0, MAX_LINE_LENGTH) << "\r\n " while escaped.size > MAX_LINE_LENGTH
-               s << escaped << "\r\n"
-               s.gsub!(/ *$/, '')
+               add_sliced_text(s,prelude + params + escape_chars(value))
             end
          end
       end
       s
+    end
+
+    def escape_chars(value)
+      value.gsub("\\", "\\\\").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
+    end
+
+    def add_sliced_text(add_to,escaped)
+      escaped = escaped.split('') # split is unicdoe-aware when `$kcode = 'UTF8'`
+      add_to << escaped.shift(MAX_LINE_LENGTH).to_s << "\r\n " while escaped.length != 0
+      add_to.gsub!(/ *$/, '')
     end
 
     # Print the parameters for a specific property

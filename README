@@ -197,6 +197,9 @@ Now for some examples:
   # RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
   # END:STANDARD
   # END:VTIMEZONE
+
+== Unicode
+Add `$kcode = 'UTF8'` to make icalender work correctly with Utf8 texts
   
 == Parsing iCalendars:
   
