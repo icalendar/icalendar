@@ -199,7 +199,7 @@ Now for some examples:
   # END:VTIMEZONE
 
 == Unicode
-Add `$kcode = 'UTF8'` to make icalender work correctly with Utf8 texts
+Add `$KCODE = 'u'` to make icalender work correctly with Utf8 texts
   
 == Parsing iCalendars:
   

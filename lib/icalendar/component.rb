@@ -163,7 +163,7 @@ module Icalendar
     end
 
     def add_sliced_text(add_to,escaped)
-      escaped = escaped.split('') # split is unicdoe-aware when `$kcode = 'UTF8'`
+      escaped = escaped.split('') # split is unicdoe-aware when `$KCODE = 'u'`
       add_to << escaped.shift(MAX_LINE_LENGTH).to_s << "\r\n " while escaped.length != 0
       add_to.gsub!(/ *$/, '')
     end
