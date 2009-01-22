@@ -1,6 +1,6 @@
 Gem::Specification.new do |s| 
   s.name = "icalendar" 
-  s.version = "1.0.2.3"
+  s.version = "1.0.2.4"
   s.homepage = "http://icalendar.rubyforge.org/" 
   s.platform = Gem::Platform::RUBY 
   s.summary = "A ruby implementation of the iCalendar specification (RFC-2445)." 
