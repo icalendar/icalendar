@@ -5,7 +5,7 @@ require 'rake/rdoctask'
 require 'rake/clean'
 require 'rake/contrib/sshpublisher'
 
-PKG_VERSION = "1.0.2.4"
+PKG_VERSION = "1.1.0"
 
 $VERBOSE = nil
 TEST_CHANGES_SINCE = Time.now - 600 # Recent tests = changed in last 10 minutes
