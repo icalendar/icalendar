@@ -36,6 +36,12 @@ class Fixnum
   end
 end
 
+class Bignum
+  def to_ical
+    "#{self}"
+  end
+end
+
 class Float
   def to_ical
     "#{self}"
