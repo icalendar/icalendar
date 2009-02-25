@@ -21,6 +21,7 @@ require 'hash_attrs'
 
 require 'icalendar/base'
 require 'icalendar/component'
+require 'icalendar/rrule'
 
 # Calendar and components
 require 'icalendar/calendar'

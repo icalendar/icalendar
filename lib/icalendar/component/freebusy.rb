@@ -20,6 +20,7 @@ module Icalendar
     ical_property :organizer
     ical_property :uid, :user_id
     ical_property :url
+    ical_property :summary
 
     # Multi-properties
     ical_multiline_property :attendee, :attendee, :attendees
