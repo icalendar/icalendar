@@ -63,4 +63,14 @@ class TestComponent < Test::Unit::TestCase
     @event.x_foobar = "my-custom-property"
     assert_equal("my-custom-property", @event.x_foobar)
   end
+
+  def test_respond_to_missing
+    component = Icalendar::Component.new('name')
+    assert !component.respond_to?(:there_is_no_such_method)
+  end
+
+  def test_respond_to_x_property
+    component = Icalendar::Component.new('name')
+    assert component.respond_to?(:x_foobar)
+  end
 end
