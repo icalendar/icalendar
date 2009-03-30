@@ -21,7 +21,7 @@ Rake::TestTask.new(:test) { |t|
 }
 
 # rcov code coverage
-rcov_path = '/usr/local/bin/rcov'
+rcov_path = '/usr/bin/rcov'
 rcov_test_output = "./test/coverage"
 rcov_exclude = "interactive.rb,read_write.rb,fixtures"
 
