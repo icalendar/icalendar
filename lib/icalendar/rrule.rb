@@ -111,9 +111,9 @@ module Icalendar
     end
 
     def parse_wkstart(string)
-      match = string.match(/;WKSTART=(SU|MO|TU|WE|TH|FR|SA)(;|$)/)
+      match = string.match(/;WKST=(SU|MO|TU|WE|TH|FR|SA)(;|$)/)
       if match
-        %w{SU MO TU WE TH FR SA}.index(match[1])
+        match[1]
       else
         nil
       end
