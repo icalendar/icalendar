@@ -64,7 +64,7 @@ module Icalendar
 
     # Defines a URL associated with this item
     ical_property :url
-    ical_property :recurid, :recurrence_id
+    ical_property :recurrence_id, :recurid
 
     ## Single but mutually exclusive properties (Not testing though)
     
