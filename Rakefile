@@ -55,7 +55,8 @@ Rake::RDocTask.new(:doc) { |rdoc|
   rdoc.options << "--accessor=ical_component,ical_property,ical_multi_property"
 }
 
-Gem::manage_gems 
+require 'rubygems'
+require 'rubygems/gem_runner'
 require 'rake/gempackagetask'
 
 spec = Gem::Specification.new do |s| 
