@@ -5,7 +5,8 @@ require 'rake/rdoctask'
 require 'rake/clean'
 require 'rake/contrib/sshpublisher'
 
-PKG_VERSION = "1.1.0.3"
+PKG_NAME = "icalendar"
+PKG_VERSION = "1.1.1"
 
 $VERBOSE = nil
 TEST_CHANGES_SINCE = Time.now - 600 # Recent tests = changed in last 10 minutes
@@ -83,6 +84,27 @@ Rake::GemPackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
   pkg.need_tar = true
   pkg.need_zip = true
+end
+
+desc "Upload Docs to RubyForge"
+task :publish_docs => [:doc] do
+    publisher = Rake::SshDirPublisher.new(
+                                          "sdague@rubyforge.org",
+                                          "/var/www/gforge-projects/icalendar",
+                                          "docs/api"
+                                          )
+    publisher.upload
+end
+
+desc "Publish the release files to RubyForge."
+task :release => [ :package, :publish_docs ] do
+    require 'rubyforge'
+    packages = %w( gem tgz zip ).collect{ |ext| "pkg/#{PKG_NAME}-#{PKG_VERSION}.#{ext}" }
+    rubyforge = RubyForge.new
+    rubyforge.configure
+    rubyforge.scrape_config
+    rubyforge.scrape_project(PKG_NAME)
+    rubyforge.add_release(540, PKG_NAME, "v#{PKG_VERSION}", *packages)
 end
 
 desc 'Install the gem globally (requires sudo)'
