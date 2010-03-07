@@ -103,8 +103,8 @@ module Icalendar
     def to_ical
       print_component do
         s = ""
-        @components.each_value do |comps|
-          comps.each { |component| s << component.to_ical }
+        @components.sort.each do |k, comps|
+          comps.sort.each { |component| s << component.to_ical }
         end
         s
       end
@@ -129,7 +129,7 @@ module Icalendar
     def print_properties
       s = ""
 
-      @properties.each do |key,val| 
+      @properties.sort.each do |key,val| 
         # Take out underscore for property names that conflicted
         # with built-in words.
         if key =~ /ip_.*/

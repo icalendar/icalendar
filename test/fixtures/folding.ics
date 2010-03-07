@@ -1,15 +1,9 @@
 BEGIN:VCALENDAR
-VERSION:2.0
 CALSCALE:GREGORIAN
 PRODID:iCalendar-Ruby
+VERSION:2.0
 X-WR-CALNAME:Test Long Description
 BEGIN:VEVENT
-SEQUENCE:1001
-DTEND:20061215T180000
-URL:http://test.com/events/644
-DTSTART:20061215T160000
-UID:foobar
-DTSTAMP:20061215T114034
 DESCRIPTION:FULL DETAILS:\nhttp://test.com/events/570\n\nCary Brothers walk
  s the same musical ground as Pete Yorn\, Nick Drake\, Jeff Buckley and othe
  rs\; crafting emotional melodies\, with strong vocals and thoughtful lyrics
@@ -18,6 +12,12 @@ DESCRIPTION:FULL DETAILS:\nhttp://test.com/events/570\n\nCary Brothers walk
  lyrical beauty rare in a young songwriter\,&quot\; and &quot\;this soulful 
  blend of everything that feels good.&quot\; Rising up around him is music\;
   transcending genres\, genders and generations.
+DTEND:20061215T180000
+DTSTAMP:20061215T114034
+DTSTART:20061215T160000
+SEQUENCE:1001
 SUMMARY:DigiWorld 2006
+UID:foobar
+URL:http://test.com/events/644
 END:VEVENT
 END:VCALENDAR
