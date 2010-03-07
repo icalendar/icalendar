@@ -103,7 +103,7 @@ module Icalendar
     def to_ical
       print_component do
         s = ""
-        @components.sort.each do |k, comps|
+        @components.sort.each do |key, comps|
           comps.sort.each { |component| s << component.to_ical }
         end
         s
@@ -145,13 +145,13 @@ module Icalendar
 
            # Property value
            value = ":#{val.to_ical}" 
-           add_sliced_text(s,prelude+escape_chars(value))
+           add_sliced_text(s, prelude + escape_chars(value))
          else 
            prelude = "#{key.gsub(/_/, '-').upcase}" 
             val.each do |v| 
                params = print_parameters(v)
                value = ":#{v.to_ical}"
-               add_sliced_text(s,prelude + params + escape_chars(value))
+               add_sliced_text(s, prelude + params + escape_chars(value))
             end
          end
       end
@@ -159,12 +159,14 @@ module Icalendar
     end
 
     def escape_chars(value)
-      value.gsub("\\", "\\\\").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
+      v = value.gsub("\\", "\\\\").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
+      return v
+       # return value
     end
 
     def add_sliced_text(add_to,escaped)
       escaped = escaped.split('') # split is unicdoe-aware when `$KCODE = 'u'`
-      add_to << escaped.slice!(0,MAX_LINE_LENGTH).to_s << "\r\n " while escaped.length != 0 # shift(MAX_LINE_LENGTH) does not work with ruby 1.8.6
+      add_to << escaped.slice!(0,MAX_LINE_LENGTH).join << "\r\n " while escaped.length != 0 # shift(MAX_LINE_LENGTH) does not work with ruby 1.8.6
       add_to.gsub!(/ *$/, '')
     end
 
