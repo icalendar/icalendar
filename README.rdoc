@@ -1,5 +1,9 @@
 = iCalendar -- Internet calendaring, Ruby style
 
+* http://github.com/sdague/icalendar
+
+== DESCRIPTION
+
 This is a Ruby library for dealing with iCalendar files.  Rather than
 explaining myself, here is the introduction from RFC-2445, which
 defines the format:
