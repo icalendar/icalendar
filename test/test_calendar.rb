@@ -1,7 +1,4 @@
-$:.unshift(File.dirname(__FILE__) + '/../lib')
-
-require 'test/unit'
-require 'icalendar'
+require File.dirname(__FILE__) + '/test_helper.rb'
 
 require 'date'
 

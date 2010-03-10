@@ -4,6 +4,8 @@ require 'hoe'
 require 'fileutils'
 require './lib/icalendar'
 
+ENV['VERSION'] = Icalendar::VERSION
+
 Hoe.plugin :newgem
 Hoe.plugin :website
 # Hoe.plugin :cucumberfeatures
