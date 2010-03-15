@@ -43,6 +43,23 @@ class TestCalendar < Test::Unit::TestCase
       end
    end
 
+   def test_create_multiple_event_calendar
+       # Create a fresh calendar
+       cal = Calendar.new
+       [1,2,3].each do |t| 
+           cal.event do
+               self.dtend = "1997090#{t}T190000Z"
+               self.summary = "This is summary #{t}"
+           end
+       end
+       [1,2,3].each do |t| 
+           cal.todo do
+               self.summary = "test #{t} todo"
+           end
+       end
+       cal.to_ical
+   end
+   
    def test_find
      cal = Calendar.new
 

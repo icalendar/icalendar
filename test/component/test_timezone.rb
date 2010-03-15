@@ -39,7 +39,10 @@ class TestTimezone < Test::Unit::TestCase
     timezone.add(standard)
     timezone.add(daylight)
     @cal.add(timezone)
-    assert_equal(@testTimezone, @cal.timezones.first.to_ical)
+
+      array1 = @testTimezone.split("\r\n").sort
+      array2 = @cal.timezones.first.to_ical.split("\r\n").sort
+      assert_equal(array1, array2)
   end
 
   def test_block_creation

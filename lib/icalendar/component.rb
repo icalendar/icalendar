@@ -103,8 +103,8 @@ module Icalendar
     def to_ical
       print_component do
         s = ""
-        @components.sort.each do |key, comps|
-          comps.sort.each { |component| s << component.to_ical }
+        @components.each do |key, comps|
+          comps.each { |component| s << component.to_ical }
         end
         s
       end
