@@ -7,7 +7,7 @@ require './lib/icalendar'
 ENV['VERSION'] = Icalendar::VERSION
 
 Hoe.plugin :newgem
-Hoe.plugin :website
+# Hoe.plugin :website
 # Hoe.plugin :cucumberfeatures
 
 # Generate all the Rake tasks
@@ -17,7 +17,8 @@ $hoe = Hoe.spec 'icalendar' do
   self.post_install_message = 'PostInstall.txt' # TODO remove if post-install message not required
   self.rubyforge_name       = self.name # TODO this is default value
   # self.extra_deps         = [['activesupport','>= 2.0.2']]
-
+  self.extra_rdoc_files = ["README.rdoc"]
+  self.readme_file = "README.rdoc"
 end
 
 require 'newgem/tasks'
