@@ -135,7 +135,7 @@ transport such as infrared might also be used.
   # TRIGGER:-PT15M
   # END:VALARM
 
-=== Timezones
+== Timezones
   
   # Create a timezone definition (previous convention)
   cal = Calendar.new
