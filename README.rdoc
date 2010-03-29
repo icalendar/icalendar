@@ -32,9 +32,10 @@ based clipboard or drag/drop interactions, point-to-point asynchronous
 communication, wired-network transport, or some form of unwired
 transport such as infrared might also be used.
 
-Now for some examples:
 
-## Probably want to start with this
+== EXAMPLES
+
+=== Probably want to start with this
 
   require 'rubygems' # Unless you install from the tarball or zip.
   require 'icalendar'
@@ -42,7 +43,7 @@ Now for some examples:
 
   include Icalendar # Probably do this in your class to limit namespace overlap
 
-## Creating calendars and events is easy.
+=== Creating calendars and events is easy.
 
   # Create a calendar with an event (standard method)
   cal = Calendar.new
@@ -56,7 +57,7 @@ Now for some examples:
 
   cal.publish
 
-## Or you can make events like this
+=== Or you can make events like this
   event = Event.new
   event.start = DateTime.civil(2006, 6, 23, 8, 30)
   event.summary = "A great event!"
@@ -80,9 +81,9 @@ Now for some examples:
   cal_string = cal.to_ical
   puts cal_string
 
-## ALARMS
+== ALARMS
 
-## Within an event, you can create e-mail notification alarms like this...
+=== Within an event, you can create e-mail notification alarms like this...
 
   cal.event.do
     # ...other event properties
@@ -134,7 +135,7 @@ Now for some examples:
   # TRIGGER:-PT15M
   # END:VALARM
 
-## Timezones
+=== Timezones
   
   # Create a timezone definition (previous convention)
   cal = Calendar.new
