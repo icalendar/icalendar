@@ -23,10 +23,10 @@ class TestComponent < Test::Unit::TestCase
 
       @cal.add_event @event
       cal_str = @cal.to_ical
-       puts cal_str
+#       puts cal_str
 
       cals = Icalendar::Parser.new(cal_str).parse
-       pp cals
+#       pp cals
       event = cals.first.events.first
       assert_equal params, event.summary.ical_params
    end

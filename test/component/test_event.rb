@@ -82,7 +82,7 @@ EOS
   end
   
   def test_dtstart_tzid_should_be_correct
-    puts "#{@event.dtstart.icalendar_tzid} #{@event.dtstart}"
+    # puts "#{@event.dtstart.icalendar_tzid} #{@event.dtstart}"
     assert_equal("America/Chicago",@event.dtstart.icalendar_tzid)
   end
   
@@ -120,7 +120,7 @@ EOS
   end
   
   def test_dtstart_tzid_should_be_correct
-    puts "#{@event.dtstart.icalendar_tzid} #{@event.dtstart}"
+    # puts "#{@event.dtstart.icalendar_tzid} #{@event.dtstart}"
     assert_equal("UTC",@event.dtstart.icalendar_tzid)
   end
   
@@ -158,7 +158,7 @@ EOS
   end
   
   def test_dtstart_tzid_should_be_nil
-    puts "#{@event.dtstart.icalendar_tzid.inspect} #{@event.dtstart}"
+    # puts "#{@event.dtstart.icalendar_tzid.inspect} #{@event.dtstart}"
     assert_nil(@event.dtstart.icalendar_tzid)
   end
   
