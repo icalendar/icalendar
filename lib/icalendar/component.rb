@@ -125,33 +125,34 @@ module Icalendar
       "END:#{@name.upcase}\r\n"
     end
 
-    # Print this components properties
     def print_properties
       s = ""
 
-      @properties.sort.each do |key,val| 
+      @properties.sort.each do |key,val|
         # Take out underscore for property names that conflicted
         # with built-in words.
         if key =~ /ip_.*/
           key = key[3..-1]
         end
-
+        
         # Property name
         unless multiline_property?(key)
-           prelude = "#{key.gsub(/_/, '-').upcase}" + 
+           prelude = "#{key.gsub(/_/, '-').upcase}" +
 
            # Possible parameters
-           print_parameters(val) 
+           print_parameters(val)
 
            # Property value
-           value = ":#{val.to_ical}" 
-           add_sliced_text(s, prelude + escape_chars(value))
-         else 
-           prelude = "#{key.gsub(/_/, '-').upcase}" 
-            val.each do |v| 
+           value = ":#{val.to_ical}"
+           value = escape_chars(value) unless key == "rrule"
+           add_sliced_text(s, prelude + value)
+         else
+           prelude = "#{key.gsub(/_/, '-').upcase}"
+            val.each do |v|
                params = print_parameters(v)
                value = ":#{v.to_ical}"
-               add_sliced_text(s, prelude + params + escape_chars(value))
+               value = escape_chars(value) unless key == "rrule"
+               add_sliced_text(s, prelude + params + value)
             end
          end
       end
