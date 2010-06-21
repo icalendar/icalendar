@@ -1,3 +1,6 @@
+=== 1.1.5 2010-06-21
+* Fix for windows line endings (thanks to Rowan Collins)
+
 === 1.1.4 2010-04-23
 * Fix for RRULE escaping
 * Fix tests so they run under 1.8.7 in multiple environments
