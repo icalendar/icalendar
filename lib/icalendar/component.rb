@@ -160,7 +160,7 @@ module Icalendar
     end
 
     def escape_chars(value)
-      v = value.gsub("\\", "\\\\").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
+      v = value.gsub("\\", "\\\\").gsub("\r\n", "\n").gsub("\r", "\n").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
       return v
        # return value
     end
