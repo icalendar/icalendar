@@ -19,6 +19,11 @@ $hoe = Hoe.spec 'icalendar' do
   self.readme_file = "README.rdoc"
 end
 
+if ENV['UNDER_HUDSON']
+  require 'ci/reporter/rake/test_unit'
+  task :test => ["ci:setup:testunit"]
+end
+
 require 'newgem/tasks'
 Dir['tasks/**/*.rake'].each { |t| load t }
 
