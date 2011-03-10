@@ -5,7 +5,7 @@ require 'fileutils'
 require './lib/icalendar'
 
 Hoe.plugin :newgem
-# Hoe.plugin :website
+Hoe.plugin :website
 # Hoe.plugin :cucumberfeatures
 
 # Generate all the Rake tasks
