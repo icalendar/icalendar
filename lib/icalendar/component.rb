@@ -144,7 +144,7 @@ module Icalendar
 
            # Property value
            value = ":#{val.to_ical}"
-           value = escape_chars(value) unless key == "rrule"
+           value = escape_chars(value) unless ["rrule", "categories"].include?(key)
            add_sliced_text(s, prelude + value)
          else
            prelude = "#{key.gsub(/_/, '-').upcase}"

@@ -14,7 +14,7 @@ CALSCALE:GREGORIAN
 PRODID:iCalendar-Ruby
 VERSION:2.0
 BEGIN:VEVENT
-CATEGORIES:foo\\,bar\\,baz
+CATEGORIES:foo,bar,baz
 DESCRIPTION:desc
 DTSTAMP:20060720T174052
 DTSTART:20060720
@@ -33,7 +33,7 @@ EOS
   end
 
   def test_to_ical_conversions
-    @cal.event do 
+    @cal.event do
       # String
       description "desc"
 
@@ -42,17 +42,17 @@ EOS
 
       # Float by way of Geo class
       geo(Geo.new(46.01, 8.57))
-      
+
       # Array
       categories ["foo", "bar"]
       add_category "baz"
 
-      # Last Modified 
+      # Last Modified
       last_modified DateTime.parse("1996-08-17T13:30:00")
 
       # URI
       organizer(URI::MailTo.build(['joe@example.com', 'subject=Ruby']))
-      
+
       # Date
       start  Date.parse("2006-07-20")
 
@@ -64,13 +64,13 @@ EOS
 
       uid "foobar"
     end
-       
+
     assert_equal(RESULT.gsub("\n", "\r\n"), @cal.to_ical)
   end
 
   def test_to_ical_folding
     @cal.x_wr_calname = 'Test Long Description'
-    
+
     @cal.event do
       url      'http://test.com/events/644'
       dtend     DateTime.parse('20061215T180000')
@@ -80,18 +80,18 @@ EOS
       uid      'foobar'
       summary  'DigiWorld 2006'
 
-      description "FULL DETAILS:\nhttp://test.com/events/570\n\n" + 
-        "Cary Brothers walks the same musical ground as Pete Yorn, Nick Drake, " + 
-        "Jeff Buckley and others; crafting emotional melodies, with strong vocals " + 
-        "and thoughtful lyrics. Brett Dennen has &quot;that thing.&quot; " + 
-        "Inspired fans describe it: &quot;lush shimmering vocals, an intricately " + 
-        "groovin&#39; guitar style, a lyrical beauty rare in a young songwriter," + 
-        "&quot; and &quot;this soulful blend of everything that feels good.&quot; " + 
+      description "FULL DETAILS:\nhttp://test.com/events/570\n\n" +
+        "Cary Brothers walks the same musical ground as Pete Yorn, Nick Drake, " +
+        "Jeff Buckley and others; crafting emotional melodies, with strong vocals " +
+        "and thoughtful lyrics. Brett Dennen has &quot;that thing.&quot; " +
+        "Inspired fans describe it: &quot;lush shimmering vocals, an intricately " +
+        "groovin&#39; guitar style, a lyrical beauty rare in a young songwriter," +
+        "&quot; and &quot;this soulful blend of everything that feels good.&quot; " +
         "Rising up around him is music; transcending genres, genders and generations."
     end
-    
+
     folded = File.read(File.join(File.dirname(__FILE__), 'fixtures/folding.ics')).gsub("\n", "\r\n")
     assert_equal(folded, @cal.to_ical)
   end
-  
+
 end
