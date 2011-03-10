@@ -28,7 +28,7 @@ module Icalendar
     ical_property :tzoffsetfrom, :timezone_offset_from
     ical_property :tzid, :timezone_id
     ical_property :tzname, :timezone_name
-    
+
     ical_property :created
     ical_property :last_modified
     ical_property :timestamp
@@ -57,18 +57,18 @@ module Icalendar
       s
       end
     end
-    
+
 
     def initialize(name = "VTIMEZONE")
       super(name)
     end
-    
+
     # Allow block syntax for declaration of standard and daylight components of timezone
     def standard(&block)
       e = Standard.new
       self.add_component e
 
-      e.instance_eval &block if block
+      e.instance_eval(&block) if block
 
       e
     end
@@ -77,14 +77,14 @@ module Icalendar
       e = Daylight.new
       self.add_component e
 
-      e.instance_eval &block if block
+      e.instance_eval(&block) if block
 
       e
     end
   end
 
   # A Standard component is a sub-component of the Timezone component which
-  # is used to describe the standard time offset. 
+  # is used to describe the standard time offset.
   class Standard < Timezone
 
     def initialize()

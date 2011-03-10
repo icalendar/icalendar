@@ -1,6 +1,6 @@
 # A set of methods to help create meta-programming gizmos.
 class Object
-  # The metaclass is the singleton behind every object.  
+  # The metaclass is the singleton behind every object.
   def metaclass
     class << self
       self
@@ -8,8 +8,8 @@ class Object
   end
 
   # Evaluates the block in the context of the metaclass
-  def meta_eval &blk
-    metaclass.instance_eval &blk
+  def meta_eval(&blk)
+    metaclass.instance_eval(&blk)
   end
 
   # Acts like an include except it adds the module's methods

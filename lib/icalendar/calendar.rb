@@ -29,11 +29,11 @@ module Icalendar
       e = Event.new
       # Note: I'm not sure this is the best way to pass this down, but it works
       e.tzid = self.timezones[0].tzid if self.timezones.length > 0
-     
+
       self.add_component e
 
       if block
-        e.instance_eval &block
+        e.instance_eval(&block)
         if e.tzid
           e.dtstart.ical_params = { "TZID" => e.tzid }
           e.dtend.ical_params = { "TZID" => e.tzid }
@@ -42,7 +42,7 @@ module Icalendar
 
       e
     end
-    
+
     def find_event(uid)
       self.events.find {|e| e.uid == uid}
     end
@@ -51,7 +51,7 @@ module Icalendar
       e = Todo.new
       self.add_component e
 
-      e.instance_eval &block if block
+      e.instance_eval(&block) if block
 
       e
     end
@@ -59,12 +59,12 @@ module Icalendar
     def find_todo(uid)
       self.todos.find {|t| t.uid == uid}
     end
-    
+
     def journal(&block)
       e = Journal.new
       self.add_component e
 
-      e.instance_eval &block if block
+      e.instance_eval(&block) if block
 
       e
     end
@@ -77,7 +77,7 @@ module Icalendar
       e = Freebusy.new
       self.add_component e
 
-      e.instance_eval &block if block
+      e.instance_eval(&block) if block
 
       e
     end
@@ -90,11 +90,11 @@ module Icalendar
       e = Timezone.new
       self.add_component e
 
-      e.instance_eval &block if block
+      e.instance_eval(&block) if block
 
       e
     end
-    
+
     # The "PUBLISH" method in a "VEVENT" calendar component is an
     # unsolicited posting of an iCalendar object. Any CU may add published
     # components to their calendar. The "Organizer" MUST be present in a

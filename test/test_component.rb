@@ -5,7 +5,6 @@ require 'test/unit'
 require 'icalendar'
 
 class TestComponent < Test::Unit::TestCase
-
   # Create a calendar with an event for each test.
   def setup
     @cal = Icalendar::Calendar.new

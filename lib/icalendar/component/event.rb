@@ -19,7 +19,7 @@ module Icalendar
     ## Single instance properties
 
     # Access classification (PUBLIC, PRIVATE, CONFIDENTIAL...)
-    ical_property :ip_class, :klass 
+    ical_property :ip_class, :klass
 
     # Date & time of creation
     ical_property :created
@@ -29,13 +29,13 @@ module Icalendar
 
     # Specifies the timezone for the event
     attr_accessor :tzid
-    
+
     # Specifies date-time when calendar component begins
     ical_property :dtstart, :start
 
     # Latitude & longitude for specified activity
     ical_property :geo, :geo_location
- 
+
     # Date & time this item was last modified
     ical_property :last_modified
 
@@ -67,7 +67,7 @@ module Icalendar
     ical_property :recurrence_id, :recurid
 
     ## Single but mutually exclusive properties (Not testing though)
-    
+
     # Specifies a date and time that this item ends
     ical_property :dtend, :end
 
@@ -81,7 +81,7 @@ module Icalendar
 
     # Defines an attendee for this calendar item
     ical_multiline_property :attendee, :attendee, :attendees
-    
+
     # Defines the categories for a calendar component (school, work...)
     ical_multi_property :categories, :category, :categories
 
@@ -102,7 +102,7 @@ module Icalendar
     # recurring calendar item.
     ical_multi_property :rdate, :recurrence_date, :recurrence_dates
     ical_multi_property :rrule, :recurrence_rule, :recurrence_rules
-    
+
     def initialize()
       super("VEVENT")
 
@@ -116,11 +116,11 @@ module Icalendar
       a = Alarm.new
       self.add a
 
-      a.instance_eval &block if block
+      a.instance_eval(&block) if block
 
       a
     end
-    
+
     def occurrences_starting(time)
       recurrence_rules.first.occurrences_of_event_starting(self, time)
     end
