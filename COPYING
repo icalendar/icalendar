@@ -1,6 +1,10 @@
 Ruby is copyrighted free software by Yukihiro Matsumoto <matz@netlab.jp>.
-You can redistribute it and/or modify it under either the terms of the GPL
-(see the file GPL), or the conditions below:
+
+As of Ruby 1.9.3, the Ruby Language went from a Dual GPL/Ruby license
+to Dual BSD/Ruby license. The intent of the icalendar license is that
+it is provided under the same terms as Ruby itself. The way we're
+going to interpret this is the software can be redistributed under any
+of the 3 licenses, GPL, BSD, or the conditions below, at your option:
 
   1. You may make and give away verbatim copies of the source form of the
      software without restriction, provided that you duplicate all of the
@@ -44,9 +48,9 @@ You can redistribute it and/or modify it under either the terms of the GPL
      For the list of those files and their copying conditions, see the
      file LEGAL.
 
-  5. The scripts and library files supplied as input to or produced as 
+  5. The scripts and library files supplied as input to or produced as
      output from the software do not automatically fall under the
-     copyright of the software, but belong to whomever generated them, 
+     copyright of the software, but belong to whomever generated them,
      and may be sold commercially, and may be aggregated with this
      software.
 
