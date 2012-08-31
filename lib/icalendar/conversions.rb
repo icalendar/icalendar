@@ -69,32 +69,7 @@ class DateTime < Date
   include Icalendar::TzidSupport
 
   def to_ical
-    s = ""
-    
-    # 4 digit year
-    s << self.year.to_s
-    
-    # Double digit month
-    s << "0" unless self.month > 9 
-    s << self.month.to_s
-    
-    # Double digit day
-    s << "0" unless self.day > 9 
-    s << self.day.to_s
-
-    s << "T"
-        
-    # Double digit hour
-    s << "0" unless self.hour > 9 
-    s << self.hour.to_s
-    
-    # Double digit minute
-    s << "0" unless self.min > 9 
-    s << self.min.to_s
-    
-    # Double digit second
-    s << "0" unless self.sec > 9 
-    s << self.sec.to_s
+    s = strftime '%Y%m%dT%H%M%S'
 
     # UTC time gets a Z suffix
     if icalendar_tzid == "UTC"
@@ -108,37 +83,14 @@ end
 class Date
   attr_accessor :ical_params
   def to_ical(utc = false)
-    s = ""
-        
-    # 4 digit year
-    s << self.year.to_s
-    
-    # Double digit month
-    s << "0" unless self.month > 9 
-    s << self.month.to_s
-    
-    # Double digit day
-    s << "0" unless self.day > 9 
-    s << self.day.to_s
+    strftime '%Y%m%d'
   end
 end
 
 class Time
   attr_accessor :ical_params
   def to_ical(utc = false)
-    s = ""
-
-    # Double digit hour
-    s << "0" unless self.hour > 9 
-    s << self.hour.to_s
-    
-    # Double digit minute
-    s << "0" unless self.min > 9 
-    s << self.min.to_s
-    
-    # Double digit second
-    s << "0" unless self.sec > 9 
-    s << self.sec.to_s
+    s = strftime '%H%M%S'
 
     # UTC time gets a Z suffix
     if utc
