@@ -1,3 +1,7 @@
+=== 1.2.0 2012-08-30
+* Fix calendar handling for dates < 1000 - Ryan Ahearn
+* Updated license to GPL/BSD/Ruby at users option
+
 === 1.1.6 2011-03-10
 * Fix todo handling (thanks to Frank Schwarz)
 * clean up a number of warnings during test runs
