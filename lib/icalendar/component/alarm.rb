@@ -17,6 +17,7 @@ module Icalendar
     ical_property :description
     ical_property :trigger
     ical_property :summary
+    ical_property :uid
     
     # Single but must appear together
     ical_property :duration
