@@ -259,6 +259,21 @@ It's all about rubygems:
 
 $ sudo gem install icalendar
 
+== Testing
+
+You cannot use the most recent version of rake (10.x +), so you must install an
+older version, such as 0.9.2.2:
+
+  gem install rake -v=0.9.2.2
+
+The gem `hoe` is required as well:
+
+  gem install hoe
+
+To run the tests:
+
+  rake _0.9.2.2_ test
+
 == License
 
 This library is released under the same license as Ruby itself.
