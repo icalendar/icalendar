@@ -18,9 +18,11 @@ CATEGORIES:foo,bar,baz
 DESCRIPTION:desc
 DTSTAMP:20060720T174052
 DTSTART:20060720
+EXDATE:20121012T170000Z,20121102T170000Z
 GEO:46.01\\;8.57
 LAST-MODIFIED:19960817T133000
 ORGANIZER:mailto:joe@example.com?subject=Ruby
+RRULE:FREQ=WEEKLY;UNTIL=20130220T180000Z;BYDAY=FR
 SEQUENCE:2
 UID:foobar
 X-TIME-OF-DAY:101736
@@ -63,6 +65,11 @@ EOS
       x_time_of_day Time.at(123456).utc
 
       uid "foobar"
+
+      add_rrule "FREQ=WEEKLY;UNTIL=20130220T180000Z;BYDAY=FR"
+
+      add_exdate "20121012T170000Z"
+      add_exdate "20121102T170000Z"
     end
 
     assert_equal(RESULT.gsub("\n", "\r\n"), @cal.to_ical)
