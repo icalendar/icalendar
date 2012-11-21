@@ -154,7 +154,6 @@ module Icalendar
 
           # Lookup the property name to see if we have a string to
           # object parser for this property type.
-          orig_value = value
           if @parsers.has_key?(name)
             value = @parsers[name].call(name, params, value)
           end

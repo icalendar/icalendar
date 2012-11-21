@@ -137,24 +137,24 @@ module Icalendar
         
         # Property name
         unless multiline_property?(key)
-           prelude = "#{key.gsub(/_/, '-').upcase}" +
+          prelude = "#{key.gsub(/_/, '-').upcase}" +
 
-           # Possible parameters
-           print_parameters(val)
+          # Possible parameters
+          print_parameters(val)
 
-           # Property value
-           value = ":#{val.to_ical}"
-           value = escape_chars(value) unless ["rrule", "categories"].include?(key)
-           add_sliced_text(s, prelude + value)
-         else
-           prelude = "#{key.gsub(/_/, '-').upcase}"
-            val.each do |v|
-               params = print_parameters(v)
-               value = ":#{v.to_ical}"
-               value = escape_chars(value) unless key == "rrule"
-               add_sliced_text(s, prelude + params + value)
-            end
-         end
+          # Property value
+          value = ":#{val.to_ical}"
+          value = escape_chars(value) unless %w[rrule categories exdate].include?(key)
+          add_sliced_text(s, prelude + value)
+        else
+          prelude = "#{key.gsub(/_/, '-').upcase}"
+          val.each do |v|
+            params = print_parameters(v)
+            value = ":#{v.to_ical}"
+            value = escape_chars(value) unless key == "rrule"
+            add_sliced_text(s, prelude + params + value)
+          end
+        end
       end
       s
     end
@@ -171,12 +171,12 @@ module Icalendar
       add_to.gsub!(/ *$/, '')
     end
 
-    # Print the parameters for a specific property
-    def print_parameters(val)
+    # Print the parameters for a specific property.
+    def print_parameters(value)
       s = ""
-      return s unless val.respond_to?(:ical_params) and not val.ical_params.nil?
+      return s unless value.respond_to?(:ical_params) and not value.ical_params.nil?
 
-      val.ical_params.each do |key,val|
+      value.ical_params.each do |key, val|
         s << ";#{key}"
         val = [ val ] unless val.is_a?(Array)
 
