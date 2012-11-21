@@ -6,7 +6,7 @@ require 'date'
 require 'test/unit'
 require 'icalendar'
 
-class TestComponent < Test::Unit::TestCase
+class TestParameter < Test::Unit::TestCase
 
    # Create a calendar with an event for each test.
   def setup
