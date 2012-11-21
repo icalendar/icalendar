@@ -37,9 +37,9 @@ class TestCalendar < Test::Unit::TestCase
       event.dtend "19970903T190000Z", {:TZID => "Europe/Copenhagen"}
       event.summary "This is my summary"
 
-      ev = cal.events.each do |ev|
-         assert_equal("19970903T190000Z", ev.dtend)
-         assert_equal("This is my summary", ev.summary)
+      cal.events.each do |ev|
+        assert_equal("19970903T190000Z", ev.dtend)
+        assert_equal("This is my summary", ev.summary)
       end
    end
 
