@@ -9,7 +9,7 @@ class TestTodo < Test::Unit::TestCase
 
     cal = Calendar.new
 
-    t = cal.todo do
+    cal.todo do
       summary      "Plan next vacations"
       description  "Let's have a break"
       percent      50
