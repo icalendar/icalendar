@@ -1,3 +1,7 @@
+=== 1.2.1 2012-11-12
+ * Adds uid property to alarms to support iCloud - Jeroen Jacobs
+ * Fix up testing docs - Eric Carty-Fickes
+
 === 1.2.0 2012-08-30
 * Fix calendar handling for dates < 1000 - Ryan Ahearn
 * Updated license to GPL/BSD/Ruby at users option
