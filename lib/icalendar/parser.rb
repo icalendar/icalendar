@@ -195,7 +195,7 @@ module Icalendar
     QSTR    = '"[^"]*"'
 
     # Contentline
-    LINE = "(#{NAME})(.*(?:#{QSTR})|(?:[^:]*))\:(.*)"
+    LINE = "(#{NAME})((?:(?:[^:]*?)(?:#{QSTR})(?:[^:]*?))+|(?:[^:]*))\:(.*)"
    
     # *<Any character except CTLs, DQUOTE, ";", ":", ",">
     PTEXT   = '[^";:,]*'
