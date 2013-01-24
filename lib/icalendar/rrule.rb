@@ -68,9 +68,9 @@ module Icalendar
       @by_list.each do |key, value|
         if value
           if key == :byday
-            result << ";BYDAY=#{value.join(',')}"
+            result << ";BYDAY=#{value.join ','}"
           else
-            result << ";#{key.to_s.upcase}=#{value}" if value
+            result << ";#{key.to_s.upcase}=#{value}"
           end
         end
       end
