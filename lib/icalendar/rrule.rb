@@ -27,15 +27,10 @@ module Icalendar
     class Weekday
       def initialize(day, position)
         @day, @position = day, position
-        @last = false
       end
       
       def to_s
-        "#{@position}#{@day}#{ "," unless @last }"
-      end
-
-      def you_are_last()
-        @last = true
+        "#{@position}#{@day}"
       end
     end
     
@@ -71,7 +66,13 @@ module Icalendar
       result << ";COUNT=#{@count}" if @count
       result << ";INTERVAL=#{@interval}" if @interval
       @by_list.each do |key, value|
-        result << ";#{key.to_s.upcase}=#{value}" if value
+        if value
+          if key == :byday
+            result << ";BYDAY=#{value.join(',')}"
+          else
+            result << ";#{key.to_s.upcase}=#{value}" if value
+          end
+        end
       end
       result << ";WKST=#{@wkst}" if @wkst
       result.join
@@ -99,11 +100,10 @@ module Icalendar
     def parse_weekday_list(name, string)
       match = string.match(/;#{name}=(.*?)(;|$)/)
       if match
-        return_array = match[1].split(",").map {|weekday|
+        return_array = match[1].split(",").map do |weekday|
           wd_match = weekday.match(/([+-]?\d*)(SU|MO|TU|WE|TH|FR|SA)/)
           Weekday.new(wd_match[2], wd_match[1])
-          }
-        return_array.last.you_are_last
+        end
       else
         nil
       end
