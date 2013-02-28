@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.require_path = "lib"
   s.autorequire = "icalendar"
   s.has_rdoc = true
-  s.extra_rdoc_files = ["README", "COPYING", "GPL"]
+  s.extra_rdoc_files = ["README.rdoc", "COPYING", "GPL"]
   s.rdoc_options.concat ['--main', 'README']
 
   s.author = "Sean Dague"
