@@ -13,8 +13,8 @@ require 'stringio'
 
 module Icalendar
   
-  def Icalendar.parse(src, single = false)
-    cals = Icalendar::Parser.new(src).parse
+  def Icalendar.parse(src, single = false, strict = true)
+    cals = Icalendar::Parser.new(src).parse(strict)
 
     if single
       cals.first
@@ -89,7 +89,7 @@ module Icalendar
     end
 
     # Parse the calendar into an object representation
-    def parse
+    def parse(strict = true)
       calendars = []
 
       @@logger.debug "parsing..."
@@ -99,7 +99,7 @@ module Icalendar
 
         # Just iterate through until we find the beginning of a calendar object
         if fields[:name] == "BEGIN" and fields[:value] == "VCALENDAR"
-          cal = parse_component
+          cal = parse_component(Calendar.new,strict)
           @@logger.debug "Added parsed calendar..."
           calendars << cal
         end
@@ -114,7 +114,7 @@ module Icalendar
     # -- This should consist of the PRODID, VERSION, option METHOD & CALSCALE,
     # and then one or more calendar components: VEVENT, VTODO, VJOURNAL, 
     # VFREEBUSY, VTIMEZONE
-    def parse_component(component = Calendar.new)
+    def parse_component(component = Calendar.new, strict = true)
       @@logger.debug "parsing new component..."
 
       while (line = next_line)
@@ -173,13 +173,13 @@ module Icalendar
             if component.respond_to?(adder)
               component.send(adder, value, params)
             else
-              raise(UnknownPropertyMethod, "Unknown property type: #{adder}")
+               raise(UnknownPropertyMethod, "Unknown property type: #{adder}") unless strict
             end
           else
             if component.respond_to?(name)
               component.send(name, value, params)
             else
-              raise(UnknownPropertyMethod, "Unknown property type: #{name}")
+             raise(UnknownPropertyMethod, "Unknown property type: #{name}") unless strict
             end
           end
         end  
