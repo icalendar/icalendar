@@ -12,10 +12,13 @@ Gem::Specification.new do |s|
   s.require_path = "lib"
   s.autorequire = "icalendar"
   s.has_rdoc = true
-  s.extra_rdoc_files = ["README", "COPYING", "GPL"]
+  s.extra_rdoc_files = ["README.rdoc", "COPYING", "GPL"]
   s.rdoc_options.concat ['--main', 'README']
 
   s.author = "Sean Dague"
   s.email = "sean@dague.net"
+
+  s.add_development_dependency 'rake', '~>10.0.3'
+  s.add_development_dependency 'hoe', '~>3.5.1'
 end
 
