@@ -134,7 +134,7 @@ module Icalendar
         if key =~ /ip_.*/
           key = key[3..-1]
         end
-        
+
         # Property name
         unless multiline_property?(key)
           prelude = "#{key.gsub(/_/, '-').upcase}" +
@@ -412,13 +412,11 @@ module Icalendar
       end
     end
 
-    def method_missing(method_name, *args)
+    def method_missing(method, *args)
       @@logger.debug("Inside method_missing...")
-      method_name = method_name.to_s.downcase
+      method_name = method.to_s.downcase
 
-      unless method_name =~ /x_.*/
-        raise NoMethodError, "Method Name: #{method_name}"
-      end
+      super unless method_name =~ /x_.*/
 
       # x-properties are accessed with underscore but stored with a dash so
       # they output correctly and we don't have to special case the
