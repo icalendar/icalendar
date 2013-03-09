@@ -4,6 +4,8 @@ require './lib/icalendar'
 
 Hoe.plugin :newgem
 Hoe.plugin :website
+Hoe.plugins.delete :gemcutter
+Hoe.plugin :rubyforge
 
 # Generate all the Rake tasks
 # Run 'rake -T' to see list of generated tasks (from gem root directory)

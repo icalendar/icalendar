@@ -10,5 +10,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'hoe', '~> 3.5'
   s.add_development_dependency 'newgem', '~> 1.5'
   s.add_development_dependency 'rubyforge', '~> 2.0'
+  s.add_development_dependency 'rdoc', '~> 4.0'
 end
 

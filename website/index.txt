@@ -8,6 +8,10 @@ h2. How
 
 Please see "the README":https://github.com/icalendar/icalendar/blob/master/README.rdoc for more information.
 
+h2. Docs
+
+The best documents are the code, but we'll attempt to keep the  "rdoc":http://icalendar.rubyforge.org/rdoc up to date.
+
 h2. Installing
 
 <pre syntax="ruby">sudo gem install icalendar</pre>
