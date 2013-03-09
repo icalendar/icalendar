@@ -1,3 +1,8 @@
+=== 1.2.3 2013-03-09
+ * Call `super` from Component#method_missing
+ * Clean up warnings in test suite
+ * Add Gemfile for installing development dependencies
+
 === 1.2.2 2013-02-16
  * added TZURL property to Timezone component - spacepixels
  * correct days in RRule ("[TU,WE]" -> "TU,WE") - Christoph Finkensiep
