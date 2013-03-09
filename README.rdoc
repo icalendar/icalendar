@@ -1,6 +1,6 @@
 = iCalendar -- Internet calendaring, Ruby style
 
-* http://github.com/sdague/icalendar
+* http://github.com/icalendar/icalendar
 
 == DESCRIPTION
 
@@ -75,8 +75,8 @@ transport such as infrared might also be used.
     dtend   Date.new(2005, 04, 28)
     summary "This is a summary with params.", params
   end
-  
-  # We can output the calendar as a string to write to a file, 
+
+  # We can output the calendar as a string to write to a file,
   # network port, database etc.
   cal_string = cal.to_ical
   puts cal_string
@@ -97,7 +97,7 @@ transport such as infrared might also be used.
       trigger       "-PT15M" # 15 minutes before
       add_attach    "ftp://host.com/novo-procs/felizano.exe", {"FMTTYPE" => "application/binary"} # email attachments (optional)
     end
-    
+
     alarm do
       action        "DISPLAY" # This line isn't necessary, it's the default
       summary       "Alarm notification"
@@ -128,7 +128,7 @@ transport such as infrared might also be used.
   # TRIGGER:-P1DT0H0M0S
   # SUMMARY:Alarm notification
   # END:VALARM
-  # 
+  #
   # BEGIN:VALARM
   # ACTION:AUDIO
   # ATTACH;VALUE=URI:Basso
@@ -136,7 +136,7 @@ transport such as infrared might also be used.
   # END:VALARM
 
 == Timezones
-  
+
   # Create a timezone definition (previous convention)
   cal = Calendar.new
   timezone = Icalendar::Timezone.new
@@ -182,9 +182,9 @@ transport such as infrared might also be used.
       add_recurrence_rule   "YEARLY;BYMONTH=11;BYDAY=1SU"
     end
   end
-  
+
   # Both conventions output
-  
+
   # BEGIN:VTIMEZONE
   # TZID:America/Chicago
   # BEGIN:DAYLIGHT
@@ -205,20 +205,20 @@ transport such as infrared might also be used.
 
 == Unicode
 Add `$KCODE = 'u'` to make icalender work correctly with Utf8 texts
-  
+
 == Parsing iCalendars:
-  
+
   # Open a file or pass a string to the parser
   cal_file = File.open("single_event.ics")
-  
+
   # Parser returns an array of calendars because a single file
   # can have multiple calendars.
   cals = Icalendar.parse(cal_file)
   cal = cals.first
-  
+
   # Now you can access the cal object in just the same way I created it
   event = cal.events.first
-  
+
   puts "start date-time: " + event.dtstart
   puts "summary: " + event.summary
 
@@ -227,7 +227,7 @@ Add `$KCODE = 'u'` to make icalender work correctly with Utf8 texts
 Often times in web apps and other interactive applications you'll need to
 lookup items in a calendar to make changes or get details.  Now you can find
 everything by the unique id automatically associated with all components.
-  
+
   cal = Calendar.new
   10.times { cal.event } # Create 10 events with only default data.
   some_event = cal.events[5] # Grab it from the array of events
@@ -261,18 +261,13 @@ $ sudo gem install icalendar
 
 == Testing
 
-You cannot use the most recent version of rake (10.x +), so you must install an
-older version, such as 0.9.2.2:
-
-  gem install rake -v=0.9.2.2
-
 The gem `hoe` is required as well:
 
   gem install hoe
 
 To run the tests:
 
-  rake _0.9.2.2_ test
+  rake test
 
 == License
 
@@ -280,7 +275,7 @@ This library is released under the same license as Ruby itself.
 
 == Support & Contributions
 
-The iCalendar library homepage is http://icalendar.rubyforge.org/ 
+The iCalendar library homepage is http://icalendar.rubyforge.org/
 
 There is an icalendar-devel@rubyforge.org mailing list that can be
 used for asking questions, making comments or submitting patches.

@@ -1,5 +1,0 @@
-
-For more information on icalendar, see http://icalendar.rubyforge.org
-
-
-
