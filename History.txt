@@ -1,3 +1,7 @@
+=== 1.2.4 2013-03-26
+ * Proxy component values now frozen in Ruby 2.0 (Fixed issue #17)
+ * Clean up gemspec for cleaner installing via bundler/git
+
 === 1.2.3 2013-03-09
  * Call `super` from Component#method_missing
  * Clean up warnings in test suite

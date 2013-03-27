@@ -1,6 +1,11 @@
+$:.push File.expand_path('../lib', __FILE__)
+require 'icalendar/base'
+
 Gem::Specification.new do |s|
+  s.authors = ['Ryan Ahearn']
+
   s.name = "icalendar"
-  s.version = "1.2"
+  s.version = Icalendar::VERSION
 
   s.homepage = "http://icalendar.rubyforge.org/"
   s.platform = Gem::Platform::RUBY
