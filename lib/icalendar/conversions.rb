@@ -20,6 +20,11 @@ module Icalendar
   module TzidSupport
     attr_accessor :icalendar_tzid
   end
+
+  require 'delegate'
+  class FrozenProxy < SimpleDelegator
+    attr_accessor :ical_params
+  end
 end
 
 require 'uri/generic'

@@ -37,4 +37,18 @@ class TestParameter < Test::Unit::TestCase
       assert_equal params, event.summary.ical_params
     end
   end
+
+  def test_nonstandard_property_parameters
+    params = {'CUSTOM' => ['yours']}
+    @event.priority(2, params)
+
+    assert_equal params, @event.priority.ical_params
+
+    @cal.add_event @event
+    cal_str = @cal.to_ical
+
+    cals = Icalendar::Parser.new(cal_str).parse
+    event = cals.first.events.first
+    assert_equal params, event.priority.ical_params
+  end
 end

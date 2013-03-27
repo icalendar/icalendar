@@ -267,6 +267,7 @@ module Icalendar
               end
 
               unless params.nil?
+                val = FrozenProxy.new val if val.frozen?
                 # Extend with the parameter methods only if we have to...
                 unless val.respond_to?(:ical_params)
                   val.class.class_eval { attr_accessor :ical_params }
