@@ -56,12 +56,12 @@ module TZInfo
   class TimezoneTransitionInfo
     def offset_from
       a = previous_offset.utc_total_offset
-      sprintf("%2.2d%2.2d", (a / 3600).to_i, ((a / 60) % 60).to_i)
+      sprintf("%+-2.2d%2.2d", (a / 3600).to_i, ((a / 60) % 60).to_i)
     end
 
     def offset_to
       a = offset.utc_total_offset
-      sprintf("%2.2d%2.2d", (a / 3600).to_i, ((a / 60) % 60).to_i)
+      sprintf("%+-2.2d%2.2d", (a / 3600).to_i, ((a / 60) % 60).to_i)
     end
 
     def rrule 
