@@ -20,8 +20,6 @@ module Icalendar
   # New York City starting from 1967. Each line represents a description
   # or rule for a particular observance.
   class Timezone < Component
-    ical_component :standard, :daylight
-
     # Single properties
     ical_property :dtstart, :start
     ical_property :tzoffsetto, :timezone_offset_to

@@ -63,6 +63,12 @@ class TestComponent < Test::Unit::TestCase
     assert_equal("my-custom-property", @event.x_foobar)
   end
 
+  def test_method_missing_no_x
+    assert_raise NoMethodError do
+      @event.there_is_no_such_method
+    end
+  end
+
   def test_respond_to_missing
     component = Icalendar::Component.new('name')
     assert !component.respond_to?(:there_is_no_such_method)

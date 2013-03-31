@@ -134,7 +134,7 @@ module Icalendar
         if key =~ /ip_.*/
           key = key[3..-1]
         end
-        
+
         # Property name
         unless multiline_property?(key)
           prelude = "#{key.gsub(/_/, '-').upcase}" +
@@ -184,8 +184,8 @@ module Icalendar
         unless val.empty?
           s << "="
           sep = "" # First entry comes after = sign, but then we need commas
-          val.each do |pval| 
-            if pval.respond_to? :to_ical 
+          val.each do |pval|
+            if pval.respond_to? :to_ical
               s << sep << pval.to_ical
               sep = ","
             end
@@ -228,8 +228,8 @@ module Icalendar
       generate_setter(property, alias_name)
       generate_query(property, alias_name)
     end
-    
-    # Define a set of methods defining a new property, which 
+
+    # Define a set of methods defining a new property, which
     # supports multiple values for the same property name.
     def Component.ical_multi_property(property, singular, plural)
       property = "#{property}".strip.downcase.gsub(/-/, '_')
@@ -246,7 +246,7 @@ module Icalendar
       generate_multi_remover(property, singular)
     end
 
-    # Define a set of methods defining a new property, which 
+    # Define a set of methods defining a new property, which
     # supports multiple values in multiple lines with same property name
     def Component.ical_multiline_property(property, singular, plural)
       @@multiline_properties["#{property}"] = true
@@ -267,8 +267,9 @@ module Icalendar
               end
 
               unless params.nil?
+                val = FrozenProxy.new val if val.frozen?
                 # Extend with the parameter methods only if we have to...
-                unless val.respond_to?(:ical_params) 
+                unless val.respond_to?(:ical_params)
                   val.class.class_eval { attr_accessor :ical_params }
                 end
                 val.ical_params = params
@@ -309,10 +310,10 @@ module Icalendar
         class_eval code, "component.rb", 226
 
         alias_method("#{alias_name}\?", "#{query}") unless alias_name.nil?
-      end    
+      end
     end
 
-    def Component.generate_multi_getter(property, plural)     
+    def Component.generate_multi_getter(property, plural)
       # Getter for whole array
       unless instance_methods.include? plural
         code = <<-code
@@ -321,7 +322,7 @@ module Icalendar
                 @properties["#{property}"] || []
               else
                 self.#{plural}=(a)
-              end 
+              end
             end
         code
 
@@ -377,7 +378,7 @@ module Icalendar
 
               unless params.nil?
                 # Extend with the parameter methods only if we have to...
-                unless val.respond_to?(:ical_params) 
+                unless val.respond_to?(:ical_params)
                   val.class.class_eval { attr_accessor :ical_params }
                 end
                 val.ical_params = params
@@ -392,7 +393,7 @@ module Icalendar
         code
 
         class_eval code, "component.rb", 289
-        alias_method("add_#{property.downcase}", "#{adder}") 
+        alias_method("add_#{property.downcase}", "#{adder}")
       end
     end
 
@@ -412,13 +413,11 @@ module Icalendar
       end
     end
 
-    def method_missing(method_name, *args)
+    def method_missing(method, *args)
       @@logger.debug("Inside method_missing...")
-      method_name = method_name.to_s.downcase
+      method_name = method.to_s.downcase
 
-      unless method_name =~ /x_.*/
-        raise NoMethodError, "Method Name: #{method_name}"
-      end
+      super unless method_name =~ /x_.*/
 
       # x-properties are accessed with underscore but stored with a dash so
       # they output correctly and we don't have to special case the

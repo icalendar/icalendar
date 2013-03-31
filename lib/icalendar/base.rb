@@ -1,6 +1,7 @@
 =begin
   Copyright (C) 2005 Jeff Rose
   Copyright (C) 2009-2010 Sean Dague
+  Copyright (C) 2013- Ryan Ahearn
 
   This library is free software; you can redistribute it and/or modify it
   under the same terms as the ruby language itself, see the file COPYING for
@@ -10,7 +11,7 @@ require 'logger'
 
 module Icalendar #:nodoc:
 
-  VERSION = '1.2.2'
+  VERSION = '1.2.4'
 
   # A simple error class to differentiate iCalendar library exceptions
   # from ruby language exceptions or others.
