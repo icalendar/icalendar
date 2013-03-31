@@ -14,7 +14,7 @@ require 'stringio'
 module Icalendar
   
   def Icalendar.parse(src, single = false)
-    cals = Icalendar::Parser.new(src).parse()
+    cals = Icalendar::Parser.new(src).parse
 
     if single
       cals.first
@@ -97,7 +97,7 @@ module Icalendar
     end
 
     # Parse the calendar into an object representation
-    def parse()
+    def parse
       calendars = []
 
       @@logger.debug "parsing..."
