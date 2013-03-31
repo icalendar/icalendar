@@ -13,8 +13,8 @@ require 'stringio'
 
 module Icalendar
   
-  def Icalendar.parse(src, single = false, strict = true)
-    cals = Icalendar::Parser.new(src).parse(strict)
+  def Icalendar.parse(src, single = false)
+    cals = Icalendar::Parser.new(src).parse()
 
     if single
       cals.first
@@ -39,9 +39,17 @@ module Icalendar
     # time-numzome = sign time-hour [":"] time-minute
     TIME = '(\d\d):?(\d\d):?(\d\d)(\.\d+)?(Z|[-+]\d\d:?\d\d)?'
 
-    def initialize(src)
+    # Defines if this is a strict parser.
+    attr_accessor :strict
+
+    def initialize(src, strict = true)
       # Setup the parser method hash table
       setup_parsers()
+
+      # The default behavior is to raise an error when the parser
+      # finds an unknown property. Set this to false to discard
+      # unknown properties instead of raising an error.
+      @strict = strict
 
       if src.respond_to?(:gets)
         @file = src
@@ -89,7 +97,7 @@ module Icalendar
     end
 
     # Parse the calendar into an object representation
-    def parse(strict = true)
+    def parse()
       calendars = []
 
       @@logger.debug "parsing..."
@@ -99,7 +107,7 @@ module Icalendar
 
         # Just iterate through until we find the beginning of a calendar object
         if fields[:name] == "BEGIN" and fields[:value] == "VCALENDAR"
-          cal = parse_component(Calendar.new,strict)
+          cal = parse_component(Calendar.new)
           @@logger.debug "Added parsed calendar..."
           calendars << cal
         end
@@ -114,7 +122,7 @@ module Icalendar
     # -- This should consist of the PRODID, VERSION, option METHOD & CALSCALE,
     # and then one or more calendar components: VEVENT, VTODO, VJOURNAL, 
     # VFREEBUSY, VTIMEZONE
-    def parse_component(component = Calendar.new, strict = true)
+    def parse_component(component = Calendar.new)
       @@logger.debug "parsing new component..."
 
       while (line = next_line)
@@ -173,13 +181,13 @@ module Icalendar
             if component.respond_to?(adder)
               component.send(adder, value, params)
             else
-               raise(UnknownPropertyMethod, "Unknown property type: #{adder}") unless strict
+               raise(UnknownPropertyMethod, "Unknown property type: #{adder}") if strict
             end
           else
             if component.respond_to?(name)
               component.send(name, value, params)
             else
-             raise(UnknownPropertyMethod, "Unknown property type: #{name}") unless strict
+             raise(UnknownPropertyMethod, "Unknown property type: #{name}") if strict
             end
           end
         end  
