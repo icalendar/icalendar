@@ -42,80 +42,80 @@
 # require "tzinfo"
 
 module TZInfo
-    class Timezone
-        def ical_timezone(date)
-            period = period_for_local(date)
-            timezone = Icalendar::Timezone.new
-            timezone.timezone_id = identifier
-            timezone.add(period.daylight)
-            timezone.add(period.standard)
-            return timezone
-        end
+  class Timezone
+    def ical_timezone(date)
+      period = period_for_local(date)
+      timezone = Icalendar::Timezone.new
+      timezone.timezone_id = identifier
+      timezone.add(period.daylight)
+      timezone.add(period.standard)
+      return timezone
     end
-    
-    class TimezoneTransitionInfo
-        def offset_from
-            a = previous_offset.utc_total_offset
-            sprintf("%2.2d%2.2d", (a / 3600).to_i, ((a / 60) % 60).to_i)
-        end
-        
-        def offset_to
-            a = offset.utc_total_offset
-            sprintf("%2.2d%2.2d", (a / 3600).to_i, ((a / 60) % 60).to_i)
-        end
-        
-        def rrule 
-            start = local_start.to_datetime
-            # this is somewhat of a hack, but seems to work ok
-            [sprintf(
-                    "FREQ=YEARLY;BYMONTH=%d;BYDAY=%d%s",
-                    start.month, 
-                    ((start.day - 1)/ 7).to_i + 1,
-                    start.strftime("%a").upcase[0,2]
-                    )]
-        end
-        
-        def dtstart
-            local_start.to_datetime.strftime("%Y%m%dT%H%M%S")
-        end
+  end
 
+  class TimezoneTransitionInfo
+    def offset_from
+      a = previous_offset.utc_total_offset
+      sprintf("%+-2.2d%2.2d", (a / 3600).to_i, ((a / 60) % 60).to_i)
     end
-    
-    class TimezonePeriod
-        def daylight
-            day = Icalendar::Daylight.new
-            if dst?
-                day.timezone_name = abbreviation.to_s
-                day.timezone_offset_from = start_transition.offset_from
-                day.timezone_offset_to = start_transition.offset_to
-                day.dtstart = start_transition.dtstart
-                day.recurrence_rules = start_transition.rrule
-            else
-                day.timezone_name = abbreviation.to_s.sub("ST","DT")
-                day.timezone_offset_from = end_transition.offset_from
-                day.timezone_offset_to = end_transition.offset_to
-                day.dtstart = end_transition.dtstart
-                day.recurrence_rules = end_transition.rrule
-            end
-            return day
-        end
-        
-        def standard
-            std = Icalendar::Standard.new
-            if dst?
-                std.timezone_name = abbreviation.to_s.sub("DT","ST")
-                std.timezone_offset_from = end_transition.offset_from
-                std.timezone_offset_to = end_transition.offset_to
-                std.dtstart = end_transition.dtstart
-                std.recurrence_rules = end_transition.rrule
-            else
-                std.timezone_name = abbreviation.to_s
-                std.timezone_offset_from = start_transition.offset_from
-                std.timezone_offset_to = start_transition.offset_to
-                std.dtstart = start_transition.dtstart
-                std.recurrence_rules = start_transition.rrule
-            end
-            return std
-        end
+
+    def offset_to
+      a = offset.utc_total_offset
+      sprintf("%+-2.2d%2.2d", (a / 3600).to_i, ((a / 60) % 60).to_i)
     end
+
+    def rrule 
+      start = local_start.to_datetime
+      # this is somewhat of a hack, but seems to work ok
+      [sprintf(
+        "FREQ=YEARLY;BYMONTH=%d;BYDAY=%d%s",
+        start.month, 
+        ((start.day - 1)/ 7).to_i + 1,
+        start.strftime("%a").upcase[0,2]
+      )]
+    end
+
+    def dtstart
+      local_start.to_datetime.strftime("%Y%m%dT%H%M%S")
+    end
+
+  end
+
+  class TimezonePeriod
+    def daylight
+      day = Icalendar::Daylight.new
+      if dst?
+        day.timezone_name = abbreviation.to_s
+        day.timezone_offset_from = start_transition.offset_from
+        day.timezone_offset_to = start_transition.offset_to
+        day.dtstart = start_transition.dtstart
+        day.recurrence_rules = start_transition.rrule
+      else
+        day.timezone_name = abbreviation.to_s.sub("ST","DT")
+        day.timezone_offset_from = end_transition.offset_from
+        day.timezone_offset_to = end_transition.offset_to
+        day.dtstart = end_transition.dtstart
+        day.recurrence_rules = end_transition.rrule
+      end
+      return day
+    end
+
+    def standard
+      std = Icalendar::Standard.new
+      if dst?
+        std.timezone_name = abbreviation.to_s.sub("DT","ST")
+        std.timezone_offset_from = end_transition.offset_from
+        std.timezone_offset_to = end_transition.offset_to
+        std.dtstart = end_transition.dtstart
+        std.recurrence_rules = end_transition.rrule
+      else
+        std.timezone_name = abbreviation.to_s
+        std.timezone_offset_from = start_transition.offset_from
+        std.timezone_offset_to = start_transition.offset_to
+        std.dtstart = start_transition.dtstart
+        std.recurrence_rules = start_transition.rrule
+      end
+      return std
+    end
+  end
 end
