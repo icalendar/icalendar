@@ -44,7 +44,7 @@ module Icalendar
 
     def initialize(src, strict = true)
       # Setup the parser method hash table
-      setup_parsers()
+      setup_parsers
 
       # The default behavior is to raise an error when the parser
       # finds an unknown property. Set this to false to discard
@@ -107,7 +107,7 @@ module Icalendar
 
         # Just iterate through until we find the beginning of a calendar object
         if fields[:name] == "BEGIN" and fields[:value] == "VCALENDAR"
-          cal = parse_component(Calendar.new)
+          cal = parse_component Calendar.new
           @@logger.debug "Added parsed calendar..."
           calendars << cal
         end
@@ -181,13 +181,13 @@ module Icalendar
             if component.respond_to?(adder)
               component.send(adder, value, params)
             else
-               raise(UnknownPropertyMethod, "Unknown property type: #{adder}") if strict
+              raise(UnknownPropertyMethod, "Unknown property type: #{adder}") if strict
             end
           else
             if component.respond_to?(name)
               component.send(name, value, params)
             else
-             raise(UnknownPropertyMethod, "Unknown property type: #{name}") if strict
+              raise(UnknownPropertyMethod, "Unknown property type: #{name}") if strict
             end
           end
         end  

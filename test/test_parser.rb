@@ -7,6 +7,7 @@ require 'icalendar'
 class TestIcalendarParser < Test::Unit::TestCase
 
   TEST_CAL = File.join(File.dirname(__FILE__), 'fixtures', 'single_event.ics')
+  NONSTANDARD = File.join(File.dirname(__FILE__), 'fixtures', 'nonstandard.ics')
 
   # First make sure that we can run the parser and get back objects.
   def test_new
@@ -41,6 +42,20 @@ class TestIcalendarParser < Test::Unit::TestCase
     calString = File.open(TEST_CAL).read
     cals = Icalendar::Parser.new(calString).parse
     do_asserts(cals)
+  end
+
+  def test_strict_parser
+    File.open(NONSTANDARD) do |cal_file|
+      assert_raise(Icalendar::UnknownPropertyMethod) do
+        Icalendar::Parser.new(cal_file).parse
+      end
+    end
+  end
+
+  def test_lenient_parser
+    File.open(NONSTANDARD) do |cal_file|
+      do_asserts Icalendar::Parser.new(cal_file, false).parse
+    end
   end
 
   # Just a helper method so we don't have to repeat the same tests.
