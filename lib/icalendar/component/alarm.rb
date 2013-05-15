@@ -29,6 +29,7 @@ module Icalendar
     ical_property :last_modified
     ical_property :timestamp
     ical_property :sequence
+    ical_property :acknowledged
 
     # Multi properties
     ical_multiline_property :attendee, :attendee, :attendees
