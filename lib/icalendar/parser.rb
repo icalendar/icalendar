@@ -291,6 +291,7 @@ module Icalendar
       @parsers["CREATED"] = m
       @parsers["DTSTAMP"] = m
       @parsers["LAST-MODIFIED"] = m
+      @parsers["ACKNOWLEDGED"] = m
 
       # URI's
       m = self.method(:parse_uri)
