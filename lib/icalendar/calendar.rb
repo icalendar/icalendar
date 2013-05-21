@@ -25,6 +25,20 @@ module Icalendar
       self.version = "2.0" # Version of the specification
     end
 
+    def print_component
+      "BEGIN:#{@name.upcase}\r\n" +
+      "VERSION:#{version}\r\n" +
+
+      # Then the properties
+      print_properties(@properties.select { |k,v| k != 'version' }) +
+
+      # sub components
+      yield +
+
+      # End of this component
+      "END:#{@name.upcase}\r\n"
+    end
+
     def event(&block)
       e = Event.new
       # Note: I'm not sure this is the best way to pass this down, but it works

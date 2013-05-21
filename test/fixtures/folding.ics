@@ -1,7 +1,7 @@
 BEGIN:VCALENDAR
+VERSION:2.0
 CALSCALE:GREGORIAN
 PRODID:iCalendar-Ruby
-VERSION:2.0
 X-WR-CALNAME:Test Long Description
 BEGIN:VEVENT
 DESCRIPTION:FULL DETAILS:\nhttp://test.com/events/570\n\nCary Brothers walk
