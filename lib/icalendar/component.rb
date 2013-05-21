@@ -125,10 +125,10 @@ module Icalendar
       "END:#{@name.upcase}\r\n"
     end
 
-    def print_properties
+    def print_properties(properties = @properties)
       s = ""
 
-      @properties.sort.each do |key,val|
+      properties.sort.each do |key,val|
         # Take out underscore for property names that conflicted
         # with built-in words.
         if key =~ /ip_.*/

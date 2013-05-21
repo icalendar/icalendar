@@ -10,9 +10,9 @@ class TestConversions < Test::Unit::TestCase
 
   RESULT = <<EOS
 BEGIN:VCALENDAR
+VERSION:2.0
 CALSCALE:GREGORIAN
 PRODID:iCalendar-Ruby
-VERSION:2.0
 BEGIN:VEVENT
 CATEGORIES:foo,bar,baz
 DESCRIPTION:desc
