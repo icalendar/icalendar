@@ -192,6 +192,40 @@ EOS
   
 end
 
+class TestRecurringEventWithUntil < Test::Unit::TestCase
+
+  def setup
+    src = <<EOS
+BEGIN:VCALENDAR
+METHOD:PUBLISH
+CALSCALE:GREGORIAN
+VERSION:2.0
+BEGIN:VEVENT
+UID:19970901T130000Z-123401@host.com
+DTSTAMP:19970901T1300Z
+DTSTART:19970902T090000Z
+DTEND:19970902T100000Z
+RRULE:FREQ=WEEKLY;UNTIL=20110629T065959Z
+SUMMARY:Annual Employee Review
+CLASS:PRIVATE
+CATEGORIES:BUSINESS,HUMAN RESOURCES
+END:VEVENT
+END:VCALENDAR
+EOS
+    @calendar = Icalendar.parse(src).first
+    @event = @calendar.events.first
+  end
+
+  def test_event_is_parsed
+    assert_not_nil(@event)
+  end
+
+  def test_event_rule_until_info
+    assert_equal("2011-06-29T06:59:59+00:00", @event.recurrence_rules[0].until.to_s)
+  end
+
+end
+
 class TestRecurringEventWithCount < Test::Unit::TestCase 
   # DTSTART;TZID=US-Eastern:19970902T090000
   # RRULE:FREQ=DAILY;COUNT=10
