@@ -34,6 +34,8 @@ module Icalendar
       end
     end
     
+    attr_accessor :until
+    
     def initialize(name, params, value, parser)
       @value = value
       frequency_match = value.match(/FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY)/)
