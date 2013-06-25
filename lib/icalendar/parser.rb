@@ -350,7 +350,7 @@ module Icalendar
     end
     
     def parse_recur(name, params, value)
-      ::Icalendar::RRule.new(name, params, value, self)
+      ::Icalendar::RRule.new(name, params, value)
     end
 
     # Durations

@@ -136,11 +136,8 @@ module Icalendar
         end
 
         # Property name
-        unless multiline_property?(key)
-          prelude = "#{key.gsub(/_/, '-').upcase}" +
-
-          # Possible parameters
-          print_parameters(val)
+        if !multiline_property?(key)
+          prelude = "#{key.gsub(/_/, '-').upcase}#{print_parameters val}"
 
           # Property value
           value = ":#{val.to_ical}"
@@ -151,7 +148,7 @@ module Icalendar
           val.each do |v|
             params = print_parameters(v)
             value = ":#{v.to_ical}"
-            value = escape_chars(value) unless key == "rrule"
+            value = escape_chars(value)
             add_sliced_text(s, prelude + params + value)
           end
         end
@@ -174,7 +171,7 @@ module Icalendar
     # Print the parameters for a specific property.
     def print_parameters(value)
       s = ""
-      return s unless value.respond_to?(:ical_params) and not value.ical_params.nil?
+      return s unless value.respond_to?(:ical_params) && !value.ical_params.nil?
 
       value.ical_params.each do |key, val|
         s << ";#{key}"

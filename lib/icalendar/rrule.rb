@@ -33,8 +33,8 @@ module Icalendar
         "#{@position}#{@day}"
       end
     end
-    
-    def initialize(name, params, value, parser)
+
+    def initialize(name, params, value)
       @value = value
       frequency_match = value.match(/FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY)/)
       raise Icalendar::InvalidPropertyValue.new("FREQ must be specified for RRULE values") unless frequency_match
