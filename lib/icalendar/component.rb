@@ -213,12 +213,12 @@ module Icalendar
     # Make it protected so we can monitor usage...
     protected
 
-    def Component.ical_component(*syms)
+    def self.ical_component(*syms)
       hash_accessor :@components, *syms
     end
 
     # Define a set of methods supporting a new property
-    def Component.ical_property(property, alias_name = nil, prop_name = nil)
+    def self.ical_property(property, alias_name = nil, prop_name = nil)
       property = "#{property}".strip.downcase
       alias_name = "#{alias_name}".strip.downcase unless alias_name.nil?
       # If a prop_name was given then we use that for the actual storage
@@ -231,7 +231,7 @@ module Icalendar
 
     # Define a set of methods defining a new property, which
     # supports multiple values for the same property name.
-    def Component.ical_multi_property(property, singular, plural)
+    def self.ical_multi_property(property, singular, plural)
       property = "#{property}".strip.downcase.gsub(/-/, '_')
       plural = "#{plural}".strip.downcase
 
@@ -248,7 +248,7 @@ module Icalendar
 
     # Define a set of methods defining a new property, which
     # supports multiple values in multiple lines with same property name
-    def Component.ical_multiline_property(property, singular, plural)
+    def self.ical_multiline_property(property, singular, plural)
       @@multiline_properties["#{property}"] = true
       ical_multi_property(property, singular, plural)
     end
@@ -256,7 +256,7 @@ module Icalendar
 
     private
 
-    def Component.generate_getter(property, alias_name)
+    def self.generate_getter(property, alias_name)
       unless instance_methods.include? property
         code = <<-code
             def #{property}(val = nil, params = nil)
@@ -284,7 +284,7 @@ module Icalendar
       end
     end
 
-    def Component.generate_setter(property, alias_name)
+    def self.generate_setter(property, alias_name)
       setter = property + '='
       unless instance_methods.include? setter
         code = <<-code
@@ -298,7 +298,7 @@ module Icalendar
       end
     end
 
-    def Component.generate_query(property, alias_name)
+    def self.generate_query(property, alias_name)
       query = "#{property}?"
       unless instance_methods.include? query
         code = <<-code
@@ -313,7 +313,7 @@ module Icalendar
       end
     end
 
-    def Component.generate_multi_getter(property, plural)
+    def self.generate_multi_getter(property, plural)
       # Getter for whole array
       unless instance_methods.include? plural
         code = <<-code
@@ -330,7 +330,7 @@ module Icalendar
       end
     end
 
-    def Component.generate_multi_setter(property, plural)
+    def self.generate_multi_setter(property, plural)
       # Setter for whole array
       unless instance_methods.include? plural+'+'
         code = <<-code
@@ -353,7 +353,7 @@ module Icalendar
       end
     end
 
-    def Component.generate_multi_query(property, plural)
+    def self.generate_multi_query(property, plural)
       # Query for any of these properties
       unless instance_methods.include? plural+'?'
         code = <<-code
@@ -366,7 +366,7 @@ module Icalendar
       end
     end
 
-    def Component.generate_multi_adder(property, singular)
+    def self.generate_multi_adder(property, singular)
       adder = "add_"+singular.to_s
       # Add another item to this properties array
       unless instance_methods.include? adder
@@ -397,7 +397,7 @@ module Icalendar
       end
     end
 
-    def Component.generate_multi_remover(property, singular)
+    def self.generate_multi_remover(property, singular)
       # Remove an item from this properties array
       unless instance_methods.include? "remove_#{singular}"
         code = <<-code
