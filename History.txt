@@ -1,3 +1,7 @@
+=== 1.4.1 2013-06-25
+ * Don't escape semicolon in GEO property - temirov
+ * Allow access to various parts of RRule class
+
 === 1.4.0 2013-05-21
  * Implement ACKNOWLEDGED property for VALARM - tsuzuki08
  * Output VERSION property as first line after BEGIN:VCALENDAR
