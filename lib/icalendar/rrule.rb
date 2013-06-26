@@ -34,14 +34,14 @@ module Icalendar
       end
     end
 
+    attr_accessor :frequency, :until, :count, :interval, :by_list, :wkst
+
     def initialize(name, params, value)
       @value = value
       frequency_match = value.match(/FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY)/)
-      raise Icalendar::InvalidPropertyValue.new("FREQ must be specified for RRULE values") unless frequency_match
       @frequency = frequency_match[1]
       @until = parse_date_val("UNTIL", value)
       @count = parse_int_val("COUNT", value)
-      raise Icalendar::InvalidPropertyValue.new("UNTIL and COUNT must not both be specified for RRULE values") if [@until, @count].compact.length > 1
       @interval = parse_int_val("INTERVAL", value)
       @by_list = {:bysecond => parse_int_list("BYSECOND", value)}
       @by_list[:byminute] = parse_int_list("BYMINUTE",value)
@@ -59,23 +59,25 @@ module Icalendar
     def orig_value
       @value
     end
-    
+
     def to_ical
-      result = ["FREQ=#{@frequency}"]
-      result << ";UNTIL=#{@until.to_ical}" if @until
-      result << ";COUNT=#{@count}" if @count
-      result << ";INTERVAL=#{@interval}" if @interval
-      @by_list.each do |key, value|
+      raise Icalendar::InvalidPropertyValue.new("FREQ must be specified for RRULE values") unless frequency
+      raise Icalendar::InvalidPropertyValue.new("UNTIL and COUNT must not both be specified for RRULE values") if [self.until, count].compact.length > 1
+      result = ["FREQ=#{frequency}"]
+      result << "UNTIL=#{self.until.to_ical}" if self.until
+      result << "COUNT=#{count}" if count
+      result << "INTERVAL=#{interval}" if interval
+      by_list.each do |key, value|
         if value
           if key == :byday
-            result << ";BYDAY=#{value.join ','}"
+            result << "BYDAY=#{value.join ','}"
           else
-            result << ";#{key.to_s.upcase}=#{value}"
+            result << "#{key.to_s.upcase}=#{value}"
           end
         end
       end
-      result << ";WKST=#{@wkst}" if @wkst
-      result.join
+      result << "WKST=#{wkst}" if wkst
+      result.join ';'
     end
     
     def parse_date_val(name, string)
@@ -122,11 +124,11 @@ module Icalendar
     # TODO: Incomplete
     def occurrences_of_event_starting(event, datetime)
       initial_start = event.dtstart
-      (0...@count).map {|day_offset| 
-              occurrence = event.clone
-              occurrence.dtstart = initial_start + day_offset
-              occurrence.clone
-              }
+      (0...count).map do |day_offset|
+        occurrence = event.clone
+        occurrence.dtstart = initial_start + day_offset
+        occurrence.clone
+      end
     end
   end
 
