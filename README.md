@@ -202,8 +202,9 @@ Parsing iCalendars
     # Now you can access the cal object in just the same way I created it
     event = cal.events.first
 
-    puts "start date-time: " + event.dtstart
-    puts "summary: " + event.summary
+    puts "start date-time: #{event.dtstart}"
+    puts "start date-time timezone: #{event.dtstart.icalendar_tzid}" if event.dtstart.is_a?(DateTime)
+    puts "summary: #{event.summary}"
 
     # Some calendars contain non-standard parameters (e.g. Apple iCloud
     # calendars). You can pass in a `strict` value when creating a new parser.
