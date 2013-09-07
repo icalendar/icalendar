@@ -429,9 +429,9 @@ module Icalendar
 
     public
 
-    def respond_to?(method_name)
+    def respond_to?(method_name, include_all=false)
       if method_name.to_s.downcase =~ /x_.*/
-       true
+        true
       else
         super
       end
