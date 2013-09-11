@@ -1,3 +1,7 @@
+=== 1.4.2 2013-09-11
+ * Double Quote parameter values that contain forbidden characters
+ * Update Component#respond_to? to match Ruby 2.0 - Keith Marcum
+
 === 1.4.1 2013-06-25
  * Don't escape semicolon in GEO property - temirov
  * Allow access to various parts of RRule class
