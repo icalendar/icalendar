@@ -183,7 +183,7 @@ module Icalendar
           s << val.map do |pval|
             if pval.respond_to? :to_ical
               param = pval.to_ical
-              param = %|"#{param}"| unless param =~ /#{Parser::PVALUE}/
+              param = %|"#{param}"| unless param =~ %r{\A#{Parser::QSTR}\z|\A#{Parser::PTEXT}\z}
               param
             end
           end.compact.join(',')
