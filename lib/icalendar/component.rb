@@ -180,13 +180,13 @@ module Icalendar
         # Possible parameter values
         unless val.empty?
           s << "="
-          sep = "" # First entry comes after = sign, but then we need commas
-          val.each do |pval|
+          s << val.map do |pval|
             if pval.respond_to? :to_ical
-              s << sep << pval.to_ical
-              sep = ","
+              param = pval.to_ical
+              param = %|"#{param}"| unless param =~ /#{Parser::PVALUE}/
+              param
             end
-          end
+          end.compact.join(',')
         end
       end
       s
