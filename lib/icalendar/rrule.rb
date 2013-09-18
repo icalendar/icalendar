@@ -21,14 +21,14 @@ module Icalendar
   #
   # Example:
   #   rules = event.recurrence_rules.map{ |rule| rule.orig_value }
-  
+
   class RRule < Icalendar::Base
-    
+
     class Weekday
       def initialize(day, position)
         @day, @position = day, position
       end
-      
+
       def to_s
         "#{@position}#{@day}"
       end
@@ -54,7 +54,7 @@ module Icalendar
       @by_list[:bysetpos] = parse_int_list("BYSETPOS", value)
       @wkst = parse_wkstart(value)
     end
-    
+
     # Returns the original pre-parsed RRULE value.
     def orig_value
       @value
@@ -68,28 +68,22 @@ module Icalendar
       result << "COUNT=#{count}" if count
       result << "INTERVAL=#{interval}" if interval
       by_list.each do |key, value|
-        if value
-          if key == :byday
-            result << "BYDAY=#{value.join ','}"
-          else
-            result << "#{key.to_s.upcase}=#{value}"
-          end
-        end
+        result << "#{key.to_s.upcase}=#{value.join ','}" if value
       end
       result << "WKST=#{wkst}" if wkst
       result.join ';'
     end
-    
+
     def parse_date_val(name, string)
       match = string.match(/;#{name}=(.*?)(;|$)/)
       match ? DateTime.parse(match[1]) : nil
     end
-    
+
     def parse_int_val(name, string)
       match = string.match(/;#{name}=(\d+)(;|$)/)
       match ? match[1].to_i : nil
     end
-    
+
     def parse_int_list(name, string)
       match = string.match(/;#{name}=([+-]?.*?)(;|$)/)
       if match
@@ -98,7 +92,7 @@ module Icalendar
         nil
       end
     end
-    
+
     def parse_weekday_list(name, string)
       match = string.match(/;#{name}=(.*?)(;|$)/)
       if match
@@ -120,7 +114,7 @@ module Icalendar
         nil
       end
     end
-    
+
     # TODO: Incomplete
     def occurrences_of_event_starting(event, datetime)
       initial_start = event.dtstart
