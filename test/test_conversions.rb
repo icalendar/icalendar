@@ -8,7 +8,7 @@ require 'date'
 class TestConversions < Test::Unit::TestCase
   include Icalendar
 
-  RESULT = <<EOS
+  RESULT = <<EOS.gsub("\n", "\r\n")
 BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
@@ -17,8 +17,8 @@ BEGIN:VEVENT
 CATEGORIES:foo,bar,baz
 DESCRIPTION:desc
 DTSTAMP:20060720T174052
-DTSTART:20060720
-EXDATE:20121012T170000Z,20121102T170000Z
+DTSTART;VALUE=DATE:20060720
+EXDATE;TZID=America/New_York:20121012T170000,20121102T170000
 GEO:46.01;8.57
 LAST-MODIFIED:19960817T133000
 ORGANIZER:mailto:joe@example.com?subject=Ruby
@@ -56,7 +56,7 @@ EOS
       organizer(URI::MailTo.build(['joe@example.com', 'subject=Ruby']))
 
       # Date
-      start  Date.parse("2006-07-20")
+      start Date.parse("2006-07-20"), {'VALUE' => 'DATE'}
 
       # DateTime
       timestamp DateTime.parse("2006-07-20T17:40:52+0200")
@@ -67,12 +67,12 @@ EOS
       uid "foobar"
 
       add_rrule "FREQ=WEEKLY;UNTIL=20130220T180000Z;BYDAY=FR"
-
-      add_exdate "20121012T170000Z"
-      add_exdate "20121102T170000Z"
+      exception_dates %w(20121012T170000 20121102T170000), {'TZID' => 'America/New_York'}
     end
 
-    assert_equal(RESULT.gsub("\n", "\r\n"), @cal.to_ical)
+    assert_equal(RESULT, @cal.to_ical)
+    # test round-trip
+    assert_equal(@cal.to_ical, Icalendar.parse(RESULT).to_ical)
   end
 
   def test_to_ical_folding

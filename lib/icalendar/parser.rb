@@ -176,7 +176,7 @@ module Icalendar
           # Replace dashes with underscores
           name = name.gsub('-', '_')
 
-          if component.multi_property?(name)
+          if component.multiline_property?(name)
             adder = "add_" + name
             if component.respond_to?(adder)
               component.send(adder, value, params)
@@ -286,12 +286,14 @@ module Icalendar
       @parsers["DUE"] = m
       @parsers["DTSTART"] = m
       @parsers["RECURRENCE-ID"] = m
-      @parsers["EXDATE"] = m
-      @parsers["RDATE"] = m
       @parsers["CREATED"] = m
       @parsers["DTSTAMP"] = m
       @parsers["LAST-MODIFIED"] = m
       @parsers["ACKNOWLEDGED"] = m
+
+      m = self.method(:parse_multi_datetime)
+      @parsers["EXDATE"] = m
+      @parsers["RDATE"] = m
 
       # URI's
       m = self.method(:parse_uri)
@@ -331,26 +333,48 @@ module Icalendar
     # Dates, Date-Times & Times
     # NOTE: invalid dates & times will be returned as strings...
     def parse_datetime(name, params, value)
-      begin
-        if params["VALUE"] && params["VALUE"].first == "DATE"
-          result = Date.parse(value)
+      if params["VALUE"] && params["VALUE"].first == "DATE"
+        result = Date.parse(value)
+      else
+        result = DateTime.parse(value)
+        if /Z$/ =~ value
+          timezone = "UTC"
         else
-          result = DateTime.parse(value)
-          if /Z$/ =~ value
-            timezone = "UTC"
-          else
-            timezone = params["TZID"].first if params["TZID"]
-          end
-          result.icalendar_tzid = timezone
+          timezone = params["TZID"].first if params["TZID"]
         end
-        result
-      rescue Exception
-        value
+        result.icalendar_tzid = timezone
       end
+      result
+    rescue Exception
+      value
     end
-    
+
+    # Multiple valued Dates
+    def parse_multi_datetime(name, params, value)
+      use_date = params['VALUE'] && params['VALUE'].first == 'DATE'
+      tzid = params['TZIID'].first if params['TZID']
+      result = []
+      value.split(/,/).each do |val|
+        if use_date
+          result << Date.parse(val)
+        else
+          dt = DateTime.parse val
+          if /Z$/ =~ val
+            timezone = 'UTC'
+          else
+            timezone = tzid
+          end
+          dt.icalendar_tzid = timezone
+          result << dt
+        end
+      end
+      result
+    rescue Exception
+      [value]
+    end
+
     def parse_recur(name, params, value)
-      ::Icalendar::RRule.new(name, params, value)
+      [::Icalendar::RRule.new(name, params, value)]
     end
 
     # Durations

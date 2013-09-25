@@ -75,8 +75,12 @@ module Icalendar
     end
 
     def parse_date_val(name, string)
-      match = string.match(/;#{name}=(.*?)(;|$)/)
-      match ? DateTime.parse(match[1]) : nil
+      match = string.match(/;#{name}=(.*?)(Z)?(;|$)/)
+      if match
+        DateTime.parse(match[1]).tap do |dt|
+          dt.icalendar_tzid = 'UTC' unless match[2].nil?
+        end
+      end
     end
 
     def parse_int_val(name, string)

@@ -314,16 +314,24 @@ module Icalendar
       # Getter for whole array
       unless instance_methods.include? plural
         code = <<-code
-            def #{plural}(a = nil)
+            def #{plural}(a = nil, params = nil)
               if a.nil?
                 @properties["#{property}"] || []
               else
-                self.#{plural}=(a)
+                self.#{plural}=(a).tap do |val|
+                  unless params.nil?
+                    unless val.respond_to?(:ical_params)
+                      val.class.class_eval { attr_accessor :ical_params }
+                    end
+                    val.ical_params = params
+                  end
+                end
               end
             end
         code
 
         class_eval code, "component.rb", 186
+        alias_method property, plural
       end
     end
 
@@ -333,13 +341,9 @@ module Icalendar
         code = <<-code
             def #{plural}=(a)
               if a.respond_to?(:to_ary)
-                a.to_ary.each do |val|
-                  unless val.respond_to?(:to_ical)
-                    raise(NotImplementedError, "Property values do not support to_ical method!")
-                  end
-                end
-
                 @properties["#{property}"] = a.to_ary
+              elsif a =~ /^[^"].*(?<!\\\\),.*[^"]$/
+                @properties["#{property}"] = a.split(/(?<!\\\\),/).to_ary
               else
                 raise ArgumentError, "#{plural} is a multi-property that must be an array! Use the add_[property] method to add single entries."
               end
