@@ -10,11 +10,11 @@ Gem::Specification.new do |s|
 
   s.homepage = "https://github.com/icalendar/icalendar"
   s.platform = Gem::Platform::RUBY
-  s.summary = "A ruby implementation of the iCalendar specification (RFC-2445)."
+  s.summary = "A ruby implementation of the iCalendar specification (RFC-5545)."
   s.description = <<-EOD
-    Implements the iCalendar specification (RFC-2445) in Ruby.  This allows
-    for the generation and parsing of .ics files, which are used by a
-    variety of calendaring applications.
+Implements the iCalendar specification (RFC-5545) in Ruby.  This allows
+for the generation and parsing of .ics files, which are used by a
+variety of calendaring applications.
   EOD
 
   s.files = `git ls-files`.split "\n"
