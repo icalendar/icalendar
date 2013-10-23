@@ -1,5 +1,5 @@
 $:.push File.expand_path('../lib', __FILE__)
-require 'icalendar/base'
+require 'icalendar'
 
 Gem::Specification.new do |s|
   s.authors = ['Ryan Ahearn']
@@ -26,5 +26,6 @@ variety of calendaring applications.
   s.add_development_dependency 'bundler', '~> 1.3'
   s.add_development_dependency 'tzinfo', '~> 0.3'
   s.add_development_dependency 'timecop', '~> 0.6.3'
+  s.add_development_dependency 'rspec', '~> 2.14'
 end
 
