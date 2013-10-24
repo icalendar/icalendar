@@ -16,3 +16,8 @@ module Icalendar
     end
   end
 end
+
+require 'icalendar/properties'
+require 'icalendar/components'
+require 'icalendar/component'
+require 'icalendar/calendar'
