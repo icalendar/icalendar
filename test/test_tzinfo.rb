@@ -4,6 +4,7 @@ require 'test/unit'
 require 'icalendar'
 require 'tzinfo'
 require 'icalendar/tzinfo'
+require 'timecop'
 
 class TestTZInfoExt < Test::Unit::TestCase
   def setup
@@ -53,5 +54,30 @@ TZOFFSETTO:+0000
 END:STANDARD
 END:VTIMEZONE
     EXPECTED
+  end
+
+  def test_dst_transition
+    tz = TZInfo::Timezone.get "America/Los_Angeles"
+
+    # DST transition in America/Los_Angeles
+    Timecop.freeze('2013-11-03T01:30:00-08:00') do
+      assert_raises(TZInfo::AmbiguousTime) { tz.ical_timezone( tz.now ) }
+      assert_raises(TZInfo::AmbiguousTime) { tz.ical_timezone( tz.now, nil ) }
+      assert_raises(TZInfo::AmbiguousTime) do 
+        TZInfo::Timezone.default_dst = nil
+        tz.ical_timezone( tz.now )
+      end
+      
+      assert_nothing_raised { tz.ical_timezone( tz.now, true ) }
+      assert_nothing_raised { tz.ical_timezone( tz.now, false ) }
+      assert_nothing_raised do 
+        TZInfo::Timezone.default_dst = true
+        tz.ical_timezone( tz.now )
+      end
+      assert_nothing_raised do 
+        TZInfo::Timezone.default_dst = false
+        tz.ical_timezone( tz.now )
+      end
+    end
   end
 end

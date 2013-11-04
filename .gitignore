@@ -3,3 +3,5 @@
 .ruby-gemset
 Gemfile.lock
 pkg/
+.bundle
+vendor/
