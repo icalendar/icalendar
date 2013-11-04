@@ -43,7 +43,7 @@
 
 module TZInfo
   class Timezone
-    def ical_timezone(date, dst=nil)
+    def ical_timezone(date, dst = Timezone.default_dst)
       period = period_for_local(date, dst)
       timezone = Icalendar::Timezone.new
       timezone.timezone_id = identifier
