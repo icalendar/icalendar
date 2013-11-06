@@ -1,3 +1,10 @@
+=== 1.4.4 2013-11-05
+ * Allow user to handle TZInfo::AmbiguousTime error - David Bradford
+ * Better handling of multiple exdate and rdate values
+
+=== 1.4.3 2013-09-18
+ * Fix concatenation of multiple BYWEEK or BYMONTH recurrence rules
+
 === 1.4.2 2013-09-11
  * Double Quote parameter values that contain forbidden characters
  * Update Component#respond_to? to match Ruby 2.0 - Keith Marcum
