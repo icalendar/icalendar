@@ -87,4 +87,12 @@ class TestComponent < Test::Unit::TestCase
     assert_equal(2, geo.long)
     assert_equal('1;2', geo.to_ical)
   end
+
+  def test_geo_lat_and_long_setter
+    geo = Icalendar::Geo.new(1, 2)
+    geo.lat = 3
+    geo.long = 4
+    assert_equal(3, geo.lat)
+    assert_equal(4, geo.long)
+  end
 end

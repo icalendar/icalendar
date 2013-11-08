@@ -14,7 +14,9 @@ module Icalendar
   class Geo < Icalendar::Base
     attr_accessor :latitude, :longitude
     alias :lat :latitude
+    alias :lat= :latitude=
     alias :long :longitude
+    alias :long= :longitude=
 
     def initialize(lat, long)
       @latitude = lat
