@@ -78,4 +78,13 @@ class TestComponent < Test::Unit::TestCase
     component = Icalendar::Component.new('name')
     assert component.respond_to?(:x_foobar)
   end
+
+  def test_geo_constructor
+    geo = Icalendar::Geo.new(1, 2)
+    assert_equal(1, geo.latitude)
+    assert_equal(1, geo.lat)
+    assert_equal(2, geo.longitude)
+    assert_equal(2, geo.long)
+    assert_equal('1;2', geo.to_ical)
+  end
 end

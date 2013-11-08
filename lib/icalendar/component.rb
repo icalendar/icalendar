@@ -17,12 +17,12 @@ module Icalendar
     alias :long :longitude
 
     def initialize(lat, long)
-      @lat = lat
-      @long = long
+      @latitude = lat
+      @longitude = long
     end
 
     def to_ical
-      "#{@lat.to_ical};#{@long.to_ical}"
+      "#{@latitude.to_ical};#{@longitude.to_ical}"
     end
   end
 
