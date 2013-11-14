@@ -52,6 +52,10 @@ class TestComponent < Test::Unit::TestCase
     @event.remove_comment "c1"
     assert_equal(["c2"], @event.comments)
 
+    # Add using multi setter
+    @event.comments "c3"
+    assert_equal(["c2","c3"], @event.comments)
+
     # Set & get whole array
     foo = ["as", "df"]
     @event.comments = foo
