@@ -1,3 +1,8 @@
+=== 1.4.5 2013-11-14
+ * Fix Geo accessor methods - bouzuya
+ * Add ical_multiline_property :related_to for Alarm
+ * Allow using multi setters to append single values
+
 === 1.4.4 2013-11-05
  * Allow user to handle TZInfo::AmbiguousTime error - David Bradford
  * Better handling of multiple exdate and rdate values
