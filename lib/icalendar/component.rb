@@ -347,7 +347,7 @@ module Icalendar
               elsif a =~ /^[^"].*(?<!\\\\),.*[^"]$/
                 @properties["#{property}"] = a.split(/(?<!\\\\),/).to_ary
               else
-                raise ArgumentError, "#{plural} is a multi-property that must be an array! Use the add_[property] method to add single entries."
+                (@properties["#{property}"] ||= []) << a
               end
             end
         code
