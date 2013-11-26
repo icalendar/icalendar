@@ -25,7 +25,7 @@ module Icalendar
       method_name = method.to_s
       if method_name =~ /^add_(x_\w+)$/
         component_name = $1
-        custom = args.first || Component.new(component_name)
+        custom = args.first || Component.new(component_name, component_name.upcase)
         custom_components[component_name] << custom
         yield custom if block_given?
         custom
@@ -43,20 +43,37 @@ module Icalendar
         @components ||= []
       end
 
-      def component(singular_name)
-        component = "#{singular_name}s"
-        self.components << component
-        component_var = "@#{component}"
-        define_method component do
+      def component(singular_name, find_by = :uid, klass = nil)
+        components = "#{singular_name}s"
+        self.components << components
+        component_var = "@#{components}"
+
+        define_method components do
           if instance_variable_defined? component_var
             instance_variable_get component_var
           else
             instance_variable_set component_var, []
           end
         end
-        define_method "find_#{singular_name}" do |uid|
-          send(component).find { |c| c.uid == uid }
+
+        define_method singular_name do |c = nil, &block|
+          if c.nil?
+            begin
+              klass ||= Icalendar.const_get singular_name.capitalize
+              add_component klass.new, &block
+            rescue NameError => ne
+              puts "WARN: #{ne.message}"
+              add_component Component.new(singular_name), &block
+            end
+          else
+            add_component c, &block
+          end
         end
+
+        define_method "find_#{singular_name}" do |id|
+          send(components).find { |c| c.send(find_by) == id }
+        end if find_by
+
         define_method "add_#{singular_name}" do |c|
           send singular_name, c
         end

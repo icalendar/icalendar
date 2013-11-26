@@ -5,7 +5,7 @@ describe Icalendar::Calendar do
   context 'properties' do
     let(:property) { 'my-value' }
 
-    %w(prodid version calscale method x_custom_prop).each do |prop|
+    %w(prodid version calscale ip_method x_custom_prop).each do |prop|
       it "##{prop} sets and gets" do
         subject.send("#{prop}=", property)
         subject.send(prop).should == property
@@ -75,6 +75,19 @@ describe Icalendar::Calendar do
 
       it 'finds by uid' do
         subject.find_event('uid').should == ical_component
+      end
+    end
+
+    describe '#find_timezone' do
+      let(:ical_timezone) { double 'Timezone', tzid: 'Eastern' }
+      let(:other_timezone) { double 'Timezone', tzid: 'Pacific' }
+      before(:each) do
+        subject.timezones << other_timezone
+        subject.timezones << ical_timezone
+      end
+
+      it 'finds by tzid' do
+        subject.find_timezone('Eastern').should == ical_timezone
       end
     end
 
