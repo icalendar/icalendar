@@ -1,8 +1,8 @@
 module Icalendar
 
   class Component
-    include Properties
-    include Components
+    include HasProperties
+    include HasComponents
 
     attr_reader :name
     attr_reader :ical_name

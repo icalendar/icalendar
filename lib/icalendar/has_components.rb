@@ -1,6 +1,6 @@
 module Icalendar
 
-  module Components
+  module HasComponents
 
     def self.included(base)
       base.extend ClassMethods

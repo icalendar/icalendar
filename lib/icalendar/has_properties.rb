@@ -1,6 +1,6 @@
 module Icalendar
 
-  module Properties
+  module HasProperties
 
     def self.included(base)
       base.extend ClassMethods
@@ -63,52 +63,67 @@ module Icalendar
         @mutex_properties ||= []
       end
 
-      def required_property(prop, validator = nil)
+      def default_property_types
+        @default_property_types ||= {}
+      end
+
+      def required_property(prop, klass = Icalendar::Values::Text, validator = nil)
         validator ||= ->(component, value) { !value.nil? }
         self.required_properties[prop] = validator
-        single_property prop
+        single_property prop, klass
       end
 
-      def required_multi_property(prop, validator = nil)
+      def required_multi_property(prop, klass = Icalendar::Values::Text, validator = nil)
         validator ||= ->(component, value) { !value.compact.empty? }
         self.required_properties[prop] = validator
-        multi_property prop
+        multi_property prop, klass
       end
 
-      def optional_single_property(prop)
+      def optional_single_property(prop, klass = Icalendar::Values::Text)
         self.optional_properties << prop
-        single_property prop
+        single_property prop, klass
       end
 
-      def mutually_exclusive_properties(*properties)
+      def mutually_exclusive_properties(properties, klass = Icalendar::Values::Text)
         self.mutex_properties << properties
         properties.each do |prop|
-          optional_single_property prop
+          optional_single_property prop, klass
         end
       end
 
-      def optional_property(prop, suggested_single = false)
+      def optional_property(prop, klass = Icalendar::Values::Text, suggested_single = false)
         self.optional_properties << prop
         self.suggested_single_properties << prop if suggested_single
-        multi_property prop
+        multi_property prop, klass
       end
 
-      def single_property(prop)
+      def single_property(prop, klass)
+        self.default_property_types[prop] = klass
         define_method prop do
           instance_variable_get "@#{prop}"
         end
         define_method "#{prop}=" do |value|
+          value = klass.new value unless value.nil? || value.is_a?(Icalendar::Value)
           instance_variable_set "@#{prop}", value
         end
       end
 
-      def multi_property(prop)
+      def multi_property(prop, klass)
+        self.default_property_types[prop] = klass
         property_var = "@#{prop}"
 
         define_method "#{prop}=" do |value|
           if value.is_a? Array
+            value = value.map do |v|
+              if v.nil? || v.is_a?(Icalendar::Value)
+                v
+              else
+                klass.new v
+              end
+            end
             instance_variable_set property_var, value
           else
+            value = klass.new value unless value.nil? || value.is_a?(Icalendar::Value)
             instance_variable_set property_var, [value]
           end
         end
@@ -122,6 +137,7 @@ module Icalendar
         end
 
         define_method "add_#{prop}" do |value|
+          value = klass.new value unless value.is_a? Icalendar::Value
           send(prop) << value
         end
       end

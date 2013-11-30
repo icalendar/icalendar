@@ -8,7 +8,7 @@ module Icalendar
           required_property :tzoffsetto
           required_property :tzoffsetfrom
 
-          optional_property :rrule, true
+          optional_property :rrule, Icalendar::Values::Text, true
           optional_property :comment
           optional_property :rdate
           optional_property :tzname

@@ -17,9 +17,10 @@ module Icalendar
   end
 end
 
-require 'icalendar/properties'
-require 'icalendar/components'
+require 'icalendar/has_properties'
+require 'icalendar/has_components'
 require 'icalendar/component'
+require 'icalendar/value'
 require 'icalendar/alarm'
 require 'icalendar/event'
 require 'icalendar/todo'

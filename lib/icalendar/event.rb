@@ -4,9 +4,10 @@ module Icalendar
     required_property :dtstamp
     required_property :uid
     # dtstart only required if calendar's method is nil
-    required_property :dtstart, ->(event, dtstart) { !dtstart.nil? || !(event.parent.nil? || event.parent.ip_method.nil?) }
+    required_property :dtstart, Icalendar::Values::Text,
+                      ->(event, dtstart) { !dtstart.nil? || !(event.parent.nil? || event.parent.ip_method.nil?) }
 
-    mutually_exclusive_properties :dtend, :duration
+    mutually_exclusive_properties [:dtend, :duration]
 
     optional_single_property :ip_class
     optional_single_property :created
@@ -23,8 +24,8 @@ module Icalendar
     optional_single_property :url
     optional_single_property :recurrence_id
 
-    optional_property :rrule, true
-    optional_property :attachment
+    optional_property :rrule, Icalendar::Values::Text, true
+    optional_property :attach, Icalendar::Values::Uri
     optional_property :attendee
     optional_property :categories
     optional_property :comment

@@ -28,7 +28,7 @@ describe Icalendar::Event do
     end
   end
 
-  context 'mutually exclusive properties' do
+  context 'mutually exclusive values' do
     before(:each) { subject.dtstart = DateTime.now }
 
     it 'is invalid if both dtend and duration are set' do
@@ -48,7 +48,7 @@ describe Icalendar::Event do
     end
   end
 
-  context 'suggested single properties' do
+  context 'suggested single values' do
     before(:each) do
       subject.dtstart = DateTime.now
       subject.add_rrule double('RRule')
@@ -64,7 +64,7 @@ describe Icalendar::Event do
     end
   end
 
-  context 'multi properties' do
+  context 'multi values' do
     describe '#comment' do
       it 'will return an array when set singly' do
         subject.comment = 'a comment'

@@ -16,8 +16,8 @@ module Icalendar
     optional_single_property :summary
     optional_single_property :url
 
-    optional_property :rrule, true
-    optional_property :attachment
+    optional_property :rrule, Icalendar::Values::Text, true
+    optional_property :attach, Icalendar::Values::Uri
     optional_property :attendee
     optional_property :categories
     optional_property :comment

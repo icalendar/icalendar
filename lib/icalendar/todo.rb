@@ -4,9 +4,10 @@ module Icalendar
     required_property :dtstamp
     required_property :uid
     # dtstart only required if duration is specified
-    required_property :dtstart, ->(todo, dtstart) { !(!todo.duration.nil? && dtstart.nil?) }
+    required_property :dtstart, Icalendar::Values::Text,
+                      ->(todo, dtstart) { !(!todo.duration.nil? && dtstart.nil?) }
 
-    mutually_exclusive_properties :due, :duration
+    mutually_exclusive_properties [:due, :duration]
 
     optional_single_property :ip_class
     optional_single_property :completed
@@ -24,8 +25,8 @@ module Icalendar
     optional_single_property :summary
     optional_single_property :url
 
-    optional_property :rrule, true
-    optional_property :attachment
+    optional_property :rrule, Icalendar::Values::Text, true
+    optional_property :attach, Icalendar::Values::Uri
     optional_property :attendee
     optional_property :categories
     optional_property :comment

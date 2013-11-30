@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Icalendar::Calendar do
 
-  context 'properties' do
+  context 'values' do
     let(:property) { 'my-value' }
 
     %w(prodid version calscale ip_method x_custom_prop).each do |prop|
@@ -12,7 +12,13 @@ describe Icalendar::Calendar do
       end
     end
 
-    context "required properties" do
+    it 'can set params on a property' do
+      subject.prodid.ical_params = {'hello' => 'world'}
+      subject.prodid.value.should == 'icalendar-ruby'
+      subject.prodid.ical_params.should == {'hello' => 'world'}
+    end
+
+    context "required values" do
       it 'is not valid when prodid is not set' do
         subject.prodid = nil
         subject.should_not be_valid
