@@ -34,7 +34,7 @@ module Icalendar
       #   cal.x_wr_calname = "iCalendar Calendar"
       if method_name =~ CAL_EXTENSION_REGEX
 
-        # Make sure to remote '=' from the end of the method_name so we can
+        # Make sure to remove '=' from the end of the method_name so we can
         # define it
         name = method_name.to_s.chomp '='
 
