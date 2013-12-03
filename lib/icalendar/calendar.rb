@@ -36,14 +36,14 @@ module Icalendar
 
         # Make sure to remote '=' from the end of the method_name so we can
         # define it
-        name = method_name.to_s[0..-2]
+        name = method_name.to_s.chomp '='
 
         self.class.class_eval do
           ical_property name
         end
         self.send("#{name}=", args[0])
       else
-        super(method_name, *args, &block)
+        super
       end
     end
 
