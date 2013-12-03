@@ -6,7 +6,7 @@ class TestCalendar < Test::Unit::TestCase
   include Icalendar
    # Generate a calendar using the raw api, and then spit it out
    # as a string.  Parse the string and make sure everything matches up.
-   def test_raw_generation    
+   def test_raw_generation
       # Create a fresh calendar
       cal = Calendar.new
 
@@ -14,7 +14,7 @@ class TestCalendar < Test::Unit::TestCase
       cal.version = "3.2"
       cal.prodid = "test-prodid"
 
-      # Now generate the string and then parse it so we can verify 
+      # Now generate the string and then parse it so we can verify
       # that everything was set, generated and parsed correctly.
       calString = cal.to_ical
 
@@ -46,29 +46,29 @@ class TestCalendar < Test::Unit::TestCase
    def test_create_multiple_event_calendar
        # Create a fresh calendar
        cal = Calendar.new
-       [1,2,3].each do |t| 
+       [1,2,3].each do |t|
            cal.event do
                self.dtend = "1997090#{t}T190000Z"
                self.summary = "This is summary #{t}"
            end
        end
-       [1,2,3].each do |t| 
+       [1,2,3].each do |t|
            cal.todo do
                self.summary = "test #{t} todo"
            end
        end
        cal.to_ical
    end
-   
+
    def test_find
      cal = Calendar.new
 
      # add some events so we actually have to search
-     10.times do 
+     10.times do
        cal.event
-       cal.todo 
+       cal.todo
        cal.journal
-       cal.freebusy 
+       cal.freebusy
      end
      event = cal.events[5]
      assert_equal(event, cal.find_event(event.uid))
@@ -78,8 +78,27 @@ class TestCalendar < Test::Unit::TestCase
 
      journal = cal.journals[5]
      assert_equal(journal, cal.find_journal(journal.uid))
-     
+
      freebusy = cal.freebusys[5]
      assert_equal(freebusy, cal.find_freebusy(freebusy.uid))
+   end
+
+   def test_set_and_get_proprietary_attributes
+     cal = Calendar.new
+
+     cal.x_wr_name = 'Icalendar Calendar'
+
+     calString = cal.to_ical
+
+     cals = Parser.new(calString).parse
+
+     cal2 = cals.first
+     assert_equal("Icalendar Calendar", cal2.x_wr_name)
+   end
+
+   def test_respond_to_proprietary_attributes
+     cal = Calendar.new
+
+     assert_respond_to(cal, 'x_wr_name=')
    end
 end
