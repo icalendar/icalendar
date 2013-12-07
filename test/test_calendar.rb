@@ -93,7 +93,7 @@ class TestCalendar < Test::Unit::TestCase
      cals = Parser.new(calString).parse
 
      cal2 = cals.first
-     assert_equal("Icalendar Calendar", cal2.x_wr_name)
+     assert_equal(["Icalendar Calendar"], cal2.x_wr_name)
    end
 
    def test_respond_to_proprietary_attributes

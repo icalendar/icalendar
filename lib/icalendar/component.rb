@@ -432,9 +432,9 @@ module Icalendar
         name = method_name.to_s.chomp '='
 
         self.class.class_eval do
-          ical_property name
+          ical_multiline_property name, name, name
         end
-        self.send(method_name, *args)
+        send method_name, *args
       else
         super
       end

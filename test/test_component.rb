@@ -64,7 +64,7 @@ class TestComponent < Test::Unit::TestCase
 
   def test_x_property
     @event.x_foobar = "my-custom-property"
-    assert_equal("my-custom-property", @event.x_foobar)
+    assert_equal(["my-custom-property"], @event.x_foobar)
   end
 
   def test_method_missing_no_x

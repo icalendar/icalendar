@@ -43,7 +43,7 @@ class TestEvent < Test::Unit::TestCase
 
     result = Icalendar::Parser.new(@cal.to_ical).parse.first.events.first
 
-    assert_equal 'My Custom Property', result.x_custom_property
+    assert_equal ['My Custom Property'], result.x_custom_property
   end
 end
 
