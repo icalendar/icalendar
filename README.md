@@ -189,7 +189,7 @@ TIMEZONES
 Unicode
 ---
 
-Add `$KCODE = 'u'` to make icalender work correctly with Utf8 texts
+Add `$KCODE = 'u'` to make icalendar work correctly with Utf8 texts
 
 Parsing iCalendars
 ---
