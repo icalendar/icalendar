@@ -16,8 +16,6 @@ module Icalendar
     ical_property :version
     ical_property :ip_method
 
-    CAL_EXTENSION_REGEX = /\Ax_[a-z_]+=\Z/
-
     def initialize()
       super("VCALENDAR")
 
@@ -25,30 +23,6 @@ module Icalendar
       self.calscale = "GREGORIAN"    # Who knows, but this is the only one in the spec.
       self.prodid = "iCalendar-Ruby" # Current product... Should be overwritten by apps that use the library
       self.version = "2.0" # Version of the specification
-    end
-
-    def method_missing(method_name, *args, &block)
-      # Allow proprietary calendar extensions to be set
-      #
-      # Example:
-      #   cal.x_wr_calname = "iCalendar Calendar"
-      if method_name =~ CAL_EXTENSION_REGEX
-
-        # Make sure to remove '=' from the end of the method_name so we can
-        # define it
-        name = method_name.to_s.chomp '='
-
-        self.class.class_eval do
-          ical_property name
-        end
-        self.send("#{name}=", args[0])
-      else
-        super
-      end
-    end
-
-    def respond_to_missing?(method_name, include_private = false)
-      method_name.to_s =~ CAL_EXTENSION_REGEX || super
     end
 
     def print_component

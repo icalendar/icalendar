@@ -37,6 +37,8 @@ module Icalendar
   # Freebusy time information, or an Alarm.
   class Component < Icalendar::Base
 
+    CAL_EXTENSION_REGEX = /\Ax_[a-z_]+=?\Z/
+
     meta_include HashAttrs
 
     attr_reader :name
@@ -416,32 +418,30 @@ module Icalendar
       end
     end
 
-    def method_missing(method, *args)
-      @@logger.debug("Inside method_missing...")
-      method_name = method.to_s.downcase
-
-      super unless method_name =~ /x_.*/
-
-      # x-properties are accessed with underscore but stored with a dash so
-      # they output correctly and we don't have to special case the
-      # output code, which would require checking every property.
-      if args.size > 0 # Its a setter
-        # Pull off the possible equals
-        @properties[method_name[/x_[^=]*/].gsub('x_', 'x-')] = args.first
-      else # Or its a getter
-        return @properties[method_name.gsub('x_', 'x-')]
-      end
-    end
-
     public
 
-    def respond_to?(method_name, include_all=false)
-      if method_name.to_s.downcase =~ /x_.*/
-        true
+    def method_missing(method_name, *args, &block)
+      # Allow proprietary calendar extensions to be set
+      #
+      # Example:
+      #   cal.x_wr_calname = "iCalendar Calendar"
+      if method_name =~ CAL_EXTENSION_REGEX
+
+        # Make sure to remove '=' from the end of the method_name so we can
+        # define it
+        name = method_name.to_s.chomp '='
+
+        self.class.class_eval do
+          ical_property name
+        end
+        self.send(method_name, *args)
       else
         super
       end
     end
 
+    def respond_to_missing?(method_name, include_private = false)
+      method_name.to_s =~ CAL_EXTENSION_REGEX || super
+    end
   end # class Component
 end
