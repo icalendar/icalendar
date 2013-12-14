@@ -186,6 +186,31 @@ TIMEZONES
     # END:STANDARD
     # END:VTIMEZONE
 
+iCalendar has some basic support for creating VTIMEZONE blocks from timezone information pulled from `tzinfo`. You must require `tzinfo` support manually to take advantage, and iCalendar only supports `tzinfo` with versions `~> 0.3`
+
+#### Example ####
+
+    require 'tzinfo'
+    require 'icalendar/tzinfo'
+    
+    cal = Calendar.new
+    
+    event_start = DateTime.new 2008, 12, 29, 8, 0, 0
+    event_end = DateTime.new 2008, 12, 29, 11, 0, 0
+    
+    tzid = "America/Chicago"
+    tz = TZInfo::Timezone.get tzid
+    timezone = tz.ical_timezone event_start
+    cal.add timezone
+  
+    cal.event do
+        dtstart     event_start.tap { |d| d.ical_params = {'TZID' => tzid} }
+        dtend       event_end.tap { |d| d.ical_params = {'TZID' => tzid} }
+        summary     "Meeting with the man."
+        description "Have a long lunch meeting and decide nothing..."
+    end
+
+
 Unicode
 ---
 
