@@ -26,7 +26,7 @@ module Icalendar
 
     def params_ical
       unless ical_params.empty?
-        ";#{ical_params.map { |name, value| "#{name.upcase}=#{value}" }.join ';'}"
+        ";#{ical_params.map { |name, value| "#{name.to_s.gsub('_', '-').upcase}=#{value}" }.join ';'}"
       end
     end
 

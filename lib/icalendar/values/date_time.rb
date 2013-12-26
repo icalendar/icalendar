@@ -7,18 +7,22 @@ module Icalendar
       FORMAT = '%Y%m%dT%H%M%S'
 
       def initialize(value, params = {})
-        # TODO deal with timezones (Z on end of UTC string)
+        # TODO deal with timezones
         if value.respond_to? :to_datetime
           super value.to_datetime, params
         elsif value.is_a? String
-          super DateTime.strptime(value, FORMAT), params
+          super ::DateTime.strptime(value, FORMAT), params
         else
           super
         end
       end
 
       def value_ical
-        value.strftime FORMAT
+        if offset == 0
+          "#{strftime FORMAT}Z"
+        else
+          strftime FORMAT
+        end
       end
 
     end

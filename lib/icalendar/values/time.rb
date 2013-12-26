@@ -11,7 +11,7 @@ module Icalendar
         if value.respond_to? :to_time
           super value.to_time, params
         elsif value.is_a? String
-          super DateTime.strptime(value, FORMAT).to_time, params
+          super ::DateTime.strptime(value, FORMAT).to_time, params
         else
           super
         end

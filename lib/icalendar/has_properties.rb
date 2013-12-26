@@ -10,7 +10,7 @@ module Icalendar
     end
 
     def initialize(*args)
-      @custom_properties = {}
+      @custom_properties = Hash.new { |h, k| h[k] = [] }
       super
     end
 
@@ -33,7 +33,11 @@ module Icalendar
       method_name = method.to_s
       if method_name.start_with? 'x_'
         if method_name.end_with? '='
-          custom_properties[method_name.chomp('=')] = args.first
+          if args.first.is_a? Icalendar::Value
+            custom_properties[method_name.chomp('=')] << args.first
+          else
+            custom_properties[method_name.chomp('=')] << Icalendar::Values::Text.new(args.first)
+          end
         else
           custom_properties[method_name]
         end
@@ -47,6 +51,10 @@ module Icalendar
     end
 
     module ClassMethods
+      def properties
+        required_properties.keys + optional_properties
+      end
+
       def required_properties
         @required_properties ||= {}
       end

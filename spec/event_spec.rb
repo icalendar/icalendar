@@ -94,4 +94,19 @@ describe Icalendar::Event do
       expect(subject.respond_to?(:find_alarm)).to be_false
     end
   end
+
+  describe '#to_ical' do
+    before(:each) do
+      start = DateTime.new 2013, 12, 27, 1, 30
+      subject.dtstart = start
+      subject.dtend = "20131227T033000Z"
+      subject.summary = 'My event, my ical, my test'
+      subject.x_custom_property = 'customize'
+    end
+
+    it { expect(subject.to_ical).to include 'DTSTART:20131227T013000Z' }
+    it { expect(subject.to_ical).to include 'DTEND:20131227T033000Z' }
+    it { expect(subject.to_ical).to include 'SUMMARY:My event\, my ical\, my test' }
+    it { expect(subject.to_ical).to include 'X-CUSTOM-PROPERTY:customize' }
+  end
 end

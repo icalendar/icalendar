@@ -5,11 +5,16 @@ describe Icalendar::Calendar do
   context 'values' do
     let(:property) { 'my-value' }
 
-    %w(prodid version calscale ip_method x_custom_prop).each do |prop|
+    %w(prodid version calscale ip_method).each do |prop|
       it "##{prop} sets and gets" do
         subject.send("#{prop}=", property)
         subject.send(prop).should == property
       end
+    end
+
+    it "sets and gets custom properties" do
+      subject.x_custom_prop = property
+      expect(subject.x_custom_prop).to eq [property]
     end
 
     it 'can set params on a property' do
@@ -106,6 +111,48 @@ describe Icalendar::Calendar do
       subject.add_x_custom_component.should be_a_kind_of Icalendar::Component
       expect { |b| subject.add_x_custom_component(&b) }.to yield_with_args Icalendar::Component
       subject.add_x_custom_component(ical_component).should == ical_component
+    end
+  end
+
+  describe '#to_ical' do
+    before(:each) do
+      Timecop.freeze Date.new(2013, 12, 26)
+      subject.event do |e|
+        e.summary = 'An event'
+        e.dtstart = "20140101T000000Z"
+        e.dtend = "20140101T050000Z"
+      end
+      subject.freebusy do |f|
+        f.dtstart = "20140102T080000Z"
+        f.dtend = "20140102T100000Z"
+        f.comment = 'Busy'
+      end
+    end
+    after(:each) do
+      Timecop.return
+    end
+
+    it 'outputs properties and components' do
+      expected_no_uid = <<-EOICAL.gsub("\n", "\r\n")
+BEGIN:VCALENDAR
+PRODID:icalendar-ruby
+VERSION:2.0
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+DTSTAMP:20131226T050000Z
+DTSTART:20140101T000000Z
+DTEND:20140101T050000Z
+SUMMARY:An event
+END:VEVENT
+BEGIN:VFREEBUSY
+DTSTAMP:20131226T050000Z
+DTSTART:20140102T080000Z
+DTEND:20140102T100000Z
+COMMENT:Busy
+END:VFREEBUSY
+END:VCALENDAR
+      EOICAL
+      expect(subject.to_ical.gsub(/^UID:.*\r\n/, '')).to eq expected_no_uid
     end
   end
 end
