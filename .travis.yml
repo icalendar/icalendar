@@ -2,4 +2,4 @@ language: ruby
 rvm:
   - 2.0.0
   - 1.9.3
-script: bundle exec rake test
+script: bundle exec rake spec
