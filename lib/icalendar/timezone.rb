@@ -4,13 +4,13 @@ module Icalendar
     module TzProperties
       def self.included(base)
         base.class_eval do
-          required_property :dtstart
-          required_property :tzoffsetto
-          required_property :tzoffsetfrom
+          required_property :dtstart, Icalendar::Values::DateTime
+          required_property :tzoffsetto, Icalendar::Values::UtcOffset
+          required_property :tzoffsetfrom, Icalendar::Values::UtcOffset
 
-          optional_property :rrule, Icalendar::Values::Text, true
+          optional_property :rrule, Icalendar::Values::Recur, true
           optional_property :comment
-          optional_property :rdate
+          optional_property :rdate, Icalendar::Values::DateTime
           optional_property :tzname
         end
       end
@@ -33,8 +33,8 @@ module Icalendar
 
     required_property :tzid
 
-    optional_single_property :last_mod
-    optional_single_property :tzurl
+    optional_single_property :last_modified, Icalendar::Values::DateTime
+    optional_single_property :tzurl, Icalendar::Values::Uri
 
     component :daylight, false, Icalendar::Timezone::Daylight
     component :standard, false, Icalendar::Timezone::Standard

@@ -84,11 +84,8 @@ module Icalendar
         single_property prop, klass
       end
 
-      def mutually_exclusive_properties(properties, klass = Icalendar::Values::Text)
+      def mutually_exclusive_properties(*properties)
         self.mutex_properties << properties
-        properties.each do |prop|
-          optional_single_property prop, klass
-        end
       end
 
       def optional_property(prop, klass = Icalendar::Values::Text, suggested_single = false)

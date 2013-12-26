@@ -3,16 +3,16 @@ module Icalendar
   class Alarm < Component
 
     required_property :action
-    required_property :trigger
+    required_property :trigger, Icalendar::Values::Duration
     required_property :description, Icalendar::Values::Text,
                       ->(alarm, description) { alarm.action.downcase == 'audio' || !description.nil? }
     required_property :summary, Icalendar::Values::Text,
                       ->(alarm, summary) { alarm.action.downcase != 'email' || !summary.nil? }
-    required_multi_property :attendee, Icalendar::Values::Text,
+    required_multi_property :attendee, Icalendar::Values::CalAddress,
                             ->(alarm, attendees) { alarm.action.downcase != 'email' || !attendees.compact.empty? }
 
-    optional_single_property :duration
-    optional_single_property :repeat
+    optional_single_property :duration, Icalendar::Values::Duration
+    optional_single_property :repeat, Icalendar::Values::Integer
 
     optional_property :attach, Icalendar::Values::Uri
 
