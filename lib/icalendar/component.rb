@@ -21,7 +21,7 @@ module Icalendar
     def to_ical
       [
         "BEGIN:#{ical_name}",
-        ical_parameters,
+        ical_properties,
         ical_components,
         "END:#{ical_name}\r\n"
       ].compact.join "\r\n"
@@ -29,19 +29,26 @@ module Icalendar
 
     private
 
-    def ical_parameters
+    def ical_properties
       (self.class.properties + custom_properties.keys).map do |prop|
         value = send prop
         unless value.nil?
           if value.is_a? ::Array
             value.map do |part|
-              "#{prop.to_s.gsub('_', '-').upcase}#{part.to_ical}"
+              "#{ical_prop_name prop}#{part.to_ical}"
             end.join "\r\n" unless value.empty?
           else
-            "#{prop.to_s.gsub('_', '-').upcase}#{value.to_ical}"
+            "#{ical_prop_name prop}#{value.to_ical}"
           end
         end
-      end.compact.join "\r\n"
+      end.compact.map do |property|
+        split = property.split ''
+        [].tap { |a| a << split.shift(Icalendar::MAX_LINE_LENGTH).join until split.empty? }.join "\r\n "
+      end.join "\r\n"
+    end
+
+    def ical_prop_name(prop_name)
+      prop_name.to_s.gsub(/\Aip_/, '').gsub('_', '-').upcase
     end
 
     def ical_components

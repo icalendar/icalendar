@@ -34,7 +34,7 @@ module Icalendar
         if fields[:name] == 'end'
           break
         elsif fields[:name] == 'begin'
-          klass_name = fields[:value].gsub(/^V/, '').downcase.capitalize
+          klass_name = fields[:value].gsub(/\AV/, '').downcase.capitalize
           if Icalendar.const_defined? klass_name
             component.add_component parse_component(Icalendar.const_get(klass_name).new)
           else
@@ -52,7 +52,7 @@ module Icalendar
             prop_value = Icalendar::Values::Array.new fields[:value].split(/(?<!\\);/), klass, fields[:params]
           end
           prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
-          component.send "#{prop_name}=", prop_value
+          component.send "add_#{prop_name}", prop_value
         end
       end
       component
