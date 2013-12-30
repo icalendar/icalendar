@@ -76,7 +76,7 @@ module Icalendar
       end
 
       def default_property_types
-        @default_property_types ||= {}
+        @default_property_types ||= Hash.new { |h,k| Icalendar::Values::Text }
       end
 
       def required_property(prop, klass = Icalendar::Values::Text, validator = nil)
@@ -106,7 +106,7 @@ module Icalendar
 
       def single_property(prop, klass)
         self.single_properties << prop
-        self.default_property_types[prop] = klass
+        self.default_property_types[prop.to_s] = klass
         define_method prop do
           instance_variable_get "@#{prop}"
         end
@@ -117,7 +117,7 @@ module Icalendar
 
       def multi_property(prop, klass)
         self.multiple_properties << prop
-        self.default_property_types[prop] = klass
+        self.default_property_types[prop.to_s] = klass
         property_var = "@#{prop}"
 
         define_method "#{prop}=" do |value|
