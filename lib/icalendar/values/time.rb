@@ -18,7 +18,11 @@ module Icalendar
       end
 
       def value_ical
-        value.strftime FORMAT
+        if utc_offset == 0 && ical_params['tzid'].nil?
+          "#{strftime FORMAT}Z"
+        else
+          strftime FORMAT
+        end
       end
 
     end

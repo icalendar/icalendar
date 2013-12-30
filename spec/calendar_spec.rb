@@ -139,8 +139,8 @@ describe Icalendar::Calendar do
     it 'outputs properties and components' do
       expected_no_uid = <<-EOICAL.gsub("\n", "\r\n")
 BEGIN:VCALENDAR
-PRODID:icalendar-ruby
 VERSION:2.0
+PRODID:icalendar-ruby
 CALSCALE:GREGORIAN
 BEGIN:VEVENT
 DTSTAMP:20131226T050000Z

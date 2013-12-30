@@ -35,20 +35,22 @@ module Icalendar
         unless value.nil?
           if value.is_a? ::Array
             value.map do |part|
-              "#{ical_prop_name prop}#{part.to_ical}"
+              ical_fold "#{ical_prop_name prop}#{part.to_ical}"
             end.join "\r\n" unless value.empty?
           else
-            "#{ical_prop_name prop}#{value.to_ical}"
+            ical_fold "#{ical_prop_name prop}#{value.to_ical}"
           end
         end
-      end.compact.map do |property|
-        split = property.split ''
-        [].tap { |a| a << split.shift(Icalendar::MAX_LINE_LENGTH).join until split.empty? }.join "\r\n "
-      end.join "\r\n"
+      end.compact.join "\r\n"
     end
 
     def ical_prop_name(prop_name)
       prop_name.to_s.gsub(/\Aip_/, '').gsub('_', '-').upcase
+    end
+
+    def ical_fold(content_line)
+      split = content_line.split ''
+      [].tap { |a| a << split.shift(Icalendar::MAX_LINE_LENGTH).join until split.empty? }.join "\r\n "
     end
 
     def ical_components

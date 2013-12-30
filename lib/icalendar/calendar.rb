@@ -1,8 +1,8 @@
 module Icalendar
 
   class Calendar < Component
-    required_property :prodid
     required_property :version
+    required_property :prodid
     optional_single_property :calscale
     optional_single_property :ip_method
 
