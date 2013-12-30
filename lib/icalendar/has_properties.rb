@@ -52,15 +52,19 @@ module Icalendar
 
     module ClassMethods
       def properties
-        required_properties.keys + optional_properties
+        single_properties + multiple_properties
+      end
+
+      def single_properties
+        @single_properties ||= []
+      end
+
+      def multiple_properties
+        @multiple_properties ||= []
       end
 
       def required_properties
         @required_properties ||= {}
-      end
-
-      def optional_properties
-        @optional_properties ||= []
       end
 
       def suggested_single_properties
@@ -88,7 +92,6 @@ module Icalendar
       end
 
       def optional_single_property(prop, klass = Icalendar::Values::Text)
-        self.optional_properties << prop
         single_property prop, klass
       end
 
@@ -97,55 +100,55 @@ module Icalendar
       end
 
       def optional_property(prop, klass = Icalendar::Values::Text, suggested_single = false)
-        self.optional_properties << prop
         self.suggested_single_properties << prop if suggested_single
         multi_property prop, klass
       end
 
       def single_property(prop, klass)
+        self.single_properties << prop
         self.default_property_types[prop] = klass
         define_method prop do
           instance_variable_get "@#{prop}"
         end
         define_method "#{prop}=" do |value|
-          value = klass.new value unless value.nil? || value.is_a?(Icalendar::Value)
-          instance_variable_set "@#{prop}", value
+          instance_variable_set "@#{prop}", map_property_value(value, klass)
         end
       end
 
       def multi_property(prop, klass)
+        self.multiple_properties << prop
         self.default_property_types[prop] = klass
         property_var = "@#{prop}"
 
         define_method "#{prop}=" do |value|
-          if value.is_a? Array
-            value = value.map do |v|
-              if v.nil? || v.is_a?(Icalendar::Value)
-                v
-              else
-                klass.new v
-              end
-            end
-            instance_variable_set property_var, value
-          else
-            value = klass.new value unless value.nil? || value.is_a?(Icalendar::Value)
-            instance_variable_set property_var, [value]
-          end
+          instance_variable_set property_var, [map_property_value(value, klass)].compact
         end
 
         define_method prop do
           if instance_variable_defined? property_var
             instance_variable_get property_var
           else
-            send "#{prop}=", []
+            send "#{prop}=", nil
           end
         end
 
         define_method "add_#{prop}" do |value|
-          value = klass.new value unless value.is_a? Icalendar::Value
-          send(prop) << value
+          send(prop) << map_property_value(value, klass)
         end
       end
     end
+
+    private
+
+    def map_property_value(value, klass)
+      if value.nil? || value.is_a?(Icalendar::Value)
+        value
+      elsif value.is_a? ::Array
+        Icalendar::Values::Array.new value, klass
+      else
+        klass.new value
+      end
+    end
+
   end
 end

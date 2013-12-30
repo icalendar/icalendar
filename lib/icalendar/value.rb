@@ -34,6 +34,7 @@ module Icalendar
 
 end
 
+require_relative 'values/array'
 require_relative 'values/binary'
 require_relative 'values/boolean'
 require_relative 'values/date'

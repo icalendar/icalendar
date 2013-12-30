@@ -71,11 +71,6 @@ describe Icalendar::Event do
         subject.comment.should == ['a comment']
       end
 
-      it 'can be set with an array' do
-        subject.comment = ['a comment']
-        subject.comment.should == ['a comment']
-      end
-
       it 'can be appended' do
         subject.comment << 'a comment'
         subject.comment << 'b comment'
@@ -101,6 +96,7 @@ describe Icalendar::Event do
       subject.dtstart = start
       subject.dtend = "20131227T033000Z"
       subject.summary = 'My event, my ical, my test'
+      subject.geo = [41.230896,-74.411774]
       subject.x_custom_property = 'customize'
     end
 
@@ -108,5 +104,6 @@ describe Icalendar::Event do
     it { expect(subject.to_ical).to include 'DTEND:20131227T033000Z' }
     it { expect(subject.to_ical).to include 'SUMMARY:My event\, my ical\, my test' }
     it { expect(subject.to_ical).to include 'X-CUSTOM-PROPERTY:customize' }
+    it { expect(subject.to_ical).to include 'GEO:41.230896;-74.411774' }
   end
 end

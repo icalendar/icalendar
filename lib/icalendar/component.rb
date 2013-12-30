@@ -33,7 +33,7 @@ module Icalendar
       (self.class.properties + custom_properties.keys).map do |prop|
         value = send prop
         unless value.nil?
-          if value.is_a? Array
+          if value.is_a? ::Array
             value.map do |part|
               "#{prop.to_s.gsub('_', '-').upcase}#{part.to_ical}"
             end.join "\r\n" unless value.empty?
