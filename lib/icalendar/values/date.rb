@@ -6,20 +6,14 @@ module Icalendar
     class Date < Value
       FORMAT = '%Y%m%d'
 
-      def initialize(value, params = {})
+      def initialize(value, params = {}, include_value_param = false)
         if value.respond_to? :to_date
-          super value.to_date, params
+          super value.to_date, params, include_value_param
         elsif value.is_a? String
-          super ::Date.strptime(value, FORMAT), params
+          super ::Date.strptime(value, FORMAT), params, include_value_param
         else
           super
         end
-      end
-
-      # TODO verify VALUE= is required
-      def params_ical
-        ical_param :value, 'DATE'
-        super
       end
 
       def value_ical

@@ -3,7 +3,7 @@ module Icalendar
 
     class Array < Value
 
-      def initialize(value, klass, params = {})
+      def initialize(value, klass, params = {}, include_value_param = false)
         mapped = if value.nil? || value.is_a?(Icalendar::Value)
                    [value]
                  elsif value.is_a? ::Array
@@ -17,7 +17,7 @@ module Icalendar
                  else
                    [klass.new(value)]
                  end
-        super mapped, params
+        super mapped, params, include_value_param
       end
 
       def params_ical

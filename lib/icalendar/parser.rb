@@ -43,13 +43,21 @@ module Icalendar
         else
           # new property
           klass = component.class.default_property_types[fields[:name]]
+          include_value_param = false
           if !fields[:params]['value'].nil?
-            klass_name = fields[:params]['value']
-            klass = Icalendar::Values.const_get klass_name if Icalendar::Values.const_defined?(klass_name)
+            klass_name = fields[:params].delete('value').first
+            unless klass_name.upcase == klass.value_type
+              include_value_param = true
+              klass_name = klass_name.downcase.gsub(/(?:\A|-)(.)/) { |m| m[-1].upcase }
+              klass = Icalendar::Values.const_get klass_name if Icalendar::Values.const_defined?(klass_name)
+            end
           end
-          prop_value = klass.new fields[:value], fields[:params]
+          prop_value = klass.new fields[:value], fields[:params], include_value_param
           if fields[:value] =~ /(?<!\\);/
-            prop_value = Icalendar::Values::Array.new fields[:value].split(/(?<!\\);/), klass, fields[:params]
+            prop_value = Icalendar::Values::Array.new fields[:value].split(/(?<!\\);/),
+                                                      klass,
+                                                      fields[:params],
+                                                      include_value_param
           end
           prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
           component.send "add_#{prop_name}", prop_value

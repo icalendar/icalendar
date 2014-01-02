@@ -4,10 +4,11 @@ module Icalendar
 
   class Value < ::SimpleDelegator
 
-    attr_accessor :ical_params
+    attr_accessor :ical_params, :include_value_param
 
-    def initialize(value, params = {})
+    def initialize(value, params = {}, include_value_param = false)
       @ical_params = params.dup
+      @include_value_param = include_value_param
       super value
     end
 
@@ -25,9 +26,14 @@ module Icalendar
     end
 
     def params_ical
+      ical_param 'value', self.class.value_type if include_value_param
       unless ical_params.empty?
         ";#{ical_params.map { |name, value| param_ical name, value }.join ';'}"
       end
+    end
+
+    def self.value_type
+      name.gsub(/\A.*::/, '').gsub(/(?<!\A)[A-Z]/, '-\0').upcase
     end
 
     private
@@ -41,7 +47,10 @@ module Icalendar
 
 end
 
+# helper; not actual iCalendar value type
 require_relative 'values/array'
+
+# iCalendar value types
 require_relative 'values/binary'
 require_relative 'values/boolean'
 require_relative 'values/date'

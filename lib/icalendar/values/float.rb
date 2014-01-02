@@ -3,8 +3,8 @@ module Icalendar
 
     class Float < Value
 
-      def initialize(value, params = {})
-        super value.to_f, params
+      def initialize(value, params = {}, include_value_param = false)
+        super value.to_f, params, include_value_param
       end
 
       def value_ical
