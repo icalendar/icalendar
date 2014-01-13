@@ -255,15 +255,27 @@ class TestEventSchedule < Test::Unit::TestCase
   include Icalendar
 
   test "occurrences_between with a daily event" do
-    daily_event = example_calendar.events.first
+    daily_event = self.daily_event
     occurrences = daily_event.occurrences_between(daily_event.start.to_time, daily_event.start.to_time + 2.days)
+
     assert_equal 2,                        occurrences.length,        "Event has 2 occurrences over 3 days"
     assert_equal Time.parse("2014-01-27"), occurrences.first.to_time, "Event occurrs on the 27th"
     assert_equal Time.parse("2014-01-29"), occurrences.last.to_time,  "Event occurrs on the 29th"
   end
 
+  test "occurrences_between with an every-other-day event" do
+    every_other_day_event = self.every_other_day_event
+    start_time = every_other_day_event.start.to_time
+    occurrences = every_other_day_event.occurrences_between(start_time, start_time + 5.days)
+
+    assert_equal 3, occurrences.length, "Event has 3 occurrences over 6 days"
+    assert_equal Time.parse("2014-01-27"), occurrences[0].to_time, "Event occurs on the 27th"
+    assert_equal Time.parse("2014-01-29"), occurrences[1].to_time, "Event occurs on the 29th"
+    assert_equal Time.parse("2014-01-31"), occurrences[2].to_time, "Event occurs on the 31th"
+  end
+
   test "schedule" do
-    daily_event = example_calendar.events.first
+    daily_event = self.daily_event
     schedule = daily_event.schedule
     assert_equal daily_event.start.to_time, schedule.start_time,                   "Schedule has the same start time as event"
     assert_equal daily_event.end.to_time,   schedule.end_time,                     "Schedule has the same end time as event"
@@ -271,7 +283,7 @@ class TestEventSchedule < Test::Unit::TestCase
     assert_equal daily_event.exdate.map(&:to_time), schedule.exception_times
   end
 
-  def example_calendar
+  def daily_event
     calendars = Icalendar.parse(<<-EOF
 BEGIN:VCALENDAR
 X-WR-CALNAME:Test Public
@@ -306,6 +318,43 @@ END:VCALENDAR
     EOF
     )
 
-    Array(calendars).first
+    Array(calendars).first.events.first
+  end
+
+  def every_other_day_event
+    calendars = Icalendar.parse(<<-EOF
+BEGIN:VCALENDAR
+X-WR-CALNAME:Test Public
+X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:101165
+PRODID:Zimbra-Calendar-Provider
+VERSION:2.0
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:efcb99ae-d540-419c-91fa-42cc2bd9d302
+RRULE:FREQ=DAILY;INTERVAL=2
+SUMMARY:Every other day
+X-ALT-DESC;FMTTYPE=text/html:<html><body></body></html>
+ORGANIZER;CN=Jordan Raine:mailto:jraine@sfu.ca
+DTSTART;VALUE=DATE:20140127
+DTEND;VALUE=DATE:20140128
+STATUS:CONFIRMED
+CLASS:PUBLIC
+X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
+X-MICROSOFT-CDO-INTENDEDSTATUS:FREE
+TRANSP:TRANSPARENT
+LAST-MODIFIED:20140113T200625Z
+DTSTAMP:20140113T200625Z
+SEQUENCE:0
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER;RELATED=START:-PT5M
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+END:VCALENDAR
+    EOF
+    )
+
+    Array(calendars).first.events.first
   end
 end
