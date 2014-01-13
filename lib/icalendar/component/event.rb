@@ -6,6 +6,8 @@
   details.
 =end
 
+require 'ice_cube'
+
 module Icalendar
   # A Event calendar component is a grouping of component
   # properties, and possibly including Alarm calendar components, that
@@ -123,6 +125,36 @@ module Icalendar
 
     def occurrences_starting(time)
       recurrence_rules.first.occurrences_of_event_starting(self, time)
+    end
+
+    def occurrences_between(begin_time, closing_time)
+      schedule.occurrences_between(begin_time, closing_time)
+    end
+
+    def rrules
+      rrule
+    end
+
+    def schedule
+      schedule = IceCube::Schedule.new
+      schedule.start_time = start
+      schedule.end_time = self.end
+
+      rrules.each do |rrule|
+        recurrence_rule = if rrule.frequency == "DAILY"
+          IceCube::DailyRule.new(rrule.interval)
+        else
+          raise "Unknown frequency: #{rrule.frequency}"
+        end
+
+        schedule.add_recurrence_rule(recurrence_rule)
+      end
+
+      exdate.each do |exception_date|
+        schedule.add_exception_time(exception_date)
+      end
+
+      schedule
     end
 
   end
