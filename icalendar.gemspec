@@ -26,5 +26,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'bundler', '~> 1.3'
   s.add_development_dependency 'tzinfo', '~> 0.3'
   s.add_development_dependency 'timecop', '~> 0.6.3'
+  s.add_development_dependency 'guard-test', '~> 2.0.3'
 end
 
