@@ -271,7 +271,28 @@ class TestEventSchedule < Test::Unit::TestCase
     assert_equal 3, occurrences.length, "Event has 3 occurrences over 6 days"
     assert_equal Time.parse("2014-01-27"), occurrences[0].to_time, "Event occurs on the 27th"
     assert_equal Time.parse("2014-01-29"), occurrences[1].to_time, "Event occurs on the 29th"
-    assert_equal Time.parse("2014-01-31"), occurrences[2].to_time, "Event occurs on the 31th"
+    assert_equal Time.parse("2014-01-31"), occurrences[2].to_time, "Event occurs on the 31st"
+  end
+
+  test "occurrences_between with an every-monday event" do
+    every_monday_event = self.every_monday_event
+    start_time = every_monday_event.start.to_time
+    occurrences = every_monday_event.occurrences_between(start_time, start_time + 8.days)
+
+    assert_equal 2, occurrences.length, "Event has 2 occurrences over 8 days"
+    assert_equal Time.parse("2014-02-03 at 4pm"), occurrences[0].to_time, "Event occurs on the 3rd"
+    assert_equal Time.parse("2014-02-10 at 4pm"), occurrences[1].to_time, "Event occurs on the 10th"
+  end
+
+  test "occurrences_between with a mon,wed,fri weekly event" do
+    multi_day_weekly_event = self.multi_day_weekly_event
+    start_time = multi_day_weekly_event.start.to_time
+    occurrences = multi_day_weekly_event.occurrences_between(start_time, start_time + 7.days)
+
+    assert_equal 3, occurrences.length, "Event has 3 occurrences over 7 days"
+    assert_equal Time.parse("2014-02-03 at 4pm"), occurrences[0].to_time, "Event occurs on the 3rd"
+    assert_equal Time.parse("2014-02-05 at 4pm"), occurrences[1].to_time, "Event occurs on the 10th"
+    assert_equal Time.parse("2014-02-07 at 4pm"), occurrences[2].to_time, "Event occurs on the 10th"
   end
 
   test "schedule" do
@@ -283,8 +304,13 @@ class TestEventSchedule < Test::Unit::TestCase
     assert_equal daily_event.exdate.map(&:to_time), schedule.exception_times
   end
 
+  def parse_and_return_first_event(ics_string)
+    calendars = Icalendar.parse(ics_string)
+    Array(calendars).first.events.first
+  end
+
   def daily_event
-    calendars = Icalendar.parse(<<-EOF
+    parse_and_return_first_event <<-EOF
 BEGIN:VCALENDAR
 X-WR-CALNAME:Test Public
 X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:101165
@@ -296,7 +322,7 @@ UID:efcb99ae-d540-419c-91fa-42cc2bd9d302
 RRULE:FREQ=DAILY;INTERVAL=1
 SUMMARY:Every day, except the 28th
 X-ALT-DESC;FMTTYPE=text/html:<html><body></body></html>
-ORGANIZER;CN=Jordan Raine:mailto:jraine@sfu.ca
+ORGANIZER;CN=Jordan Raine:mailto:foo@sfu.ca
 DTSTART;VALUE=DATE:20140127
 DTEND;VALUE=DATE:20140128
 STATUS:CONFIRMED
@@ -316,13 +342,10 @@ END:VALARM
 END:VEVENT
 END:VCALENDAR
     EOF
-    )
-
-    Array(calendars).first.events.first
   end
 
   def every_other_day_event
-    calendars = Icalendar.parse(<<-EOF
+    parse_and_return_first_event <<-EOF
 BEGIN:VCALENDAR
 X-WR-CALNAME:Test Public
 X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:101165
@@ -334,7 +357,7 @@ UID:efcb99ae-d540-419c-91fa-42cc2bd9d302
 RRULE:FREQ=DAILY;INTERVAL=2
 SUMMARY:Every other day
 X-ALT-DESC;FMTTYPE=text/html:<html><body></body></html>
-ORGANIZER;CN=Jordan Raine:mailto:jraine@sfu.ca
+ORGANIZER;CN=Jordan Raine:mailto:foo@example.com
 DTSTART;VALUE=DATE:20140127
 DTEND;VALUE=DATE:20140128
 STATUS:CONFIRMED
@@ -353,8 +376,88 @@ END:VALARM
 END:VEVENT
 END:VCALENDAR
     EOF
-    )
+  end
 
-    Array(calendars).first.events.first
+  def every_monday_event
+    parse_and_return_first_event <<-EOF
+BEGIN:VCALENDAR
+X-WR-CALNAME:Test Public
+X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:101165
+PRODID:Zimbra-Calendar-Provider
+VERSION:2.0
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:b1e0c7e7-4cd7-4780-a5ed-150e98ba11d3
+RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=MO
+SUMMARY:Weekly event
+X-ALT-DESC;FMTTYPE=text/html:<html><body></body></html>
+ORGANIZER;CN=Jordan Raine:mailto:foo@sfu.ca
+DTSTART;TZID="America/Los_Angeles":20140203T160000
+DTEND;TZID="America/Los_Angeles":20140203T163000
+STATUS:CONFIRMED
+CLASS:PUBLIC
+X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
+TRANSP:OPAQUE
+LAST-MODIFIED:20140113T234836Z
+DTSTAMP:20140113T234836Z
+SEQUENCE:0
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER;RELATED=START:-PT5M
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+END:VCALENDAR
+    EOF
+  end
+
+  def multi_day_weekly_event
+    parse_and_return_first_event <<-EOF
+BEGIN:VCALENDAR
+X-WR-CALNAME:Test Public
+X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:101165
+PRODID:Zimbra-Calendar-Provider
+VERSION:2.0
+METHOD:PUBLISH
+BEGIN:VTIMEZONE
+TZID:America/Los_Angeles
+BEGIN:STANDARD
+DTSTART:19710101T020000
+TZOFFSETTO:-0800
+TZOFFSETFROM:-0700
+RRULE:FREQ=YEARLY;WKST=MO;INTERVAL=1;BYMONTH=11;BYDAY=1SU
+TZNAME:PST
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:19710101T020000
+TZOFFSETTO:-0700
+TZOFFSETFROM:-0800
+RRULE:FREQ=YEARLY;WKST=MO;INTERVAL=1;BYMONTH=3;BYDAY=2SU
+TZNAME:PDT
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:b1e0c7e7-4cd7-4780-a5ed-150e98ba11d3
+RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR
+SUMMARY:Multi day weekly event
+X-ALT-DESC;FMTTYPE=text/html:<html><body></body></html>
+ORGANIZER;CN=Jordan Raine:mailto:jraine@sfu.ca
+DTSTART;TZID="America/Los_Angeles":20140203T160000
+DTEND;TZID="America/Los_Angeles":20140203T163000
+STATUS:CONFIRMED
+CLASS:PUBLIC
+X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
+TRANSP:OPAQUE
+LAST-MODIFIED:20140114T005106Z
+DTSTAMP:20140114T005106Z
+SEQUENCE:1
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER;RELATED=START:-PT5M
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+END:VCALENDAR
+    EOF
   end
 end

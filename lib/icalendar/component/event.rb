@@ -143,6 +143,9 @@ module Icalendar
       rrules.each do |rrule|
         recurrence_rule = if rrule.frequency == "DAILY"
           IceCube::DailyRule.new(rrule.interval)
+        elsif rrule.frequency == "WEEKLY"
+          days = rrule.by_list.fetch(:byday).map {|ical_day| convert_ical_day_to_sym(ical_day) }
+          IceCube::WeeklyRule.new(rrule.interval).day(days)
         else
           raise "Unknown frequency: #{rrule.frequency}"
         end
@@ -155,6 +158,20 @@ module Icalendar
       end
 
       schedule
+    end
+
+    def convert_ical_day_to_sym(ical_day)
+      case ical_day.to_s
+      when "SU" then :sunday
+      when "MO" then :monday
+      when "TU" then :tuesday
+      when "WE" then :wednesday
+      when "TH" then :thursday
+      when "FR" then :friday
+      when "SA" then :saturday
+      else
+        raise "Unexcepted ical_day: #{ical_day.inspect}"
+      end
     end
 
   end
