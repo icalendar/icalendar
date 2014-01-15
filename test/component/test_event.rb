@@ -295,6 +295,36 @@ class TestEventSchedule < Test::Unit::TestCase
     assert_equal Time.parse("2014-02-07 at 4pm"), occurrences[2].to_time, "Event occurs on the 10th"
   end
 
+  test "occurrences_between with monthy event" do
+    on_third_every_two_months_event = self.on_third_every_two_months_event
+    start_time = on_third_every_two_months_event.start.to_time
+    occurrences = on_third_every_two_months_event.occurrences_between(start_time, start_time + 60.days)
+
+    assert_equal 2, occurrences.length, "Event has 2 occurrences over 61 days"
+    assert_equal Time.parse("2014-02-03 at 4pm"), occurrences[0].to_time, "Event occurs on February 3rd"
+    assert_equal Time.parse("2014-04-03 at 4pm"), occurrences[1].to_time, "Event occurs on April 3rd"
+  end
+
+  test "occurrences_between with yearly event" do
+    first_of_every_year_event = self.first_of_every_year_event
+    start_time = first_of_every_year_event.start.to_time
+    occurrences = first_of_every_year_event.occurrences_between(start_time, start_time + 365.days)
+
+    assert_equal 2, occurrences.length, "Event has 2 occurrences over 366 days"
+    assert_equal Time.parse("2014-01-01"), occurrences[0].to_time, "Event occurs on January 1st, 2014"
+    assert_equal Time.parse("2015-01-01"), occurrences[1].to_time, "Event occurs on January 1st, 2015"
+  end
+
+  test "occurrences_between with every-weekday daily event" do
+    every_weekday_daily_event = self.every_weekday_daily_event
+    start_time = every_weekday_daily_event.start.to_time
+    occurrences = every_weekday_daily_event.occurrences_between(start_time, start_time + 6.days)
+
+    assert_equal 5, occurrences.length, "Event has 5 occurrences over 7 days"
+    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-01-10")), "Event occurs on Friday January 10th"
+    assert_false occurrences.map(&:to_time).include?(Time.parse("2015-01-11")), "Event does not occur on Saturday January 11th"
+  end
+
   test "schedule" do
     daily_event = self.daily_event
     schedule = daily_event.schedule
@@ -456,6 +486,138 @@ ACTION:DISPLAY
 TRIGGER;RELATED=START:-PT5M
 DESCRIPTION:Reminder
 END:VALARM
+END:VEVENT
+END:VCALENDAR
+    EOF
+  end
+
+  def on_third_every_two_months_event
+    parse_and_return_first_event <<-EOF
+BEGIN:VCALENDAR
+X-WR-CALNAME:Test Public
+X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:101165
+PRODID:Zimbra-Calendar-Provider
+VERSION:2.0
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:b1e0c7e7-4cd7-4780-a5ed-150e98ba11d3
+RRULE:FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=3
+SUMMARY:On the third every two months
+X-ALT-DESC;FMTTYPE=text/html:<html><body></body></html>
+ORGANIZER;CN=Jordan Raine:mailto:jraine@sfu.ca
+DTSTART;TZID="America/Los_Angeles":20140203T160000
+DTEND;TZID="America/Los_Angeles":20140203T163000
+STATUS:CONFIRMED
+CLASS:PUBLIC
+X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
+TRANSP:OPAQUE
+LAST-MODIFIED:20140114T005712Z
+DTSTAMP:20140114T005712Z
+SEQUENCE:2
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER;RELATED=START:-PT5M
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+END:VCALENDAR
+    EOF
+  end
+
+  def first_of_every_year_event
+    parse_and_return_first_event <<-EOF
+BEGIN:VCALENDAR
+X-WR-CALNAME:Test Public
+X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:296763
+PRODID:Zimbra-Calendar-Provider
+VERSION:2.0
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:34d4e9a8-b9dd-48c0-b69d-adc5882b6419
+RRULE:FREQ=YEARLY;INTERVAL=1;BYMONTHDAY=1;BYMONTH=1
+SUMMARY:New Years Day
+DESCRIPTION:An example of yearly recurrence.
+X-ALT-DESC;FMTTYPE=text/html:<html><body>An example of yearly recurrence.</b
+ ody></html>
+ORGANIZER;CN=Jordan Raine:mailto:foo@example.com
+DTSTART;VALUE=DATE:20140101
+DTEND;VALUE=DATE:20140102
+STATUS:CONFIRMED
+CLASS:PUBLIC
+X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
+X-MICROSOFT-CDO-INTENDEDSTATUS:FREE
+TRANSP:TRANSPARENT
+LAST-MODIFIED:20140115T000152Z
+DTSTAMP:20140115T000152Z
+SEQUENCE:0
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER;RELATED=START:-PT5M
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+END:VCALENDAR
+    EOF
+  end
+
+  # TO-DO can't use this until SETPOS is implemented
+  def first_sunday_of_january_yearly_event
+    parse_and_return_first_event <<-EOF
+BEGIN:VCALENDAR
+X-WR-CALNAME:Test Public
+X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:296763
+PRODID:Zimbra-Calendar-Provider
+VERSION:2.0
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:34d4e9a8-b9dd-48c0-b69d-adc5882b6419
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=SU;BYMONTH=1;BYSETPOS=1
+SUMMARY:First sunday of january
+DESCRIPTION:An example of a complex yearly
+X-ALT-DESC;FMTTYPE=text/html:<html><body>An example of yearly recurrence. </
+ body></html>
+ORGANIZER;CN=Jordan Raine:mailto:jraine@sfu.ca
+DTSTART;VALUE=DATE:20140105
+DTEND;VALUE=DATE:20140106
+STATUS:CONFIRMED
+CLASS:PUBLIC
+X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
+X-MICROSOFT-CDO-INTENDEDSTATUS:FREE
+TRANSP:TRANSPARENT
+LAST-MODIFIED:20140115T000733Z
+DTSTAMP:20140115T000733Z
+SEQUENCE:1
+END:VEVENT
+END:VCALENDAR
+    EOF
+  end
+
+  def every_weekday_daily_event
+    parse_and_return_first_event <<-EOF
+BEGIN:VCALENDAR
+X-WR-CALNAME:Test Public
+X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:296763
+PRODID:Zimbra-Calendar-Provider
+VERSION:2.0
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:34d4e9a8-b9dd-48c0-b69d-adc5882b6419
+RRULE:FREQ=DAILY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR
+SUMMARY:Every week day
+DESCRIPTION:An example of "every week day" daily recurrence. 
+X-ALT-DESC;FMTTYPE=text/html:<html><body>An example of "every week day" dail
+ y recurrence. </body></html>
+ORGANIZER;CN=Jordan Raine:mailto:jraine@sfu.ca
+DTSTART;VALUE=DATE:20140106
+DTEND;VALUE=DATE:20140107
+STATUS:CONFIRMED
+CLASS:PUBLIC
+X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
+X-MICROSOFT-CDO-INTENDEDSTATUS:FREE
+TRANSP:TRANSPARENT
+LAST-MODIFIED:20140115T000958Z
+DTSTAMP:20140115T000958Z
+SEQUENCE:2
 END:VEVENT
 END:VCALENDAR
     EOF

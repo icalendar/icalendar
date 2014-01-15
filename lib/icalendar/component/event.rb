@@ -128,7 +128,7 @@ module Icalendar
     end
 
     def occurrences_between(begin_time, closing_time)
-      schedule.occurrences_between(begin_time, closing_time)
+      schedule.occurrences_between(begin_time.to_time, closing_time.to_time)
     end
 
     def rrules
@@ -141,11 +141,17 @@ module Icalendar
       schedule.end_time = self.end
 
       rrules.each do |rrule|
+        days = Array(rrule.by_list.fetch(:byday)).map {|ical_day| convert_ical_day_to_sym(ical_day) }
+
         recurrence_rule = if rrule.frequency == "DAILY"
-          IceCube::DailyRule.new(rrule.interval)
+          IceCube::DailyRule.new(rrule.interval).day(days)
         elsif rrule.frequency == "WEEKLY"
           days = rrule.by_list.fetch(:byday).map {|ical_day| convert_ical_day_to_sym(ical_day) }
           IceCube::WeeklyRule.new(rrule.interval).day(days)
+        elsif rrule.frequency == "MONTHLY"
+          IceCube::MonthlyRule.new(rrule.interval).day_of_month(rrule.by_list.fetch(:bymonthday))
+        elsif rrule.frequency == "YEARLY"
+          IceCube::YearlyRule.new(rrule.interval).month_of_year(rrule.by_list.fetch(:bymonth)).day_of_month(rrule.by_list.fetch(:bymonthday))
         else
           raise "Unknown frequency: #{rrule.frequency}"
         end
@@ -154,7 +160,7 @@ module Icalendar
       end
 
       exdate.each do |exception_date|
-        schedule.add_exception_time(exception_date)
+        schedule.add_exception_time(exception_date.to_time)
       end
 
       schedule
