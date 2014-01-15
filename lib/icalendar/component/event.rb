@@ -123,10 +123,12 @@ module Icalendar
       a
     end
 
+    # This is the original way
     def occurrences_starting(time)
       recurrence_rules.first.occurrences_of_event_starting(self, time)
     end
 
+    # This is the ice_cube-powered way
     def occurrences_between(begin_time, closing_time)
       schedule.occurrences_between(begin_time.to_time, closing_time.to_time)
     end
@@ -176,7 +178,7 @@ module Icalendar
       when "FR" then :friday
       when "SA" then :saturday
       else
-        raise "Unexcepted ical_day: #{ical_day.inspect}"
+        raise ArgumentError.new "Unexcepted ical_day: #{ical_day.inspect}"
       end
     end
 

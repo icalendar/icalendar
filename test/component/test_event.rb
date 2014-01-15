@@ -251,11 +251,11 @@ EOS
 #  end
 end
 
-class TestEventSchedule < Test::Unit::TestCase
+class TestEventRecurrence < Test::Unit::TestCase
   include Icalendar
 
   test "occurrences_between with a daily event" do
-    daily_event = self.daily_event
+    daily_event = example_event :daily
     occurrences = daily_event.occurrences_between(daily_event.start.to_time, daily_event.start.to_time + 2.days)
 
     assert_equal 2,                        occurrences.length,        "Event has 2 occurrences over 3 days"
@@ -264,7 +264,7 @@ class TestEventSchedule < Test::Unit::TestCase
   end
 
   test "occurrences_between with an every-other-day event" do
-    every_other_day_event = self.every_other_day_event
+    every_other_day_event = example_event :every_other_day
     start_time = every_other_day_event.start.to_time
     occurrences = every_other_day_event.occurrences_between(start_time, start_time + 5.days)
 
@@ -275,7 +275,7 @@ class TestEventSchedule < Test::Unit::TestCase
   end
 
   test "occurrences_between with an every-monday event" do
-    every_monday_event = self.every_monday_event
+    every_monday_event = example_event :every_monday
     start_time = every_monday_event.start.to_time
     occurrences = every_monday_event.occurrences_between(start_time, start_time + 8.days)
 
@@ -285,7 +285,7 @@ class TestEventSchedule < Test::Unit::TestCase
   end
 
   test "occurrences_between with a mon,wed,fri weekly event" do
-    multi_day_weekly_event = self.multi_day_weekly_event
+    multi_day_weekly_event = example_event :multi_day_weekly
     start_time = multi_day_weekly_event.start.to_time
     occurrences = multi_day_weekly_event.occurrences_between(start_time, start_time + 7.days)
 
@@ -296,7 +296,7 @@ class TestEventSchedule < Test::Unit::TestCase
   end
 
   test "occurrences_between with monthy event" do
-    on_third_every_two_months_event = self.on_third_every_two_months_event
+    on_third_every_two_months_event = example_event :on_third_every_two_months
     start_time = on_third_every_two_months_event.start.to_time
     occurrences = on_third_every_two_months_event.occurrences_between(start_time, start_time + 60.days)
 
@@ -306,7 +306,7 @@ class TestEventSchedule < Test::Unit::TestCase
   end
 
   test "occurrences_between with yearly event" do
-    first_of_every_year_event = self.first_of_every_year_event
+    first_of_every_year_event = example_event :first_of_every_year
     start_time = first_of_every_year_event.start.to_time
     occurrences = first_of_every_year_event.occurrences_between(start_time, start_time + 365.days)
 
@@ -316,7 +316,7 @@ class TestEventSchedule < Test::Unit::TestCase
   end
 
   test "occurrences_between with every-weekday daily event" do
-    every_weekday_daily_event = self.every_weekday_daily_event
+    every_weekday_daily_event = example_event :every_weekday_daily
     start_time = every_weekday_daily_event.start.to_time
     occurrences = every_weekday_daily_event.occurrences_between(start_time, start_time + 6.days)
 
@@ -326,7 +326,7 @@ class TestEventSchedule < Test::Unit::TestCase
   end
 
   test "schedule" do
-    daily_event = self.daily_event
+    daily_event = example_event :daily
     schedule = daily_event.schedule
     assert_equal daily_event.start.to_time, schedule.start_time,                   "Schedule has the same start time as event"
     assert_equal daily_event.end.to_time,   schedule.end_time,                     "Schedule has the same end time as event"
@@ -334,292 +334,10 @@ class TestEventSchedule < Test::Unit::TestCase
     assert_equal daily_event.exdate.map(&:to_time), schedule.exception_times
   end
 
-  def parse_and_return_first_event(ics_string)
+  def example_event(ics_name)
+    ics_path = File.expand_path "#{File.dirname(__FILE__)}/../fixtures/recurrence_examples/#{ics_name}_event.ics"
+    ics_string = File.read(ics_path)
     calendars = Icalendar.parse(ics_string)
     Array(calendars).first.events.first
-  end
-
-  def daily_event
-    parse_and_return_first_event <<-EOF
-BEGIN:VCALENDAR
-X-WR-CALNAME:Test Public
-X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:101165
-PRODID:Zimbra-Calendar-Provider
-VERSION:2.0
-METHOD:PUBLISH
-BEGIN:VEVENT
-UID:efcb99ae-d540-419c-91fa-42cc2bd9d302
-RRULE:FREQ=DAILY;INTERVAL=1
-SUMMARY:Every day, except the 28th
-X-ALT-DESC;FMTTYPE=text/html:<html><body></body></html>
-ORGANIZER;CN=Jordan Raine:mailto:foo@sfu.ca
-DTSTART;VALUE=DATE:20140127
-DTEND;VALUE=DATE:20140128
-STATUS:CONFIRMED
-CLASS:PUBLIC
-X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-X-MICROSOFT-CDO-INTENDEDSTATUS:FREE
-TRANSP:TRANSPARENT
-LAST-MODIFIED:20140113T200625Z
-DTSTAMP:20140113T200625Z
-SEQUENCE:0
-EXDATE;VALUE=DATE:20140128
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER;RELATED=START:-PT5M
-DESCRIPTION:Reminder
-END:VALARM
-END:VEVENT
-END:VCALENDAR
-    EOF
-  end
-
-  def every_other_day_event
-    parse_and_return_first_event <<-EOF
-BEGIN:VCALENDAR
-X-WR-CALNAME:Test Public
-X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:101165
-PRODID:Zimbra-Calendar-Provider
-VERSION:2.0
-METHOD:PUBLISH
-BEGIN:VEVENT
-UID:efcb99ae-d540-419c-91fa-42cc2bd9d302
-RRULE:FREQ=DAILY;INTERVAL=2
-SUMMARY:Every other day
-X-ALT-DESC;FMTTYPE=text/html:<html><body></body></html>
-ORGANIZER;CN=Jordan Raine:mailto:foo@example.com
-DTSTART;VALUE=DATE:20140127
-DTEND;VALUE=DATE:20140128
-STATUS:CONFIRMED
-CLASS:PUBLIC
-X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-X-MICROSOFT-CDO-INTENDEDSTATUS:FREE
-TRANSP:TRANSPARENT
-LAST-MODIFIED:20140113T200625Z
-DTSTAMP:20140113T200625Z
-SEQUENCE:0
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER;RELATED=START:-PT5M
-DESCRIPTION:Reminder
-END:VALARM
-END:VEVENT
-END:VCALENDAR
-    EOF
-  end
-
-  def every_monday_event
-    parse_and_return_first_event <<-EOF
-BEGIN:VCALENDAR
-X-WR-CALNAME:Test Public
-X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:101165
-PRODID:Zimbra-Calendar-Provider
-VERSION:2.0
-METHOD:PUBLISH
-BEGIN:VEVENT
-UID:b1e0c7e7-4cd7-4780-a5ed-150e98ba11d3
-RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=MO
-SUMMARY:Weekly event
-X-ALT-DESC;FMTTYPE=text/html:<html><body></body></html>
-ORGANIZER;CN=Jordan Raine:mailto:foo@sfu.ca
-DTSTART;TZID="America/Los_Angeles":20140203T160000
-DTEND;TZID="America/Los_Angeles":20140203T163000
-STATUS:CONFIRMED
-CLASS:PUBLIC
-X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
-TRANSP:OPAQUE
-LAST-MODIFIED:20140113T234836Z
-DTSTAMP:20140113T234836Z
-SEQUENCE:0
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER;RELATED=START:-PT5M
-DESCRIPTION:Reminder
-END:VALARM
-END:VEVENT
-END:VCALENDAR
-    EOF
-  end
-
-  def multi_day_weekly_event
-    parse_and_return_first_event <<-EOF
-BEGIN:VCALENDAR
-X-WR-CALNAME:Test Public
-X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:101165
-PRODID:Zimbra-Calendar-Provider
-VERSION:2.0
-METHOD:PUBLISH
-BEGIN:VTIMEZONE
-TZID:America/Los_Angeles
-BEGIN:STANDARD
-DTSTART:19710101T020000
-TZOFFSETTO:-0800
-TZOFFSETFROM:-0700
-RRULE:FREQ=YEARLY;WKST=MO;INTERVAL=1;BYMONTH=11;BYDAY=1SU
-TZNAME:PST
-END:STANDARD
-BEGIN:DAYLIGHT
-DTSTART:19710101T020000
-TZOFFSETTO:-0700
-TZOFFSETFROM:-0800
-RRULE:FREQ=YEARLY;WKST=MO;INTERVAL=1;BYMONTH=3;BYDAY=2SU
-TZNAME:PDT
-END:DAYLIGHT
-END:VTIMEZONE
-BEGIN:VEVENT
-UID:b1e0c7e7-4cd7-4780-a5ed-150e98ba11d3
-RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR
-SUMMARY:Multi day weekly event
-X-ALT-DESC;FMTTYPE=text/html:<html><body></body></html>
-ORGANIZER;CN=Jordan Raine:mailto:jraine@sfu.ca
-DTSTART;TZID="America/Los_Angeles":20140203T160000
-DTEND;TZID="America/Los_Angeles":20140203T163000
-STATUS:CONFIRMED
-CLASS:PUBLIC
-X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
-TRANSP:OPAQUE
-LAST-MODIFIED:20140114T005106Z
-DTSTAMP:20140114T005106Z
-SEQUENCE:1
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER;RELATED=START:-PT5M
-DESCRIPTION:Reminder
-END:VALARM
-END:VEVENT
-END:VCALENDAR
-    EOF
-  end
-
-  def on_third_every_two_months_event
-    parse_and_return_first_event <<-EOF
-BEGIN:VCALENDAR
-X-WR-CALNAME:Test Public
-X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:101165
-PRODID:Zimbra-Calendar-Provider
-VERSION:2.0
-METHOD:PUBLISH
-BEGIN:VEVENT
-UID:b1e0c7e7-4cd7-4780-a5ed-150e98ba11d3
-RRULE:FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=3
-SUMMARY:On the third every two months
-X-ALT-DESC;FMTTYPE=text/html:<html><body></body></html>
-ORGANIZER;CN=Jordan Raine:mailto:jraine@sfu.ca
-DTSTART;TZID="America/Los_Angeles":20140203T160000
-DTEND;TZID="America/Los_Angeles":20140203T163000
-STATUS:CONFIRMED
-CLASS:PUBLIC
-X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
-TRANSP:OPAQUE
-LAST-MODIFIED:20140114T005712Z
-DTSTAMP:20140114T005712Z
-SEQUENCE:2
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER;RELATED=START:-PT5M
-DESCRIPTION:Reminder
-END:VALARM
-END:VEVENT
-END:VCALENDAR
-    EOF
-  end
-
-  def first_of_every_year_event
-    parse_and_return_first_event <<-EOF
-BEGIN:VCALENDAR
-X-WR-CALNAME:Test Public
-X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:296763
-PRODID:Zimbra-Calendar-Provider
-VERSION:2.0
-METHOD:PUBLISH
-BEGIN:VEVENT
-UID:34d4e9a8-b9dd-48c0-b69d-adc5882b6419
-RRULE:FREQ=YEARLY;INTERVAL=1;BYMONTHDAY=1;BYMONTH=1
-SUMMARY:New Years Day
-DESCRIPTION:An example of yearly recurrence.
-X-ALT-DESC;FMTTYPE=text/html:<html><body>An example of yearly recurrence.</b
- ody></html>
-ORGANIZER;CN=Jordan Raine:mailto:foo@example.com
-DTSTART;VALUE=DATE:20140101
-DTEND;VALUE=DATE:20140102
-STATUS:CONFIRMED
-CLASS:PUBLIC
-X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-X-MICROSOFT-CDO-INTENDEDSTATUS:FREE
-TRANSP:TRANSPARENT
-LAST-MODIFIED:20140115T000152Z
-DTSTAMP:20140115T000152Z
-SEQUENCE:0
-BEGIN:VALARM
-ACTION:DISPLAY
-TRIGGER;RELATED=START:-PT5M
-DESCRIPTION:Reminder
-END:VALARM
-END:VEVENT
-END:VCALENDAR
-    EOF
-  end
-
-  # TO-DO can't use this until SETPOS is implemented
-  def first_sunday_of_january_yearly_event
-    parse_and_return_first_event <<-EOF
-BEGIN:VCALENDAR
-X-WR-CALNAME:Test Public
-X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:296763
-PRODID:Zimbra-Calendar-Provider
-VERSION:2.0
-METHOD:PUBLISH
-BEGIN:VEVENT
-UID:34d4e9a8-b9dd-48c0-b69d-adc5882b6419
-RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=SU;BYMONTH=1;BYSETPOS=1
-SUMMARY:First sunday of january
-DESCRIPTION:An example of a complex yearly
-X-ALT-DESC;FMTTYPE=text/html:<html><body>An example of yearly recurrence. </
- body></html>
-ORGANIZER;CN=Jordan Raine:mailto:jraine@sfu.ca
-DTSTART;VALUE=DATE:20140105
-DTEND;VALUE=DATE:20140106
-STATUS:CONFIRMED
-CLASS:PUBLIC
-X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-X-MICROSOFT-CDO-INTENDEDSTATUS:FREE
-TRANSP:TRANSPARENT
-LAST-MODIFIED:20140115T000733Z
-DTSTAMP:20140115T000733Z
-SEQUENCE:1
-END:VEVENT
-END:VCALENDAR
-    EOF
-  end
-
-  def every_weekday_daily_event
-    parse_and_return_first_event <<-EOF
-BEGIN:VCALENDAR
-X-WR-CALNAME:Test Public
-X-WR-CALID:f512e378-050c-4366-809a-ef471ce45b09:296763
-PRODID:Zimbra-Calendar-Provider
-VERSION:2.0
-METHOD:PUBLISH
-BEGIN:VEVENT
-UID:34d4e9a8-b9dd-48c0-b69d-adc5882b6419
-RRULE:FREQ=DAILY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR
-SUMMARY:Every week day
-DESCRIPTION:An example of "every week day" daily recurrence. 
-X-ALT-DESC;FMTTYPE=text/html:<html><body>An example of "every week day" dail
- y recurrence. </body></html>
-ORGANIZER;CN=Jordan Raine:mailto:jraine@sfu.ca
-DTSTART;VALUE=DATE:20140106
-DTEND;VALUE=DATE:20140107
-STATUS:CONFIRMED
-CLASS:PUBLIC
-X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-X-MICROSOFT-CDO-INTENDEDSTATUS:FREE
-TRANSP:TRANSPARENT
-LAST-MODIFIED:20140115T000958Z
-DTSTAMP:20140115T000958Z
-SEQUENCE:2
-END:VEVENT
-END:VCALENDAR
-    EOF
   end
 end
