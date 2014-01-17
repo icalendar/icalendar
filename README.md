@@ -92,7 +92,7 @@ ALARMS
 
 ### Within an event ###
 
-    cal.event.do
+    cal.event do
       # ...other event properties
       alarm do
         action        "EMAIL"
