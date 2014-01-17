@@ -145,10 +145,9 @@ module Icalendar
       rrules.each do |rrule|
         days = Array(rrule.by_list.fetch(:byday)).map {|ical_day| convert_ical_day_to_sym(ical_day) }
 
-        recurrence_rule = if rrule.frequency == "DAILY"
+        ice_cube_recurrence_rule = if rrule.frequency == "DAILY"
           IceCube::DailyRule.new(rrule.interval).day(days)
         elsif rrule.frequency == "WEEKLY"
-          days = rrule.by_list.fetch(:byday).map {|ical_day| convert_ical_day_to_sym(ical_day) }
           IceCube::WeeklyRule.new(rrule.interval).day(days)
         elsif rrule.frequency == "MONTHLY"
           IceCube::MonthlyRule.new(rrule.interval).day_of_month(rrule.by_list.fetch(:bymonthday))
@@ -158,7 +157,11 @@ module Icalendar
           raise "Unknown frequency: #{rrule.frequency}"
         end
 
-        schedule.add_recurrence_rule(recurrence_rule)
+        ice_cube_recurrence_rule
+          .until(rrule.until)
+          .count(rrule.count)
+
+        schedule.add_recurrence_rule(ice_cube_recurrence_rule)
       end
 
       exdate.each do |exception_date|

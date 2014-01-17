@@ -325,6 +325,26 @@ class TestEventRecurrence < Test::Unit::TestCase
     assert_false occurrences.map(&:to_time).include?(Time.parse("2015-01-11")), "Event does not occur on Saturday January 11th"
   end
 
+  test "occurrences_between with daily event with until date" do
+    monday_until_friday_event = example_event :monday_until_friday
+    start_time = monday_until_friday_event.start.to_time
+    occurrences = monday_until_friday_event.occurrences_between(start_time, start_time + 30.days)
+
+    assert_equal 5, occurrences.length, "Event has 5 occurrences over 31 days"
+    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-01-15 at 12pm")), "Event occurs on Wednesday January 15th"
+    assert_false occurrences.map(&:to_time).include?(Time.parse("2014-01-18 at 12pm")), "Event does not occur on Saturday January 18th"
+  end
+
+  test "occurrences_between with daily event with limited count" do
+    everyday_for_four_days = example_event :everyday_for_four_days
+    start_time = everyday_for_four_days.start.to_time
+    occurrences = everyday_for_four_days.occurrences_between(start_time, start_time + 30.days)
+
+    assert_equal 4, occurrences.length, "Event has 4 occurrences over 31 days"
+    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-01-15 at 12pm")), "Event occurs on Wednesday January 15th"
+    assert_false occurrences.map(&:to_time).include?(Time.parse("2014-01-17 at 12pm")), "Event does not occur on Saturday January 18th"
+  end
+
   test "schedule" do
     daily_event = example_event :daily
     schedule = daily_event.schedule
