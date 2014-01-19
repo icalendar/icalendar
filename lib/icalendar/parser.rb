@@ -52,12 +52,13 @@ module Icalendar
               klass = Icalendar::Values.const_get klass_name if Icalendar::Values.const_defined?(klass_name)
             end
           end
-          prop_value = klass.new fields[:value], fields[:params], include_value_param
           if fields[:value] =~ /(?<!\\);/
             prop_value = Icalendar::Values::Array.new fields[:value].split(/(?<!\\);/),
                                                       klass,
                                                       fields[:params],
                                                       include_value_param
+          else
+            prop_value = klass.new fields[:value], fields[:params], include_value_param
           end
           prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
           component.send "add_#{prop_name}", prop_value

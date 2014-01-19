@@ -39,8 +39,17 @@ module Icalendar
     private
 
     def param_ical(name, value)
-      value = value.join(',') if value.is_a? Array
+      if value.is_a? Array
+        value = value.map { |v| escape_param_value v }.join ','
+      else
+        value = escape_param_value value
+      end
       "#{name.to_s.gsub('_', '-').upcase}=#{value}"
+    end
+
+    def escape_param_value(value)
+      v = value.gsub '"', "'"
+      v =~ /[;:,]/ ? %("#{v}") : v
     end
 
   end
