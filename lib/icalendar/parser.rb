@@ -52,11 +52,12 @@ module Icalendar
               klass = Icalendar::Values.const_get klass_name if Icalendar::Values.const_defined?(klass_name)
             end
           end
-          if fields[:value] =~ /(?<!\\);/
-            prop_value = Icalendar::Values::Array.new fields[:value].split(/(?<!\\);/),
+          if fields[:value] =~ /(?<!\\)([,;])/
+            delimiter = $1
+            prop_value = Icalendar::Values::Array.new fields[:value].split(/(?<!\\)[;,]/),
                                                       klass,
                                                       fields[:params],
-                                                      include_value_param
+                                                      include_value_param: include_value_param, delimiter: delimiter
           else
             prop_value = klass.new fields[:value], fields[:params], include_value_param
           end

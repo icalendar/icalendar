@@ -3,7 +3,8 @@ module Icalendar
 
     class Array < Value
 
-      def initialize(value, klass, params = {}, include_value_param = false)
+      def initialize(value, klass, params = {}, options = {})
+        @value_delimiter = options[:delimiter] || ','
         mapped = if value.nil? || value.is_a?(Icalendar::Value)
                    [value]
                  elsif value.is_a? ::Array
@@ -11,13 +12,13 @@ module Icalendar
                      if v.nil? || v.is_a?(Icalendar::Value)
                        v
                      else
-                       klass.new v
+                       klass.new v, params
                      end
                    end
                  else
-                   [klass.new(value)]
+                   [klass.new(value, params)]
                  end
-        super mapped, params, include_value_param
+        super mapped, params, options[:include_value_param]
       end
 
       def params_ical
@@ -30,7 +31,7 @@ module Icalendar
       def value_ical
         value.map do |v|
           v.value_ical
-        end.join ';'
+        end.join @value_delimiter
       end
     end
 
