@@ -146,16 +146,22 @@ module Icalendar
         days = Array(rrule.by_list.fetch(:byday)).map {|ical_day| convert_ical_day_to_sym(ical_day) }
 
         ice_cube_recurrence_rule = if rrule.frequency == "DAILY"
-          IceCube::DailyRule.new(rrule.interval).day(days)
+          IceCube::DailyRule.new(rrule.interval)
         elsif rrule.frequency == "WEEKLY"
-          IceCube::WeeklyRule.new(rrule.interval).day(days)
+          IceCube::WeeklyRule.new(rrule.interval)
         elsif rrule.frequency == "MONTHLY"
-          IceCube::MonthlyRule.new(rrule.interval).day_of_month(rrule.by_list.fetch(:bymonthday))
+          IceCube::MonthlyRule.new(rrule.interval)
         elsif rrule.frequency == "YEARLY"
-          IceCube::YearlyRule.new(rrule.interval).month_of_year(rrule.by_list.fetch(:bymonth)).day_of_month(rrule.by_list.fetch(:bymonthday))
+          IceCube::YearlyRule.new(rrule.interval).tap do |yearly_rule|
+            yearly_rule.month_of_year(rrule.by_list.fetch(:bymonth)) if rrule.by_list.fetch(:bymonth)
+            yearly_rule.day_of_month(rrule.by_list.fetch(:bymonthday)) if rrule.by_list.fetch(:bymonthday)
+          end
         else
           raise "Unknown frequency: #{rrule.frequency}"
         end
+
+        ice_cube_recurrence_rule.day_of_month(rrule.by_list.fetch(:bymonthday)) if rrule.by_list.fetch(:bymonthday)
+        ice_cube_recurrence_rule.day(days) unless days.empty?
 
         ice_cube_recurrence_rule
           .until(rrule.until)
@@ -165,6 +171,7 @@ module Icalendar
       end
 
       exdate.each do |exception_date|
+        exception_date = Time.parse(exception_date) if exception_date.is_a?(String)
         schedule.add_exception_time(exception_date.to_time)
       end
 
@@ -172,7 +179,12 @@ module Icalendar
     end
 
     def convert_ical_day_to_sym(ical_day)
-      case ical_day.to_s
+      occ = ical_day.position || ""
+      day_code = ical_day.day
+
+      raise ical_day unless day_code || occ
+
+      day_symbol = case day_code.to_s
       when "SU" then :sunday
       when "MO" then :monday
       when "TU" then :tuesday
@@ -181,8 +193,37 @@ module Icalendar
       when "FR" then :friday
       when "SA" then :saturday
       else
-        raise ArgumentError.new "Unexcepted ical_day: #{ical_day.inspect}"
+        raise ArgumentError.new "Unexpected ical_day: #{ical_day.inspect}"
       end
+
+      # [day_symbol, occ]
+    end
+
+    def transform_byday_to_hash(byday)
+      hash = {}
+      byday.map do |byday|
+        day_code = byday.day
+        position = Array(byday.position)
+        position = [] if position == [""]
+
+        day_symbol = case day_code.to_s
+        when "SU" then :sunday
+        when "MO" then :monday
+        when "TU" then :tuesday
+        when "WE" then :wednesday
+        when "TH" then :thursday
+        when "FR" then :friday
+        when "SA" then :saturday
+        else
+          raise ArgumentError.new "Unexpected ical_day: #{ical_day.inspect}"
+        end
+
+        [day_symbol, position]
+      end.each do |two_el_array|
+        hash[two_el_array.first] = two_el_array.last
+      end
+
+      hash
     end
 
   end

@@ -345,6 +345,24 @@ class TestEventRecurrence < Test::Unit::TestCase
     assert_false occurrences.map(&:to_time).include?(Time.parse("2014-01-17 at 12pm")), "Event does not occur on Saturday January 18th"
   end
 
+  # test "occurrences_between with first saturday of month event" do
+  #   first_saturday_of_month_event = example_event :first_saturday_of_month
+  #   start_time = first_saturday_of_month_event.start.to_time
+  #   occurrences = first_saturday_of_month_event.occurrences_between(start_time, start_time + 45.days)
+
+  #   assert_equal 2, occurrences.length, "Event has 2 occurrences over 46 days"
+  #   assert_true occurrences.map(&:to_time).include?(Time.parse("2014-01-04")), "Event occurs on Jan 04"
+  #   assert_true occurrences.map(&:to_time).include?(Time.parse("2014-02-08")), "Event occurs on Feb 08"
+  # end
+
+  test "occurrences_between for proper count-limited event with first event in the past" do
+    one_day_a_month_for_three_months_event = example_event :one_day_a_month_for_three_months
+    start_time = one_day_a_month_for_three_months_event.start.to_time
+    occurrences = one_day_a_month_for_three_months_event.occurrences_between(start_time + 30.days, start_time + 90.days)
+
+    assert_equal 2, occurrences.length, "Event has 2 occurrences from 30 days after first event to 90 days after first event"
+  end
+
   test "schedule" do
     daily_event = example_event :daily
     schedule = daily_event.schedule
@@ -352,6 +370,17 @@ class TestEventRecurrence < Test::Unit::TestCase
     assert_equal daily_event.end.to_time,   schedule.end_time,                     "Schedule has the same end time as event"
     assert_equal IceCube::DailyRule,        schedule.recurrence_rules.first.class, "Sets daily recurrence rule"
     assert_equal daily_event.exdate.map(&:to_time), schedule.exception_times
+  end
+
+  test "convert_ical_day_to_sym" do
+    byday = [
+      Icalendar::RRule::Weekday.new("MO", ""),
+      Icalendar::RRule::Weekday.new("WE", ""),
+      Icalendar::RRule::Weekday.new("FR", "")
+    ]
+
+    event = example_event :daily
+    assert_equal({monday: [], wednesday: [], friday: []}, event.transform_byday_to_hash(byday))
   end
 
   def example_event(ics_name)
