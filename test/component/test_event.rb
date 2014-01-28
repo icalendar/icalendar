@@ -256,7 +256,7 @@ class TestEventRecurrence < Test::Unit::TestCase
 
   test "occurrences_between with a daily event" do
     daily_event = example_event :daily
-    occurrences = daily_event.occurrences_between(daily_event.start.to_time, daily_event.start.to_time + 2.days)
+    occurrences = daily_event.occurrences_between(daily_event.start_time, daily_event.start_time + 2.days)
 
     assert_equal 2,                        occurrences.length,        "Event has 2 occurrences over 3 days"
     assert_equal Time.parse("2014-01-27"), occurrences.first.to_time, "Event occurrs on the 27th"
@@ -265,7 +265,7 @@ class TestEventRecurrence < Test::Unit::TestCase
 
   test "occurrences_between with an every-other-day event" do
     every_other_day_event = example_event :every_other_day
-    start_time = every_other_day_event.start.to_time
+    start_time = every_other_day_event.start_time
     occurrences = every_other_day_event.occurrences_between(start_time, start_time + 5.days)
 
     assert_equal 3, occurrences.length, "Event has 3 occurrences over 6 days"
@@ -276,7 +276,7 @@ class TestEventRecurrence < Test::Unit::TestCase
 
   test "occurrences_between with an every-monday event" do
     every_monday_event = example_event :every_monday
-    start_time = every_monday_event.start.to_time
+    start_time = every_monday_event.start_time
     occurrences = every_monday_event.occurrences_between(start_time, start_time + 8.days)
 
     assert_equal 2, occurrences.length, "Event has 2 occurrences over 8 days"
@@ -286,28 +286,28 @@ class TestEventRecurrence < Test::Unit::TestCase
 
   test "occurrences_between with a mon,wed,fri weekly event" do
     multi_day_weekly_event = example_event :multi_day_weekly
-    start_time = multi_day_weekly_event.start.to_time
+    start_time = multi_day_weekly_event.start_time
     occurrences = multi_day_weekly_event.occurrences_between(start_time, start_time + 7.days)
 
     assert_equal 3, occurrences.length, "Event has 3 occurrences over 7 days"
-    assert_equal Time.parse("2014-02-03 at 4pm"), occurrences[0].to_time, "Event occurs on the 3rd"
-    assert_equal Time.parse("2014-02-05 at 4pm"), occurrences[1].to_time, "Event occurs on the 10th"
-    assert_equal Time.parse("2014-02-07 at 4pm"), occurrences[2].to_time, "Event occurs on the 10th"
+    assert_equal Time.parse("2014-02-03 16:00:00 -0800"), occurrences[0].start_time, "Event occurs on the 3rd"
+    assert_equal Time.parse("2014-02-05 16:00:00 -0800"), occurrences[1].start_time, "Event occurs on the 10th"
+    assert_equal Time.parse("2014-02-07 16:00:00 -0800"), occurrences[2].start_time, "Event occurs on the 10th"
   end
 
-  test "occurrences_between with monthy event" do
+  test "occurrences_between with monthy event (dst example)" do
     on_third_every_two_months_event = example_event :on_third_every_two_months
-    start_time = on_third_every_two_months_event.start.to_time
+    start_time = on_third_every_two_months_event.start_time
     occurrences = on_third_every_two_months_event.occurrences_between(start_time, start_time + 60.days)
 
     assert_equal 2, occurrences.length, "Event has 2 occurrences over 61 days"
-    assert_equal Time.parse("2014-02-03 at 4pm"), occurrences[0].to_time, "Event occurs on February 3rd"
-    assert_equal Time.parse("2014-04-03 at 4pm"), occurrences[1].to_time, "Event occurs on April 3rd"
+    assert_equal Time.parse("2014-02-03 16:00:00 -0800"), occurrences[0].to_time, "Event occurs on February 3rd"
+    assert_equal Time.parse("2014-04-03 16:00:00 -0700"), occurrences[1].to_time, "Event occurs on April 3rd"
   end
 
   test "occurrences_between with yearly event" do
     first_of_every_year_event = example_event :first_of_every_year
-    start_time = first_of_every_year_event.start.to_time
+    start_time = first_of_every_year_event.start_time
     occurrences = first_of_every_year_event.occurrences_between(start_time, start_time + 365.days)
 
     assert_equal 2, occurrences.length, "Event has 2 occurrences over 366 days"
@@ -317,7 +317,7 @@ class TestEventRecurrence < Test::Unit::TestCase
 
   test "occurrences_between with every-weekday daily event" do
     every_weekday_daily_event = example_event :every_weekday_daily
-    start_time = every_weekday_daily_event.start.to_time
+    start_time = every_weekday_daily_event.start_time
     occurrences = every_weekday_daily_event.occurrences_between(start_time, start_time + 6.days)
 
     assert_equal 5, occurrences.length, "Event has 5 occurrences over 7 days"
@@ -327,7 +327,7 @@ class TestEventRecurrence < Test::Unit::TestCase
 
   test "occurrences_between with daily event with until date" do
     monday_until_friday_event = example_event :monday_until_friday
-    start_time = monday_until_friday_event.start.to_time
+    start_time = monday_until_friday_event.start_time
     occurrences = monday_until_friday_event.occurrences_between(start_time, start_time + 30.days)
 
     assert_equal 5, occurrences.length, "Event has 5 occurrences over 31 days"
@@ -336,8 +336,9 @@ class TestEventRecurrence < Test::Unit::TestCase
   end
 
   test "occurrences_between with daily event with limited count" do
+    pend
     everyday_for_four_days = example_event :everyday_for_four_days
-    start_time = everyday_for_four_days.start.to_time
+    start_time = everyday_for_four_days.start_time
     occurrences = everyday_for_four_days.occurrences_between(start_time, start_time + 30.days)
 
     assert_equal 4, occurrences.length, "Event has 4 occurrences over 31 days"
@@ -345,28 +346,34 @@ class TestEventRecurrence < Test::Unit::TestCase
     assert_false occurrences.map(&:to_time).include?(Time.parse("2014-01-17 at 12pm")), "Event does not occur on Saturday January 18th"
   end
 
-  # test "occurrences_between with first saturday of month event" do
-  #   first_saturday_of_month_event = example_event :first_saturday_of_month
-  #   start_time = first_saturday_of_month_event.start.to_time
-  #   occurrences = first_saturday_of_month_event.occurrences_between(start_time, start_time + 45.days)
+  test "occurrences_between with first saturday of month event" do
+    first_saturday_of_month_event = example_event :first_saturday_of_month
+    start_time = first_saturday_of_month_event.start_time
+    occurrences = first_saturday_of_month_event.occurrences_between(start_time, start_time + 45.days)
 
-  #   assert_equal 2, occurrences.length, "Event has 2 occurrences over 46 days"
-  #   assert_true occurrences.map(&:to_time).include?(Time.parse("2014-01-04")), "Event occurs on Jan 04"
-  #   assert_true occurrences.map(&:to_time).include?(Time.parse("2014-02-08")), "Event occurs on Feb 08"
-  # end
+    assert_equal 2, occurrences.length, "Event has 2 occurrences over 46 days"
+    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-01-04")), "Event occurs on Jan 04"
+    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-02-08")), "Event occurs on Feb 08"
+  end
 
   test "occurrences_between for proper count-limited event with first event in the past" do
     one_day_a_month_for_three_months_event = example_event :one_day_a_month_for_three_months
-    start_time = one_day_a_month_for_three_months_event.start.to_time
+    start_time = one_day_a_month_for_three_months_event.start_time
     occurrences = one_day_a_month_for_three_months_event.occurrences_between(start_time + 30.days, start_time + 90.days)
 
     assert_equal 2, occurrences.length, "Event has 2 occurrences from 30 days after first event to 90 days after first event"
   end
 
+  test "occurrences_between with UTC times" do
+    utc_event = example_event :utc
+    occurrences = utc_event.occurrences_between(Time.parse("2014-01-01"), Time.parse("2014-02-01"))
+    assert_equal Time.parse("20140114T180000Z"), occurrences.first.start_time, "Event start time is in UTC"
+  end
+
   test "schedule" do
     daily_event = example_event :daily
     schedule = daily_event.schedule
-    assert_equal daily_event.start.to_time, schedule.start_time,                   "Schedule has the same start time as event"
+    assert_equal daily_event.start_time, schedule.start_time,                   "Schedule has the same start time as event"
     assert_equal daily_event.end.to_time,   schedule.end_time,                     "Schedule has the same end time as event"
     assert_equal IceCube::DailyRule,        schedule.recurrence_rules.first.class, "Sets daily recurrence rule"
     assert_equal daily_event.exdate.map(&:to_time), schedule.exception_times
@@ -388,5 +395,57 @@ class TestEventRecurrence < Test::Unit::TestCase
     ics_string = File.read(ics_path)
     calendars = Icalendar.parse(ics_string)
     Array(calendars).first.events.first
+  end
+end
+
+class TestTimeUtil < Test::Unit::TestCase
+  include Icalendar
+
+  test "converts DateTimee to Time, preserving UTC offset" do
+    utc_datetime = DateTime.parse("20140114T180000Z")
+    assert_equal 0, TimeUtil.datetime_to_time(utc_datetime).utc_offset, "UTC datetime converts to time with no offset"
+
+    pst_datetime = DateTime.parse("2014-01-27T12:55:21-08:00")
+    assert_equal -8*60*60, TimeUtil.datetime_to_time(pst_datetime).utc_offset, "PST datetime converts to time with 8 hour offset"
+  end
+
+  test "converts DateTime to Time correctly" do
+    datetime = DateTime.parse("2014-01-27T12:55:21-08:00")
+    correct_time = Time.parse("2014-01-27T12:55:21-08:00")
+    assert_equal correct_time, TimeUtil.datetime_to_time(datetime), "Converts DateTime to Time object with correct time"
+  end
+
+  test "DateTime with icalendar_tzid  overrides utc offset when coverted to a Time object" do
+    datetime = DateTime.parse("2014-01-27T12:55:21+00:00")
+    datetime.icalendar_tzid = "America/Los_Angeles"
+    
+    assert_equal Time.parse("2014-01-27T12:55:21-08:00"), TimeUtil.to_time(datetime)
+  end
+
+  test "converts Date to Time correctly" do
+    assert_equal Time.parse("2014-01-01"), TimeUtil.date_to_time(Date.parse("2014-01-01")), "Converts Date to Time object"
+  end
+
+  test ".timezone_to_hour_minute_utc_offset" do
+    assert_equal "-08:00", TimeUtil.timezone_to_hour_minute_utc_offset("America/Los_Angeles"),                           "Handles negative offsets"
+    assert_equal "+01:00", TimeUtil.timezone_to_hour_minute_utc_offset("Europe/Amsterdam"),                              "Handles positive offsets"
+    assert_equal "+00:00", TimeUtil.timezone_to_hour_minute_utc_offset("GMT"),                                           "Handles UTC zones"
+    assert_equal nil,      TimeUtil.timezone_to_hour_minute_utc_offset("Foo/Bar"),                                       "Returns nil when it doesn't know about the timezone"
+    assert_equal "-08:00", TimeUtil.timezone_to_hour_minute_utc_offset("\"America/Los_Angeles\""),                       "Handles quoted strings (you get these from ICS files)"
+    assert_equal "-07:00", TimeUtil.timezone_to_hour_minute_utc_offset("America/Los_Angeles", Date.parse("2014-05-01")), "Handles daylight savings offset"
+  end
+
+  test ".timezone_to_hour_minute_utc_offset (daylight savings cases)" do
+    # FYI, daylight savings happens on March 9, 2014 at 2am in -08:00
+
+    assert_equal "-08:00", TimeUtil.timezone_to_hour_minute_utc_offset("America/Los_Angeles", DateTime.parse("2014-03-09T01:00:00-08:00")), "Handles very specific daylight savings offset"
+    
+    embedded_timezone_datetime = DateTime.parse("2014-03-09T02:00:00+00:00")
+    embedded_timezone_datetime.icalendar_tzid = "America/Los_Angeles"
+    assert_equal "-07:00", TimeUtil.timezone_to_hour_minute_utc_offset("America/Los_Angeles", embedded_timezone_datetime), "Handles very specific daylight savings offset"
+
+    embedded_timezone_datetime = DateTime.parse("2014-03-09T03:00:00+00:00")
+    embedded_timezone_datetime.icalendar_tzid = "America/Los_Angeles"
+    assert_equal "-07:00", TimeUtil.timezone_to_hour_minute_utc_offset("America/Los_Angeles", embedded_timezone_datetime), "Handles very specific daylight savings offset"
   end
 end

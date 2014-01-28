@@ -130,7 +130,21 @@ module Icalendar
 
     # This is the ice_cube-powered way
     def occurrences_between(begin_time, closing_time)
-      schedule.occurrences_between(begin_time.to_time, closing_time.to_time)
+      occurrences = schedule.occurrences_between(TimeUtil.to_time(begin_time), TimeUtil.to_time(closing_time)).map
+      if timezone
+        occurrences.map do |occurrence|
+          tz = TZInfo::Timezone.get(timezone)
+          properly_offset_start_time = tz.local_to_utc(occurrence.start_time)
+          properly_offset_end_time = tz.local_to_utc(occurrence.end_time)
+          IceCube::Occurrence.new(properly_offset_start_time, properly_offset_end_time)
+        end
+      else
+        occurrences
+      end
+    end
+
+    def timezone
+      start.icalendar_tzid.to_s.gsub(/^(["'])|(["'])$/, "") if start.respond_to?(:icalendar_tzid)
     end
 
     def rrules
@@ -139,7 +153,7 @@ module Icalendar
 
     def schedule
       schedule = IceCube::Schedule.new
-      schedule.start_time = start
+      schedule.start_time = TimeUtil.to_time(start)
       schedule.end_time = self.end
 
       rrules.each do |rrule|
@@ -172,7 +186,7 @@ module Icalendar
 
       exdate.each do |exception_date|
         exception_date = Time.parse(exception_date) if exception_date.is_a?(String)
-        schedule.add_exception_time(exception_date.to_time)
+        schedule.add_exception_time(TimeUtil.to_time(exception_date))
       end
 
       schedule
@@ -226,5 +240,63 @@ module Icalendar
       hash
     end
 
+    def start_time
+      TimeUtil.to_time(self.start)
+    end
+
+  end
+end
+
+# Put this in it's own file.
+
+require 'tzinfo'
+
+module Icalendar
+  module TimeUtil
+    def datetime_to_time(datetime)
+      raise ArgumentError, "Must pass a DateTime object (#{datetime.class} passed instead)" unless datetime.is_a? DateTime
+      hour_minute_utc_offset = timezone_to_hour_minute_utc_offset(datetime.icalendar_tzid, datetime.to_date) || datetime.strftime("%:z")
+
+      Time.new(datetime.year, datetime.month, datetime.mday, datetime.hour, datetime.min, datetime.sec, hour_minute_utc_offset)
+    end
+
+    def date_to_time(date)
+      raise ArgumentError, "Must pass a Date object (#{date.class} passed instead)" unless date.is_a? Date
+      Time.new(date.year, date.month, date.mday)
+    end
+
+    def to_time(time_object)
+      if time_object.is_a?(Time)
+        time_object
+      elsif time_object.is_a?(DateTime)
+        datetime_to_time(time_object)
+      elsif time_object.is_a?(Date)
+        date_to_time(time_object)
+      else
+        raise ArgumentError, "Unsupported time object passed: #{time_object.inspect}"
+      end
+    end
+
+    def timezone_to_hour_minute_utc_offset(tzid, time_period = Time.now)
+      utc_time_period = to_time(time_period).utc
+      tzid = tzid.to_s.gsub(/^(["'])|(["'])$/, "")
+      utc_offset =  TZInfo::Timezone.get(tzid).period_for_utc(utc_time_period).utc_total_offset # this seems to work, but I feel like there is a lurking bug
+      hour_offset = utc_offset/60/60
+      hour_offset = "+#{hour_offset}" if hour_offset >= 0
+      match = hour_offset.to_s.match(/(\+|-)(\d+)/)
+      "#{match[1]}#{match[2].rjust(2, "0")}:00"
+    rescue TZInfo::InvalidTimezoneIdentifier => e
+      nil
+    end
+
+    # Time.parse("2013-01-01 15:00", timezone: "America/Los_Angeles") => 2013-01-01 15:00:00 -08:00
+    # Time.parse("2014-0-01 15:00", timezone: "America/Los_Angeles") => 2013-01-01 15:00:00 -08:00
+    # Time.parse("2013-01-01 15:00", timezone: "America/Toronto") => 2013-01-01 15:00:00 -05:00
+    # Time.parse(Time.now, timezone: "America/Los_Angeles")
+    # def parse(string, timezone)
+      
+    # end
+
+    extend self
   end
 end
