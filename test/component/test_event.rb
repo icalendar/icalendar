@@ -336,7 +336,6 @@ class TestEventRecurrence < Test::Unit::TestCase
   end
 
   test "occurrences_between with daily event with limited count" do
-    pend
     everyday_for_four_days = example_event :everyday_for_four_days
     start_time = everyday_for_four_days.start_time
     occurrences = everyday_for_four_days.occurrences_between(start_time, start_time + 30.days)
@@ -353,7 +352,7 @@ class TestEventRecurrence < Test::Unit::TestCase
 
     assert_equal 2, occurrences.length, "Event has 2 occurrences over 46 days"
     assert_true occurrences.map(&:to_time).include?(Time.parse("2014-01-04")), "Event occurs on Jan 04"
-    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-02-08")), "Event occurs on Feb 08"
+    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-02-01")), "Event occurs on Feb 08"
   end
 
   test "occurrences_between for proper count-limited event with first event in the past" do
@@ -379,7 +378,7 @@ class TestEventRecurrence < Test::Unit::TestCase
     assert_equal daily_event.exdate.map(&:to_time), schedule.exception_times
   end
 
-  test "convert_ical_day_to_sym" do
+  test "#transform_byday_to_hash with non-intervalic weekday recurrence ('every saturday')" do
     byday = [
       Icalendar::RRule::Weekday.new("MO", ""),
       Icalendar::RRule::Weekday.new("WE", ""),
@@ -387,7 +386,16 @@ class TestEventRecurrence < Test::Unit::TestCase
     ]
 
     event = example_event :daily
-    assert_equal({monday: [], wednesday: [], friday: []}, event.transform_byday_to_hash(byday))
+    assert_equal([:monday, :wednesday, :friday], event.transform_byday_to_hash(byday), "Returns array of days when no monthly interval is set")
+  end
+
+  test "#transform_byday_to_hash with intervalic weekday recurrence ('every 1st saturday of the month')" do
+    byday = [
+      Icalendar::RRule::Weekday.new("SA", "1")
+    ]
+
+    event = example_event :daily
+    assert_equal({saturday: [1]}, event.transform_byday_to_hash(byday), "Returns hash with day of week and interval")
   end
 
   def example_event(ics_name)

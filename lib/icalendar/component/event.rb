@@ -130,7 +130,7 @@ module Icalendar
 
     # This is the ice_cube-powered way
     def occurrences_between(begin_time, closing_time)
-      occurrences = schedule.occurrences_between(TimeUtil.to_time(begin_time), TimeUtil.to_time(closing_time)).map
+      occurrences = schedule.occurrences_between(TimeUtil.to_time(begin_time), TimeUtil.to_time(closing_time))
       if timezone
         occurrences.map do |occurrence|
           tz = TZInfo::Timezone.get(timezone)
@@ -157,7 +157,6 @@ module Icalendar
       schedule.end_time = self.end
 
       rrules.each do |rrule|
-        days = Array(rrule.by_list.fetch(:byday)).map {|ical_day| convert_ical_day_to_sym(ical_day) }
 
         ice_cube_recurrence_rule = if rrule.frequency == "DAILY"
           IceCube::DailyRule.new(rrule.interval)
@@ -175,7 +174,10 @@ module Icalendar
         end
 
         ice_cube_recurrence_rule.day_of_month(rrule.by_list.fetch(:bymonthday)) if rrule.by_list.fetch(:bymonthday)
-        ice_cube_recurrence_rule.day(days) unless days.empty?
+
+        days = transform_byday_to_hash(rrule.by_list.fetch(:byday))
+        ice_cube_recurrence_rule.day(days) if days.is_a?(Array) and !days.empty?
+        ice_cube_recurrence_rule.day_of_week(days) if days.is_a?(Hash) and !days.empty?
 
         ice_cube_recurrence_rule
           .until(rrule.until)
@@ -215,10 +217,9 @@ module Icalendar
 
     def transform_byday_to_hash(byday)
       hash = {}
-      byday.map do |byday|
+      Array(byday).map do |byday|
         day_code = byday.day
-        position = Array(byday.position)
-        position = [] if position == [""]
+        position = Array(byday.position).map(&:to_i)
 
         day_symbol = case day_code.to_s
         when "SU" then :sunday
@@ -237,7 +238,11 @@ module Icalendar
         hash[two_el_array.first] = two_el_array.last
       end
 
-      hash
+      if hash.values.find {|position| position != [0] }
+        hash
+      else
+        hash.keys
+      end
     end
 
     def start_time
@@ -288,14 +293,6 @@ module Icalendar
     rescue TZInfo::InvalidTimezoneIdentifier => e
       nil
     end
-
-    # Time.parse("2013-01-01 15:00", timezone: "America/Los_Angeles") => 2013-01-01 15:00:00 -08:00
-    # Time.parse("2014-0-01 15:00", timezone: "America/Los_Angeles") => 2013-01-01 15:00:00 -08:00
-    # Time.parse("2013-01-01 15:00", timezone: "America/Toronto") => 2013-01-01 15:00:00 -05:00
-    # Time.parse(Time.now, timezone: "America/Los_Angeles")
-    # def parse(string, timezone)
-      
-    # end
 
     extend self
   end

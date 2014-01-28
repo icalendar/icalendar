@@ -25,12 +25,12 @@ BEGIN:VEVENT
 UID:d317c7c7-a6cc-4a85-baed-1542a336899d
 RRULE:FREQ=MONTHLY;INTERVAL=1;BYDAY=1SA
 SUMMARY:Email/SFU Connect
-DESCRIPTION:\nRegular scheduled maintenance \n
-X-MS-OLK-SENDER:mailto:mluck@sfu.ca
-ORGANIZER;SENT-BY="mailto:mluck@sfu.ca":mailto:itadmin@sfu.ca
-X-MS-OLK-SENDER:mailto:mluck@sfu.ca
-DTSTART;TZID="America/Los_Angeles":20110604T000000
-DTEND;TZID="America/Los_Angeles":20110604T040000
+DESCRIPTION:\nScheduled maintenance \n
+X-MS-OLK-SENDER:mailto:foo@example.ca
+ORGANIZER;SENT-BY="mailto:foo@example.ca":mailto:itadmin@example.ca
+X-MS-OLK-SENDER:mailto:foo@example.ca
+DTSTART;TZID="America/Los_Angeles":20140104T000000
+DTEND;TZID="America/Los_Angeles":20140104T040000
 STATUS:CONFIRMED
 CLASS:PUBLIC
 X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
