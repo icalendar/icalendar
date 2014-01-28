@@ -22,6 +22,7 @@ require 'hash_attrs'
 require 'icalendar/base'
 require 'icalendar/component'
 require 'icalendar/rrule'
+require 'icalendar/schedule'
 
 # Calendar and components
 require 'icalendar/calendar'
@@ -37,3 +38,5 @@ require 'icalendar/parser'
 
 # TZINFO support
 # require 'icalendar/tzinfo'
+
+require 'icalendar/time_util'
