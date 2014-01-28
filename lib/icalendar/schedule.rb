@@ -19,6 +19,14 @@ module Icalendar
       event.rrule
     end
 
+    def start_time
+      TimeUtil.to_time(event.start)
+    end
+
+    def end_time
+      TimeUtil.to_time(event.end)
+    end
+
     def occurrences_between(begin_time, closing_time)
       occurrences = ice_cube_schedule.occurrences_between(TimeUtil.to_time(begin_time), TimeUtil.to_time(closing_time))
 
@@ -42,31 +50,7 @@ module Icalendar
       schedule.end_time = end_time
 
       rrules.each do |rrule|
-
-        ice_cube_recurrence_rule = if rrule.frequency == "DAILY"
-          IceCube::DailyRule.new(rrule.interval)
-        elsif rrule.frequency == "WEEKLY"
-          IceCube::WeeklyRule.new(rrule.interval)
-        elsif rrule.frequency == "MONTHLY"
-          IceCube::MonthlyRule.new(rrule.interval)
-        elsif rrule.frequency == "YEARLY"
-          IceCube::YearlyRule.new(rrule.interval).tap do |yearly_rule|
-            yearly_rule.month_of_year(rrule.by_list.fetch(:bymonth)) if rrule.by_list.fetch(:bymonth)
-            yearly_rule.day_of_month(rrule.by_list.fetch(:bymonthday)) if rrule.by_list.fetch(:bymonthday)
-          end
-        else
-          raise "Unknown frequency: #{rrule.frequency}"
-        end
-
-        ice_cube_recurrence_rule.day_of_month(rrule.by_list.fetch(:bymonthday)) if rrule.by_list.fetch(:bymonthday)
-
-        days = transform_byday_to_hash(rrule.by_list.fetch(:byday))
-        ice_cube_recurrence_rule.day(days) if days.is_a?(Array) and !days.empty?
-        ice_cube_recurrence_rule.day_of_week(days) if days.is_a?(Hash) and !days.empty?
-
-        ice_cube_recurrence_rule.until(TimeUtil.to_time(rrule.until)) if rrule.until
-        ice_cube_recurrence_rule.count(rrule.count)
-
+        ice_cube_recurrence_rule = convert_rrule_to_ice_cube_recurrence_rule(rrule)
         schedule.add_recurrence_rule(ice_cube_recurrence_rule)
       end
 
@@ -78,42 +62,65 @@ module Icalendar
       schedule
     end
 
-    def transform_byday_to_hash(byday)
-      hash = {}
-      Array(byday).map do |byday|
-        day_code = byday.day
-        position = Array(byday.position).map(&:to_i)
+    def transform_byday_to_hash(byday_entries)
+      hashable_array = Array(byday_entries).map {|byday| convert_byday_to_ice_cube_day_of_week_hash(byday) }.flatten(1)
+      hash = Hash[*hashable_array]
 
-        day_symbol = case day_code.to_s
-        when "SU" then :sunday
-        when "MO" then :monday
-        when "TU" then :tuesday
-        when "WE" then :wednesday
-        when "TH" then :thursday
-        when "FR" then :friday
-        when "SA" then :saturday
-        else
-          raise ArgumentError.new "Unexpected ical_day: #{ical_day.inspect}"
-        end
-
-        [day_symbol, position]
-      end.each do |two_el_array|
-        hash[two_el_array.first] = two_el_array.last
-      end
-
-      if hash.values.find {|position| position != [0] }
-        hash
-      else
+      if hash.values.include?([0]) # byday interval not specified (e.g., BYDAY=SA not BYDAY=1SA)
         hash.keys
+      else
+        hash
       end
     end
 
-    def start_time
-      TimeUtil.to_time(event.start)
+    private
+
+
+    def convert_rrule_to_ice_cube_recurrence_rule(rrule)
+      ice_cube_recurrence_rule = if rrule.frequency == "DAILY"
+        IceCube::DailyRule.new(rrule.interval)
+      elsif rrule.frequency == "WEEKLY"
+        IceCube::WeeklyRule.new(rrule.interval)
+      elsif rrule.frequency == "MONTHLY"
+        IceCube::MonthlyRule.new(rrule.interval)
+      elsif rrule.frequency == "YEARLY"
+        IceCube::YearlyRule.new(rrule.interval).tap do |yearly_rule|
+          yearly_rule.month_of_year(rrule.by_list.fetch(:bymonth)) if rrule.by_list.fetch(:bymonth)
+          yearly_rule.day_of_month(rrule.by_list.fetch(:bymonthday)) if rrule.by_list.fetch(:bymonthday)
+        end
+      else
+        raise "Unknown frequency: #{rrule.frequency}"
+      end
+
+      ice_cube_recurrence_rule.day_of_month(rrule.by_list.fetch(:bymonthday)) if rrule.by_list.fetch(:bymonthday)
+
+      days = transform_byday_to_hash(rrule.by_list.fetch(:byday))
+      ice_cube_recurrence_rule.day(days) if days.is_a?(Array) and !days.empty?
+      ice_cube_recurrence_rule.day_of_week(days) if days.is_a?(Hash) and !days.empty?
+
+      ice_cube_recurrence_rule.until(TimeUtil.to_time(rrule.until)) if rrule.until
+      ice_cube_recurrence_rule.count(rrule.count)
+
+      ice_cube_recurrence_rule
     end
 
-    def end_time
-      TimeUtil.to_time(event.end)
+    def convert_byday_to_ice_cube_day_of_week_hash(byday)
+      day_code = byday.day
+      position = Array(byday.position).map(&:to_i)
+
+      day_symbol = case day_code.to_s
+      when "SU" then :sunday
+      when "MO" then :monday
+      when "TU" then :tuesday
+      when "WE" then :wednesday
+      when "TH" then :thursday
+      when "FR" then :friday
+      when "SA" then :saturday
+      else
+        raise ArgumentError.new "Unexpected ical_day: #{ical_day.inspect}"
+      end
+
+      [day_symbol, position]
     end
   end
 end
