@@ -1,4 +1,9 @@
+require 'ice_cube'
+
 module Icalendar
+  class Occurrence < Struct.new(:start_time, :end_time)
+  end
+
   class Schedule
     attr_reader :event
 
@@ -16,15 +21,18 @@ module Icalendar
 
     def occurrences_between(begin_time, closing_time)
       occurrences = ice_cube_schedule.occurrences_between(TimeUtil.to_time(begin_time), TimeUtil.to_time(closing_time))
-      if timezone
-        occurrences.map do |occurrence|
+
+      occurrences.map do |occurrence|
+        if timezone
           tz = TZInfo::Timezone.get(timezone)
-          properly_offset_start_time = tz.local_to_utc(occurrence.start_time)
-          properly_offset_end_time = tz.local_to_utc(occurrence.end_time)
-          IceCube::Occurrence.new(properly_offset_start_time, properly_offset_end_time)
+          start_time = tz.local_to_utc(occurrence.start_time)
+          end_time = tz.local_to_utc(occurrence.end_time)  
+        else
+          start_time = occurrence.start_time
+          end_time = occurrence.end_time
         end
-      else
-        occurrences
+        
+        Icalendar::Occurrence.new(start_time, end_time)
       end
     end
 

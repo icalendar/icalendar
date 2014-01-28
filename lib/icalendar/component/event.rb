@@ -6,8 +6,6 @@
   details.
 =end
 
-require 'ice_cube'
-
 module Icalendar
   # A Event calendar component is a grouping of component
   # properties, and possibly including Alarm calendar components, that

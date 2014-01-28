@@ -259,8 +259,8 @@ class TestEventRecurrence < Test::Unit::TestCase
     occurrences = daily_event.occurrences_between(daily_event.start_time, daily_event.start_time + 2.days)
 
     assert_equal 2,                        occurrences.length,        "Event has 2 occurrences over 3 days"
-    assert_equal Time.parse("2014-01-27"), occurrences.first.to_time, "Event occurrs on the 27th"
-    assert_equal Time.parse("2014-01-29"), occurrences.last.to_time,  "Event occurrs on the 29th"
+    assert_equal Time.parse("2014-01-27"), occurrences.first.start_time, "Event occurrs on the 27th"
+    assert_equal Time.parse("2014-01-29"), occurrences.last.start_time,  "Event occurrs on the 29th"
   end
 
   test "occurrences_between with an every-other-day event" do
@@ -269,9 +269,9 @@ class TestEventRecurrence < Test::Unit::TestCase
     occurrences = every_other_day_event.occurrences_between(start_time, start_time + 5.days)
 
     assert_equal 3, occurrences.length, "Event has 3 occurrences over 6 days"
-    assert_equal Time.parse("2014-01-27"), occurrences[0].to_time, "Event occurs on the 27th"
-    assert_equal Time.parse("2014-01-29"), occurrences[1].to_time, "Event occurs on the 29th"
-    assert_equal Time.parse("2014-01-31"), occurrences[2].to_time, "Event occurs on the 31st"
+    assert_equal Time.parse("2014-01-27"), occurrences[0].start_time, "Event occurs on the 27th"
+    assert_equal Time.parse("2014-01-29"), occurrences[1].start_time, "Event occurs on the 29th"
+    assert_equal Time.parse("2014-01-31"), occurrences[2].start_time, "Event occurs on the 31st"
   end
 
   test "occurrences_between with an every-monday event" do
@@ -280,8 +280,8 @@ class TestEventRecurrence < Test::Unit::TestCase
     occurrences = every_monday_event.occurrences_between(start_time, start_time + 8.days)
 
     assert_equal 2, occurrences.length, "Event has 2 occurrences over 8 days"
-    assert_equal Time.parse("2014-02-03 at 4pm"), occurrences[0].to_time, "Event occurs on the 3rd"
-    assert_equal Time.parse("2014-02-10 at 4pm"), occurrences[1].to_time, "Event occurs on the 10th"
+    assert_equal Time.parse("2014-02-03 at 4pm"), occurrences[0].start_time, "Event occurs on the 3rd"
+    assert_equal Time.parse("2014-02-10 at 4pm"), occurrences[1].start_time, "Event occurs on the 10th"
   end
 
   test "occurrences_between with a mon,wed,fri weekly event" do
@@ -301,8 +301,8 @@ class TestEventRecurrence < Test::Unit::TestCase
     occurrences = on_third_every_two_months_event.occurrences_between(start_time, start_time + 60.days)
 
     assert_equal 2, occurrences.length, "Event has 2 occurrences over 61 days"
-    assert_equal Time.parse("2014-02-03 16:00:00 -0800"), occurrences[0].to_time, "Event occurs on February 3rd"
-    assert_equal Time.parse("2014-04-03 16:00:00 -0700"), occurrences[1].to_time, "Event occurs on April 3rd"
+    assert_equal Time.parse("2014-02-03 16:00:00 -0800"), occurrences[0].start_time, "Event occurs on February 3rd"
+    assert_equal Time.parse("2014-04-03 16:00:00 -0700"), occurrences[1].start_time, "Event occurs on April 3rd"
   end
 
   test "occurrences_between with yearly event" do
@@ -311,8 +311,8 @@ class TestEventRecurrence < Test::Unit::TestCase
     occurrences = first_of_every_year_event.occurrences_between(start_time, start_time + 365.days)
 
     assert_equal 2, occurrences.length, "Event has 2 occurrences over 366 days"
-    assert_equal Time.parse("2014-01-01"), occurrences[0].to_time, "Event occurs on January 1st, 2014"
-    assert_equal Time.parse("2015-01-01"), occurrences[1].to_time, "Event occurs on January 1st, 2015"
+    assert_equal Time.parse("2014-01-01"), occurrences[0].start_time, "Event occurs on January 1st, 2014"
+    assert_equal Time.parse("2015-01-01"), occurrences[1].start_time, "Event occurs on January 1st, 2015"
   end
 
   test "occurrences_between with every-weekday daily event" do
@@ -321,8 +321,8 @@ class TestEventRecurrence < Test::Unit::TestCase
     occurrences = every_weekday_daily_event.occurrences_between(start_time, start_time + 6.days)
 
     assert_equal 5, occurrences.length, "Event has 5 occurrences over 7 days"
-    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-01-10")), "Event occurs on Friday January 10th"
-    assert_false occurrences.map(&:to_time).include?(Time.parse("2015-01-11")), "Event does not occur on Saturday January 11th"
+    assert_true occurrences.map(&:start_time).include?(Time.parse("2014-01-10")), "Event occurs on Friday January 10th"
+    assert_false occurrences.map(&:start_time).include?(Time.parse("2015-01-11")), "Event does not occur on Saturday January 11th"
   end
 
   test "occurrences_between with daily event with until date" do
@@ -331,8 +331,8 @@ class TestEventRecurrence < Test::Unit::TestCase
     occurrences = monday_until_friday_event.occurrences_between(start_time, start_time + 30.days)
 
     assert_equal 5, occurrences.length, "Event has 5 occurrences over 31 days"
-    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-01-15 at 12pm")), "Event occurs on Wednesday January 15th"
-    assert_false occurrences.map(&:to_time).include?(Time.parse("2014-01-18 at 12pm")), "Event does not occur on Saturday January 18th"
+    assert_true occurrences.map(&:start_time).include?(Time.parse("2014-01-15 at 12pm")), "Event occurs on Wednesday January 15th"
+    assert_false occurrences.map(&:start_time).include?(Time.parse("2014-01-18 at 12pm")), "Event does not occur on Saturday January 18th"
   end
 
   test "occurrences_between with daily event with limited count" do
@@ -341,8 +341,8 @@ class TestEventRecurrence < Test::Unit::TestCase
     occurrences = everyday_for_four_days.occurrences_between(start_time, start_time + 30.days)
 
     assert_equal 4, occurrences.length, "Event has 4 occurrences over 31 days"
-    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-01-15 at 12pm")), "Event occurs on Wednesday January 15th"
-    assert_false occurrences.map(&:to_time).include?(Time.parse("2014-01-17 at 12pm")), "Event does not occur on Saturday January 18th"
+    assert_true occurrences.map(&:start_time).include?(Time.parse("2014-01-15 at 12pm")), "Event occurs on Wednesday January 15th"
+    assert_false occurrences.map(&:start_time).include?(Time.parse("2014-01-17 at 12pm")), "Event does not occur on Saturday January 18th"
   end
 
   test "occurrences_between with first saturday of month event" do
@@ -351,8 +351,8 @@ class TestEventRecurrence < Test::Unit::TestCase
     occurrences = first_saturday_of_month_event.occurrences_between(start_time, start_time + 45.days)
 
     assert_equal 2, occurrences.length, "Event has 2 occurrences over 46 days"
-    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-01-04")), "Event occurs on Jan 04"
-    assert_true occurrences.map(&:to_time).include?(Time.parse("2014-02-01")), "Event occurs on Feb 08"
+    assert_true occurrences.map(&:start_time).include?(Time.parse("2014-01-04")), "Event occurs on Jan 04"
+    assert_true occurrences.map(&:start_time).include?(Time.parse("2014-02-01")), "Event occurs on Feb 08"
   end
 
   test "occurrences_between for proper count-limited event with first event in the past" do
