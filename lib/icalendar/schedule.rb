@@ -77,31 +77,33 @@ module Icalendar
 
 
     def convert_rrule_to_ice_cube_recurrence_rule(rrule)
-      ice_cube_recurrence_rule = if rrule.frequency == "DAILY"
-        IceCube::DailyRule.new(rrule.interval)
-      elsif rrule.frequency == "WEEKLY"
-        IceCube::WeeklyRule.new(rrule.interval)
-      elsif rrule.frequency == "MONTHLY"
-        IceCube::MonthlyRule.new(rrule.interval)
-      elsif rrule.frequency == "YEARLY"
-        IceCube::YearlyRule.new(rrule.interval).tap do |yearly_rule|
-          yearly_rule.month_of_year(rrule.by_list.fetch(:bymonth)) if rrule.by_list.fetch(:bymonth)
-          yearly_rule.day_of_month(rrule.by_list.fetch(:bymonthday)) if rrule.by_list.fetch(:bymonthday)
-        end
+      ice_cube_recurrence_rule = base_ice_cube_recurrence_rule(rrule.frequency, rrule.interval)
+
+      ice_cube_recurrence_rule.tap do |r|
+        days = transform_byday_to_hash(rrule.by_list.fetch(:byday))
+        r.month_of_year(rrule.by_list.fetch(:bymonth)) if rrule.by_list.fetch(:bymonth)
+        r.day_of_month(rrule.by_list.fetch(:bymonthday)) if rrule.by_list.fetch(:bymonthday)
+        r.day_of_week(days) if days.is_a?(Hash) and !days.empty?
+        r.day(days) if days.is_a?(Array) and !days.empty?
+        r.until(TimeUtil.to_time(rrule.until)) if rrule.until
+        r.count(rrule.count)
+      end
+
+      ice_cube_recurrence_rule
+    end
+
+    def base_ice_cube_recurrence_rule(frequency, interval)
+      if frequency == "DAILY"
+        IceCube::DailyRule.new(interval)
+      elsif frequency == "WEEKLY"
+        IceCube::WeeklyRule.new(interval)
+      elsif frequency == "MONTHLY"
+        IceCube::MonthlyRule.new(interval)
+      elsif frequency == "YEARLY"
+        IceCube::YearlyRule.new(interval)
       else
         raise "Unknown frequency: #{rrule.frequency}"
       end
-
-      ice_cube_recurrence_rule.day_of_month(rrule.by_list.fetch(:bymonthday)) if rrule.by_list.fetch(:bymonthday)
-
-      days = transform_byday_to_hash(rrule.by_list.fetch(:byday))
-      ice_cube_recurrence_rule.day(days) if days.is_a?(Array) and !days.empty?
-      ice_cube_recurrence_rule.day_of_week(days) if days.is_a?(Hash) and !days.empty?
-
-      ice_cube_recurrence_rule.until(TimeUtil.to_time(rrule.until)) if rrule.until
-      ice_cube_recurrence_rule.count(rrule.count)
-
-      ice_cube_recurrence_rule
     end
 
     def convert_byday_to_ice_cube_day_of_week_hash(byday)
