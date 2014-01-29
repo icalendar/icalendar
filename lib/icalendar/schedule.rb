@@ -42,7 +42,7 @@ module Icalendar
           start_time = tz.local_to_utc(ice_cube_occurrence.start_time)
           end_time = tz.local_to_utc(ice_cube_occurrence.end_time)
         rescue TZInfo::InvalidTimezoneIdentifier => e
-          warn "Unknown TZID specified in ical event (#{timezone.inspect}), ignoring (may cause recurrence to be at wrong time)"
+          warn "Unknown TZID specified in ical event (#{timezone.inspect}), ignoring (will likely cause event to be at wrong time!)"
         end
       end
 
