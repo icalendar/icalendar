@@ -6,12 +6,12 @@ module Icalendar
     class DateTime < Value
       FORMAT = '%Y%m%dT%H%M%S'
 
-      def initialize(value, params = {}, include_value_param = false)
+      def initialize(value, params = {})
         # TODO deal with timezones
         if value.respond_to? :to_datetime
-          super value.to_datetime, params, include_value_param
+          super value.to_datetime, params
         elsif value.is_a? String
-          super ::DateTime.strptime(value, FORMAT), params, include_value_param
+          super ::DateTime.strptime(value, FORMAT), params
         else
           super
         end

@@ -23,11 +23,11 @@ describe Icalendar do
     end
 
     it 'will output value param on dtstart' do
-      expect(subject.dtstart.to_ical).to match /^;VALUE=DATE:20061215$/
+      expect(subject.dtstart.to_ical(subject.class.default_property_types['dtstart'])).to match /^;VALUE=DATE:20061215$/
     end
 
     it 'will output value param on dtend' do
-      expect(subject.dtend.to_ical).to match /^;VALUE=DATE:20061215$/
+      expect(subject.dtend.to_ical(subject.class.default_property_types['dtend'])).to match /^;VALUE=DATE:20061215$/
     end
   end
 end

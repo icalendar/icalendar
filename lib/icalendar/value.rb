@@ -4,28 +4,27 @@ module Icalendar
 
   class Value < ::SimpleDelegator
 
-    attr_accessor :ical_params, :include_value_param
+    attr_accessor :ical_params
 
-    def initialize(value, params = {}, include_value_param = false)
+    def initialize(value, params = {})
       @ical_params = params.dup
-      @include_value_param = include_value_param
       super value
     end
 
     def ical_param(key, value)
-      @ical_params[key] = value
+      @ical_params[key.to_s] = value
     end
 
     def value
       __getobj__
     end
 
-    def to_ical
+    def to_ical(default_type)
+      ical_param 'value', self.class.value_type if needs_value_type?(default_type)
       "#{params_ical}:#{value_ical}"
     end
 
     def params_ical
-      ical_param 'value', self.class.value_type if include_value_param
       unless ical_params.empty?
         ";#{ical_params.map { |name, value| param_ical name, value }.join ';'}"
       end
@@ -36,6 +35,10 @@ module Icalendar
     end
 
     private
+
+    def needs_value_type?(default_type)
+      self.class != default_type
+    end
 
     def param_ical(name, param_value)
       if param_value.is_a? Array

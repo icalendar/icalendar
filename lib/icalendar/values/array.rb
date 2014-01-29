@@ -5,20 +5,12 @@ module Icalendar
 
       def initialize(value, klass, params = {}, options = {})
         @value_delimiter = options[:delimiter] || ','
-        mapped = if value.nil? || value.is_a?(Icalendar::Value)
-                   [value]
-                 elsif value.is_a? ::Array
-                   value.map do |v|
-                     if v.nil? || v.is_a?(Icalendar::Value)
-                       v
-                     else
-                       klass.new v, params
-                     end
-                   end
+        mapped = if value.is_a? ::Array
+                   value.map { |v| klass.new v, params }
                  else
                    [klass.new(value, params)]
                  end
-        super mapped, params, options[:include_value_param]
+        super mapped, params
       end
 
       def params_ical
@@ -33,6 +25,18 @@ module Icalendar
           v.value_ical
         end.join @value_delimiter
       end
+
+      def valid?
+        klass = value.first.class
+        !value.all? { |v| v.class == klass }
+      end
+
+      private
+
+      def needs_value_type?(default_type)
+        value.first.class != default_type
+      end
+
     end
 
   end

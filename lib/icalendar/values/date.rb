@@ -6,11 +6,11 @@ module Icalendar
     class Date < Value
       FORMAT = '%Y%m%d'
 
-      def initialize(value, params = {}, include_value_param = false)
+      def initialize(value, params = {})
         if value.respond_to? :to_date
-          super value.to_date, params, include_value_param
+          super value.to_date, params
         elsif value.is_a? String
-          super ::Date.strptime(value, FORMAT), params, include_value_param
+          super ::Date.strptime(value, FORMAT), params
         else
           super
         end

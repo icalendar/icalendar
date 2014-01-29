@@ -5,9 +5,9 @@ module Icalendar
 
     class UtcOffset < Value
 
-      def initialize(value, params = {}, include_value_param = false)
+      def initialize(value, params = {})
         value = OpenStruct.new parse_fields(value)
-        super value, params, include_value_param
+        super value, params
       end
 
       def behind?

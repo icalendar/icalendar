@@ -3,7 +3,7 @@ module Icalendar
 
     class Period < Value
 
-      def initialize(value, params = {}, include_value_param = false)
+      def initialize(value, params = {})
         parts = value.split '/'
         period_start = Icalendar::Values::DateTime.new parts.first
         if parts.last =~ /\A[+-]?P.+\z/
@@ -11,7 +11,7 @@ module Icalendar
         else
           period_end = Icalendar::Values::DateTime.new parts.last
         end
-        super [period_start, period_end], params, include_value_param
+        super [period_start, period_end], params
       end
 
       def value_ical

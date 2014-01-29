@@ -5,9 +5,8 @@ module Icalendar
 
     class Duration < Value
 
-      def initialize(value, params = {}, include_value_param = false)
-        value = OpenStruct.new parse_fields(value)
-        super value, params, include_value_param
+      def initialize(value, params = {})
+        super OpenStruct.new(parse_fields value), params
       end
 
       def past?

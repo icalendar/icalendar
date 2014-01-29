@@ -121,10 +121,7 @@ describe Icalendar::Calendar do
         e.summary = 'An event'
         e.dtstart = "20140101T000000Z"
         e.dtend = "20140101T050000Z"
-        e.geo = [
-          Icalendar::Values::Float.new(-1.2, {'X-TEST' => 'output'}),
-          Icalendar::Values::Float.new(-2.1, {'Y-TEST' => 'output'})
-        ]
+        e.geo = [-1.2, -2.1]
       end
       subject.freebusy do |f|
         f.dtstart = "20140102T080000Z"
@@ -146,7 +143,7 @@ BEGIN:VEVENT
 DTSTAMP:20131226T050000Z
 DTSTART:20140101T000000Z
 DTEND:20140101T050000Z
-GEO;X-TEST=output;Y-TEST=output:-1.2;-2.1
+GEO:-1.2;-2.1
 SUMMARY:An event
 END:VEVENT
 BEGIN:VFREEBUSY

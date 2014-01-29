@@ -10,8 +10,8 @@ module Icalendar
       MONTHDAY = '[+-]?\d{1,2}'
       YEARDAY = '[+-]?\d{1,3}'
 
-      def initialize(value, params = {}, include_value_param = false)
-        super OpenStruct.new(parse_fields value), params, include_value_param
+      def initialize(value, params = {})
+        super OpenStruct.new(parse_fields value), params
       end
 
       def valid?

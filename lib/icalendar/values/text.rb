@@ -3,12 +3,12 @@ module Icalendar
 
     class Text < Value
 
-      def initialize(value, params = {}, include_value_param = false)
-        value.gsub! '\n', "\n"
+      def initialize(value, params = {})
+        value = value.gsub '\n', "\n"
         value.gsub! '\,', ','
         value.gsub! '\;', ';'
         value.gsub!('\\\\') { '\\' }
-        super value, params, include_value_param
+        super value, params
       end
 
       def value_ical

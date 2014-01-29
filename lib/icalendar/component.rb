@@ -35,10 +35,10 @@ module Icalendar
         unless value.nil?
           if value.is_a? ::Array
             value.map do |part|
-              ical_fold "#{ical_prop_name prop}#{part.to_ical}"
+              ical_fold "#{ical_prop_name prop}#{part.to_ical self.class.default_property_types[prop]}"
             end.join "\r\n" unless value.empty?
           else
-            ical_fold "#{ical_prop_name prop}#{value.to_ical}"
+            ical_fold "#{ical_prop_name prop}#{value.to_ical self.class.default_property_types[prop]}"
           end
         end
       end.compact.join "\r\n"
