@@ -134,10 +134,5 @@ module Icalendar
     def schedule
       @schedule ||= Schedule.new(self)
     end
-
-    def start_time
-      TimeUtil.to_time(self.start)
-    end
-
   end
 end

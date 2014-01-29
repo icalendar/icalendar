@@ -254,6 +254,13 @@ end
 class TestEventRecurrence < Test::Unit::TestCase
   include Icalendar
 
+  # Added for convenience in tests
+  class Icalendar::Event
+    def start_time
+      Icalendar::TimeUtil.to_time(start)
+    end
+  end
+
   test "occurrences_between with a daily event" do
     daily_event = example_event :daily
     occurrences = daily_event.occurrences_between(daily_event.start_time, daily_event.start_time + 2.days)
