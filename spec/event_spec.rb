@@ -51,8 +51,8 @@ describe Icalendar::Event do
   context 'suggested single values' do
     before(:each) do
       subject.dtstart = DateTime.now
-      subject.add_rrule double('RRule')
-      subject.add_rrule double('RRule')
+      subject.append_rrule double('RRule')
+      subject.append_rrule double('RRule')
     end
 
     it 'is valid by default' do
@@ -78,7 +78,7 @@ describe Icalendar::Event do
       end
 
       it 'can be added' do
-        subject.add_comment 'a comment'
+        subject.append_comment 'a comment'
         subject.comment.should == ['a comment']
       end
     end

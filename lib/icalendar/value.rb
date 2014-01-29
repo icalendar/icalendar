@@ -20,7 +20,6 @@ module Icalendar
       __getobj__
     end
 
-    # TODO ensure EVERYTHING is properly escaped
     def to_ical
       "#{params_ical}:#{value_ical}"
     end

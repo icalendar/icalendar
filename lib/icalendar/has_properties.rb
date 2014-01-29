@@ -105,7 +105,7 @@ module Icalendar
       end
 
       def single_property(prop, klass)
-        self.single_properties << prop
+        self.single_properties << prop.to_s
         self.default_property_types[prop.to_s] = klass
 
         define_method prop do
@@ -115,14 +115,10 @@ module Icalendar
         define_method "#{prop}=" do |value|
           instance_variable_set "@#{prop}", map_property_value(value, klass, false)
         end
-
-        define_method "add_#{prop}" do |value|
-          send "#{prop}=", value
-        end
       end
 
       def multi_property(prop, klass)
-        self.multiple_properties << prop
+        self.multiple_properties << prop.to_s
         self.default_property_types[prop.to_s] = klass
         property_var = "@#{prop}"
 
@@ -138,7 +134,7 @@ module Icalendar
           end
         end
 
-        define_method "add_#{prop}" do |value|
+        define_method "append_#{prop}" do |value|
           send(prop) << map_property_value(value, klass, true)
         end
       end

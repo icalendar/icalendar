@@ -62,7 +62,11 @@ module Icalendar
             prop_value = klass.new fields[:value], fields[:params], include_value_param
           end
           prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
-          component.send "add_#{prop_name}", prop_value
+          if component.class.multiple_properties.include? prop_name
+            component.send "append_#{prop_name}", prop_value
+          else
+            component.send "#{prop_name}=", prop_value
+          end
         end
       end
       component
@@ -96,7 +100,7 @@ module Icalendar
         param_name = match[0].downcase
         params[param_name] ||= []
         match[1].scan %r{#{PVALUE}} do |param_value|
-          params[param_name] << param_value if param_value.size > 0
+          params[param_name] << param_value.gsub(/\A"|"\z/, '') if param_value.size > 0
         end
       end
       {

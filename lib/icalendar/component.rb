@@ -45,7 +45,7 @@ module Icalendar
     end
 
     def ical_prop_name(prop_name)
-      prop_name.to_s.gsub(/\Aip_/, '').gsub('_', '-').upcase
+      prop_name.gsub(/\Aip_/, '').gsub('_', '-').upcase
     end
 
     def ical_fold(content_line)
