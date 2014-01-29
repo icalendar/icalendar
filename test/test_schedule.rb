@@ -44,6 +44,15 @@ class TestSchedule < Test::Unit::TestCase
     assert_true example_occurrence.respond_to?(:end_time), "Occurrence responds to end_time when event has timezone"
   end
 
+  test "#convert_ice_cube_occurrence" do
+    bunk_timezoned_event = example_event :first_saturday_of_month
+    bunk_timezoned_event.start.icalendar_tzid = "GMT-08.00/-07.00" # force bad timezone
+    schedule = Schedule.new(bunk_timezoned_event)
+
+    example_occurrence = schedule.occurrences_between(Date.parse("2014-02-01"), Date.parse("2014-03-01")).first
+    assert_true example_occurrence.respond_to?(:start_time), "Occurrence responds to start_time when event has timezone"
+    assert_true example_occurrence.respond_to?(:end_time), "Occurrence responds to end_time when event has timezone"
+  end
 
   def example_event(ics_name)
     ics_path = File.expand_path "#{File.dirname(__FILE__)}/fixtures/recurrence_examples/#{ics_name}_event.ics"

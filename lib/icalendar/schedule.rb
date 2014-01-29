@@ -28,20 +28,28 @@ module Icalendar
     end
 
     def occurrences_between(begin_time, closing_time)
-      occurrences = ice_cube_schedule.occurrences_between(TimeUtil.to_time(begin_time), TimeUtil.to_time(closing_time))
+      ice_cube_occurrences = ice_cube_schedule.occurrences_between(TimeUtil.to_time(begin_time), TimeUtil.to_time(closing_time))
 
-      occurrences.map do |occurrence|
-        if timezone
-          tz = TZInfo::Timezone.get(timezone)
-          start_time = tz.local_to_utc(occurrence.start_time)
-          end_time = tz.local_to_utc(occurrence.end_time)  
-        else
-          start_time = occurrence.start_time
-          end_time = occurrence.end_time
-        end
-        
-        Icalendar::Occurrence.new(start_time, end_time)
+      ice_cube_occurrences.map do |occurrence|
+        convert_ice_cube_occurrence(occurrence)
       end
+    end
+
+    def convert_ice_cube_occurrence(ice_cube_occurrence)
+      if timezone
+        begin
+          tz = TZInfo::Timezone.get(timezone)
+          start_time = tz.local_to_utc(ice_cube_occurrence.start_time)
+          end_time = tz.local_to_utc(ice_cube_occurrence.end_time)
+        rescue TZInfo::InvalidTimezoneIdentifier => e
+          warn "Unknown TZID specified in ical event (#{timezone.inspect}), ignoring (may cause recurrence to be at wrong time)"
+        end
+      end
+
+      start_time ||= ice_cube_occurrence.start_time
+      end_time ||= ice_cube_occurrence.end_time
+      
+      Icalendar::Occurrence.new(start_time, end_time)
     end
 
     def ice_cube_schedule
