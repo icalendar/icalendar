@@ -40,21 +40,19 @@ module Icalendar
     end
 
     def event(&block)
-      e = Event.new
-      # Note: I'm not sure this is the best way to pass this down, but it works
-      e.tzid = timezones[0].tzid if timezones.length > 0
+      calendar_tzid = timezone_id
+      build_component Event.new do
+        # Note: I'm not sure this is the best way to pass this down, but it works
+        self.tzid = calendar_tzid
 
-      add_component e
-
-      if block
-        e.instance_eval(&block)
-        if e.tzid
-          e.dtstart.ical_params = { "TZID" => e.tzid }
-          e.dtend.ical_params = { "TZID" => e.tzid }
+        if block
+          instance_eval(&block)
+          if tzid
+            dtstart.ical_params = { "TZID" => e.tzid }
+            dtend.ical_params = { "TZID" => e.tzid }
+          end
         end
       end
-
-      e
     end
 
     def find_event(uid)
@@ -108,6 +106,10 @@ module Icalendar
         add_component component
         component.instance_eval(&block) if block
         component
+      end
+
+      def timezone_id
+        timezones[0].tzid if timezones.length > 0
       end
   end # class Calendar
 
