@@ -42,9 +42,9 @@ module Icalendar
     def event(&block)
       e = Event.new
       # Note: I'm not sure this is the best way to pass this down, but it works
-      e.tzid = self.timezones[0].tzid if self.timezones.length > 0
+      e.tzid = timezones[0].tzid if timezones.length > 0
 
-      self.add_component e
+      add_component e
 
       if block
         e.instance_eval(&block)
@@ -58,12 +58,12 @@ module Icalendar
     end
 
     def find_event(uid)
-      self.events.find {|e| e.uid == uid}
+      events.find {|e| e.uid == uid}
     end
 
     def todo(&block)
       e = Todo.new
-      self.add_component e
+      add_component e
 
       e.instance_eval(&block) if block
 
@@ -71,12 +71,12 @@ module Icalendar
     end
 
     def find_todo(uid)
-      self.todos.find {|t| t.uid == uid}
+      todos.find {|t| t.uid == uid}
     end
 
     def journal(&block)
       e = Journal.new
-      self.add_component e
+      add_component e
 
       e.instance_eval(&block) if block
 
@@ -84,12 +84,12 @@ module Icalendar
     end
 
     def find_journal(uid)
-      self.journals.find {|j| j.uid == uid}
+      journals.find {|j| j.uid == uid}
     end
 
     def freebusy(&block)
       e = Freebusy.new
-      self.add_component e
+      add_component e
 
       e.instance_eval(&block) if block
 
@@ -97,12 +97,12 @@ module Icalendar
     end
 
     def find_freebusy(uid)
-      self.freebusys.find {|f| f.uid == uid}
+      freebusys.find {|f| f.uid == uid}
     end
 
     def timezone(&block)
       e = Timezone.new
-      self.add_component e
+      add_component e
 
       e.instance_eval(&block) if block
 
