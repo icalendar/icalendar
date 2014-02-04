@@ -130,12 +130,10 @@ module Icalendar
     def print_properties(properties = properties_to_print)
       s = ""
 
-      properties.sort.each do |key,val|
+      properties.sort.each do |key, val|
         # Take out underscore for property names that conflicted
         # with built-in words.
-        if key =~ /ip_.*/
-          key = key[3..-1]
-        end
+        key = key[3..-1] if key =~ /ip_.*/
 
         # Property name
         if !multiline_property?(key)
@@ -159,43 +157,30 @@ module Icalendar
     end
 
     def escape_chars(value)
-      v = value.gsub("\\", "\\\\").gsub("\r\n", "\n").gsub("\r", "\n").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
-      return v
-       # return value
+      value.gsub("\\", "\\\\").gsub("\r\n", "\n").gsub("\r", "\n").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
     end
 
-    def add_sliced_text(add_to,escaped)
-      escaped = escaped.split('') # split is unicdoe-aware when `$KCODE = 'u'`
-      add_to << escaped.slice!(0,MAX_LINE_LENGTH).join << "\r\n " while escaped.length != 0 # shift(MAX_LINE_LENGTH) does not work with ruby 1.8.6
+    def add_sliced_text(add_to, escaped)
+      escaped = escaped.split('') # split is unicode-aware when `$KCODE = 'u'`
+      add_to << escaped.slice!(0, MAX_LINE_LENGTH).join << "\r\n " while escaped.length > 0 # shift(MAX_LINE_LENGTH) does not work with ruby 1.8.6
       add_to.gsub!(/ *$/, '')
     end
 
     # Print the parameters for a specific property.
     def print_parameters(value)
-      s = ""
-      return s unless value.respond_to?(:ical_params) && !value.ical_params.nil?
+      return "" unless value.respond_to?(:ical_params)
 
-      value.ical_params.each do |key, val|
-        s << ";#{key}"
-        val = [ val ] unless val.is_a?(Array)
+      Array(value.ical_params).map do |key, val|
+        val = Array(val)
+        next if val.empty?
 
-        # Possible parameter values
-        unless val.empty?
-          s << "="
-          s << val.map do |pval|
-            if pval.respond_to? :to_ical
-              param = pval.to_ical
-              param = %|"#{param}"| unless param =~ %r{\A#{Parser::QSTR}\z|\A#{Parser::PTEXT}\z}
-              param
-            end
-          end.compact.join(',')
-        end
-      end
-      s
+        escaped = val.map { |v| Parser.escape(v.to_ical) }.join(',')
+        ";#{key}=" << escaped
+      end.join
     end
 
     def properties_to_print
-      @properties
+      @properties # subclasses can exclude properties
     end
 
     def print_headers
