@@ -45,19 +45,6 @@ module Icalendar
       @components[key] = component
     end
 
-    # Also need a custom to_ical because typically it iterates over an array
-    # of components.
-    def to_ical
-      print_component do
-      s = ""
-        @components.each_value do |comp|
-          s << comp.to_ical
-        end
-      s
-      end
-    end
-
-
     def initialize(name = "VTIMEZONE")
       super(name)
     end

@@ -105,31 +105,29 @@ module Icalendar
 
     # Output in the icalendar format
     def to_ical
-      print_component do
-        s = ""
-        @components.each do |key, comps|
-          comps.each { |component| s << component.to_ical }
-        end
-        s
+      printer do
+        [print_headers,
+          print_properties,
+          print_subcomponents].join
       end
     end
 
     # Print this icalendar component
     def print_component
-      # Begin a new component
-      "BEGIN:#{@name.upcase}\r\n" +
-
-      # Then the properties
-      print_properties +
-
-      # sub components
-      yield +
-
-      # End of this component
-      "END:#{@name.upcase}\r\n"
+      to_ical
     end
 
-    def print_properties(properties = @properties)
+    def print_subcomponents
+      @components.values.map(&:to_ical).join
+    end
+
+    def printer
+      ["BEGIN:#{@name.upcase}\r\n",
+      yield,
+      "END:#{@name.upcase}\r\n"].join
+    end
+
+    def print_properties(properties = properties_to_print)
       s = ""
 
       properties.sort.each do |key,val|
@@ -194,6 +192,14 @@ module Icalendar
         end
       end
       s
+    end
+
+    def properties_to_print
+      @properties
+    end
+
+    def print_headers
+      "" # subclasses can specify headers
     end
 
     # TODO: Look into the x-property, x-param stuff...
