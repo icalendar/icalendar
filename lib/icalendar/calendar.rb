@@ -62,12 +62,7 @@ module Icalendar
     end
 
     def todo(&block)
-      e = Todo.new
-      add_component e
-
-      e.instance_eval(&block) if block
-
-      e
+      build_component Todo.new, &block
     end
 
     def find_todo(uid)
@@ -75,12 +70,7 @@ module Icalendar
     end
 
     def journal(&block)
-      e = Journal.new
-      add_component e
-
-      e.instance_eval(&block) if block
-
-      e
+      build_component Journal.new, &block
     end
 
     def find_journal(uid)
@@ -88,12 +78,7 @@ module Icalendar
     end
 
     def freebusy(&block)
-      e = Freebusy.new
-      add_component e
-
-      e.instance_eval(&block) if block
-
-      e
+      build_component Freebusy.new, &block
     end
 
     def find_freebusy(uid)
@@ -101,12 +86,7 @@ module Icalendar
     end
 
     def timezone(&block)
-      e = Timezone.new
-      add_component e
-
-      e.instance_eval(&block) if block
-
-      e
+      build_component Timezone.new, &block
     end
 
     # The "PUBLISH" method in a "VEVENT" calendar component is an
@@ -122,6 +102,13 @@ module Icalendar
       self.ip_method = "PUBLISH"
     end
 
+    private
+
+      def build_component(component, &block)
+        add_component component
+        component.instance_eval(&block) if block
+        component
+      end
   end # class Calendar
 
 end # module Icalendar
