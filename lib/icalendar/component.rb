@@ -128,42 +128,36 @@ module Icalendar
     end
 
     def print_properties(properties = properties_to_print)
-      s = ""
+      excludes = %w(geo rrule categories exdate)
+      properties.sort.map do |key, val|
+        property = fix_conflict_with_built_in(key)
+        prelude = key.gsub(/_/, '-').upcase
+        params = print_parameters(val)
 
-      properties.sort.each do |key, val|
-        # Take out underscore for property names that conflicted
-        # with built-in words.
-        key = key[3..-1] if key =~ /ip_.*/
-
-        # Property name
-        if !multiline_property?(key)
-          prelude = "#{key.gsub(/_/, '-').upcase}#{print_parameters val}"
-
-          # Property value
-          value = ":#{val.to_ical}"
-          value = escape_chars(value) unless %w[geo rrule categories exdate].include?(key)
-          add_sliced_text(s, prelude + value)
-        else
-          prelude = "#{key.gsub(/_/, '-').upcase}"
-          val.each do |v|
-            params = print_parameters(v)
-            value = ":#{v.to_ical}"
-            value = escape_chars(value)
-            add_sliced_text(s, prelude + params + value)
-          end
+        value = ":#{val.to_ical}"
+        multiline = multiline_property?(property)
+        if multiline || (!multiline && !excludes.include?(property))
+          value = escape_chars(value)
         end
-      end
-      s
+
+        chunk_lines(prelude + params + value)
+      end.join
+    end
+
+    # Take out underscore for property names that conflicted
+    # with built-in words.
+    def fix_conflict_with_built_in(key)
+      key.sub(/\Aip_/, '')
     end
 
     def escape_chars(value)
       value.gsub("\\", "\\\\").gsub("\r\n", "\n").gsub("\r", "\n").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
     end
 
-    def add_sliced_text(add_to, escaped)
-      escaped = escaped.split('') # split is unicode-aware when `$KCODE = 'u'`
-      add_to << escaped.slice!(0, MAX_LINE_LENGTH).join << "\r\n " while escaped.length > 0 # shift(MAX_LINE_LENGTH) does not work with ruby 1.8.6
-      add_to.gsub!(/ *$/, '')
+    def chunk_lines(str, length = MAX_LINE_LENGTH, separator = "\r\n ")
+      chunks = str.scan(/.{1,#{length}}/)
+      lines = chunks.join(separator) << separator
+      lines.gsub(/ *$/, '')
     end
 
     # Print the parameters for a specific property.
