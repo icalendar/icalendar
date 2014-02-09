@@ -1,24 +1,27 @@
 require 'date'
+require_relative 'time_with_zone'
 
 module Icalendar
   module Values
 
     class Time < Value
+      include TimeWithZone
+
       FORMAT = '%H%M%S'
 
       def initialize(value, params = {})
-        # TODO deal with timezones again!
-        if value.respond_to? :to_time
-          super value.to_time, params
-        elsif value.is_a? String
+        if value.is_a? String
+          params['tzid'] = 'UTC' if value.end_with? 'Z'
           super ::DateTime.strptime(value, FORMAT).to_time, params
+        elsif value.respond_to? :to_time
+          super value.to_time, params
         else
           super
         end
       end
 
       def value_ical
-        if utc_offset == 0 && ical_params['tzid'].nil?
+        if tz_utc
           "#{strftime FORMAT}Z"
         else
           strftime FORMAT

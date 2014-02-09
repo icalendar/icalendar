@@ -30,7 +30,7 @@ module Icalendar
 
     def initialize
       super 'journal'
-      self.dtstamp = Time.now.utc.to_datetime
+      self.dtstamp = Icalendar::Values::DateTime.new Time.now.utc, 'tzid' => 'UTC'
       self.uid = new_uid
     end
 

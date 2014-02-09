@@ -92,8 +92,7 @@ describe Icalendar::Event do
 
   describe '#to_ical' do
     before(:each) do
-      start = DateTime.new 2013, 12, 27, 1, 30
-      subject.dtstart = start
+      subject.dtstart = "20131227T013000Z"
       subject.dtend = "20131227T033000Z"
       subject.summary = 'My event, my ical, my test'
       subject.geo = [41.230896,-74.411774]

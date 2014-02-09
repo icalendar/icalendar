@@ -27,5 +27,6 @@ variety of calendaring applications.
   s.add_development_dependency 'tzinfo', '~> 0.3'
   s.add_development_dependency 'timecop', '~> 0.7.0'
   s.add_development_dependency 'rspec', '~> 2.14'
+  s.add_development_dependency 'activesupport', '~> 3.2'
 end
 

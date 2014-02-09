@@ -7,10 +7,10 @@ module Icalendar
       FORMAT = '%Y%m%d'
 
       def initialize(value, params = {})
-        if value.respond_to? :to_date
-          super value.to_date, params
-        elsif value.is_a? String
+        if value.is_a? String
           super ::Date.strptime(value, FORMAT), params
+        elsif value.respond_to? :to_date
+          super value.to_date, params
         else
           super
         end
