@@ -6,11 +6,21 @@ describe Icalendar::Values::Recur do
   let(:value) { 'FREQ=DAILY' }
 
   describe 'parsing' do
-    let(:value) { 'FREQ=WEEKLY;COUNT=4;BYDAY=MO,WE,FR' }
+    context 'multiple bydays' do
+      let(:value) { 'FREQ=WEEKLY;COUNT=4;BYDAY=MO,WE,FR' }
 
-    specify { expect(subject.frequency).to eq 'WEEKLY' }
-    specify { expect(subject.count).to eq 4 }
-    specify { expect(subject.by_day).to eq %w(MO WE FR) }
+      specify { expect(subject.frequency).to eq 'WEEKLY' }
+      specify { expect(subject.count).to eq 4 }
+      specify { expect(subject.by_day).to eq %w(MO WE FR) }
+    end
+
+    context 'single byday' do
+      let(:value) { 'FREQ=YEARLY;BYDAY=2SU;BYMONTH=3' }
+
+      specify { expect(subject.frequency).to eq 'YEARLY' }
+      specify { expect(subject.by_day).to eq %w(2SU) }
+      specify { expect(subject.by_month).to eq [3] }
+    end
   end
 
   describe '#valid?' do

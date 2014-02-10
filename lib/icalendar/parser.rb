@@ -37,6 +37,8 @@ module Icalendar
           klass_name = fields[:value].gsub(/\AV/, '').downcase.capitalize
           if Icalendar.const_defined? klass_name
             component.add_component parse_component(Icalendar.const_get(klass_name).new)
+          elsif Icalendar::Timezone.const_defined? klass_name
+            component.add_component parse_component(Icalendar::Timezone.const_get(klass_name).new)
           else
             component.add_component parse_component(Component.new klass_name.downcase, fields[:value])
           end
@@ -50,7 +52,7 @@ module Icalendar
               klass = Icalendar::Values.const_get klass_name if Icalendar::Values.const_defined?(klass_name)
             end
           end
-          if fields[:value] =~ /(?<!\\)([,;])/
+          if klass.value_type != 'RECUR' && fields[:value] =~ /(?<!\\)([,;])/
             delimiter = $1
             prop_value = Icalendar::Values::Array.new fields[:value].split(/(?<!\\)[;,]/),
                                                       klass,

@@ -10,6 +10,13 @@ describe Icalendar do
     end
   end
 
+  describe 'timezone round trip' do
+    let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'timezone.ics') }
+    it 'will generate the same file as it parsed' do
+      Icalendar.parse(source, true).to_ical.should == source
+    end
+  end
+
   describe 'non-default values' do
     let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'nondefault_values.ics') }
     subject { Icalendar.parse(source, true).events.first }

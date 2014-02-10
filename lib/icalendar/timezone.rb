@@ -5,8 +5,8 @@ module Icalendar
       def self.included(base)
         base.class_eval do
           required_property :dtstart, Icalendar::Values::DateTime
-          required_property :tzoffsetto, Icalendar::Values::UtcOffset
           required_property :tzoffsetfrom, Icalendar::Values::UtcOffset
+          required_property :tzoffsetto, Icalendar::Values::UtcOffset
 
           optional_property :rrule, Icalendar::Values::Recur, true
           optional_property :comment

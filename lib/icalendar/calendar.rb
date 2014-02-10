@@ -6,11 +6,11 @@ module Icalendar
     optional_single_property :calscale
     optional_single_property :ip_method
 
+    component :timezone, :tzid
     component :event
     component :todo
     component :journal
     component :freebusy
-    component :timezone, :tzid
 
     def initialize
       super 'calendar'

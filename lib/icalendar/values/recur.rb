@@ -6,7 +6,7 @@ module Icalendar
     class Recur < Value
       NUM_LIST = '\d{1,2}(?:,\d{1,2})*'
       DAYNAME = 'SU|MO|TU|WE|TH|FR|SA'
-      WEEKDAY = "(?:[+-]?\d{1,2})?(?:#{DAYNAME})"
+      WEEKDAY = "(?:[+-]?\\d{1,2})?(?:#{DAYNAME})"
       MONTHDAY = '[+-]?\d{1,2}'
       YEARDAY = '[+-]?\d{1,3}'
 
