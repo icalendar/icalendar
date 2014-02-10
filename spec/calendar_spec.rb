@@ -154,7 +154,7 @@ COMMENT:Busy
 END:VFREEBUSY
 END:VCALENDAR
       EOICAL
-      expect(subject.to_ical.gsub(/^UID:.*\r\n/, '')).to eq expected_no_uid
+      expect(subject.to_ical.gsub(/^UID:.*\r\n(?: .*\r\n)*/, '')).to eq expected_no_uid
     end
   end
 end

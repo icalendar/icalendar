@@ -1,4 +1,4 @@
-require_relative 'lib/icalendar/version'
+require File.join File.dirname(__FILE__), 'lib', 'icalendar', 'version'
 
 Gem::Specification.new do |s|
   s.authors = ['Ryan Ahearn']
