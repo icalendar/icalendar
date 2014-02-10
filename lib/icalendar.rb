@@ -1,7 +1,5 @@
 module Icalendar
 
-  VERSION = '2.0.0.beta.1'
-
   MAX_LINE_LENGTH = 75
 
   def self.parse(source, single = false)
