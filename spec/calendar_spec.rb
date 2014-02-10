@@ -116,7 +116,7 @@ describe Icalendar::Calendar do
 
   describe '#to_ical' do
     before(:each) do
-      Timecop.freeze Date.new(2013, 12, 26)
+      Timecop.freeze DateTime.new(2013, 12, 26, 5, 0, 0, '+0000')
       subject.event do |e|
         e.summary = 'An event'
         e.dtstart = "20140101T000000Z"

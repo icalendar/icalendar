@@ -59,7 +59,7 @@ END:VTIMEZONE
     subject { TZInfo::Timezone.get 'America/Los_Angeles' }
     let(:now) { subject.now }
     # freeze in DST transition in America/Los_Angeles
-    before(:each) { Timecop.freeze '2013-11-03T01:30:00-08:00' }
+    before(:each) { Timecop.freeze DateTime.new(2013, 11, 03, 1, 30, 0, '-08:00') }
     after(:each) { Timecop.return }
 
     specify { expect { subject.ical_timezone now, nil }.to raise_error TZInfo::AmbiguousTime }
