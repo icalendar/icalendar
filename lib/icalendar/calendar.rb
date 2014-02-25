@@ -50,7 +50,7 @@ module Icalendar
         e.instance_eval(&block)
         if e.tzid
           e.dtstart.ical_params = { "TZID" => e.tzid }
-          e.dtend.ical_params = { "TZID" => e.tzid }
+          e.dtend.ical_params = { "TZID" => e.tzid } if e.dtend
         end
       end
 
