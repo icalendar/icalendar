@@ -69,7 +69,12 @@ module Icalendar
       if value =~ %r{\A#{Parser::QSTR}\z|\A#{Parser::PTEXT}\z}
         value
       else
-        %|"#{value}"|
+        stripped = value.gsub '"', "'"
+        if stripped =~ /\A#{Parser::PTEXT}\z/
+          stripped
+        else
+          %|"#{stripped}"|
+        end
       end
     end
 

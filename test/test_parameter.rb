@@ -40,9 +40,11 @@ class TestParameter < Test::Unit::TestCase
 
   def test_unquoted_property_parameters
     params = {'ALTREP' => ['"http://my.language.net"'],
-              'LANGUAGE' => ['SPANISH:CATILLAN']}
+              'LANGUAGE' => ['SPANISH:CATILLAN'],
+              'CN' => ['Joe "The Man" Tester']}
     expected_params = {'ALTREP' => ['"http://my.language.net"'],
-                       'LANGUAGE' => ['"SPANISH:CATILLAN"']}
+                       'LANGUAGE' => ['"SPANISH:CATILLAN"'],
+                       'CN' => ["Joe 'The Man' Tester"]}
     @event.summary('This is a test summary.', params)
 
     assert_equal params, @event.summary.ical_params
