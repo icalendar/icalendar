@@ -56,7 +56,7 @@ module Icalendar
       super("VTODO")
 
       sequence 0
-      timestamp DateTime.now
+      timestamp Time.now.utc.to_datetime.tap { |t| t.icalendar_tzid = 'UTC' }
       uid new_uid
     end
 
