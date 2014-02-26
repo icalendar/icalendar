@@ -45,6 +45,7 @@ class TestCalendar < Test::Unit::TestCase
 
    def test_create_multiple_event_calendar
        # Create a fresh calendar
+       Timecop.freeze DateTime.new(2013, 12, 26, 5, 0, 0, '+0000')
        cal = Calendar.new
        [1,2,3].each do |t|
            cal.event do
@@ -57,7 +58,49 @@ class TestCalendar < Test::Unit::TestCase
                self.summary = "test #{t} todo"
            end
        end
-       cal.to_ical
+       expected_no_uid = <<-EXPECTED.gsub("\n", "\r\n")
+BEGIN:VCALENDAR
+VERSION:2.0
+CALSCALE:GREGORIAN
+PRODID:iCalendar-Ruby
+BEGIN:VEVENT
+DTEND:19970901T190000Z
+DTSTAMP:20131226T000000
+SEQUENCE:0
+SUMMARY:This is summary 1
+END:VEVENT
+BEGIN:VEVENT
+DTEND:19970902T190000Z
+DTSTAMP:20131226T000000
+SEQUENCE:0
+SUMMARY:This is summary 2
+END:VEVENT
+BEGIN:VEVENT
+DTEND:19970903T190000Z
+DTSTAMP:20131226T000000
+SEQUENCE:0
+SUMMARY:This is summary 3
+END:VEVENT
+BEGIN:VTODO
+DTSTAMP:20131226T000000
+SEQUENCE:0
+SUMMARY:test 1 todo
+END:VTODO
+BEGIN:VTODO
+DTSTAMP:20131226T000000
+SEQUENCE:0
+SUMMARY:test 2 todo
+END:VTODO
+BEGIN:VTODO
+DTSTAMP:20131226T000000
+SEQUENCE:0
+SUMMARY:test 3 todo
+END:VTODO
+END:VCALENDAR
+       EXPECTED
+       actual_no_uid = cal.to_ical.gsub /^UID:.*\r\n(?: .*\r\n)*/, ''
+       Timecop.return
+       assert_equal expected_no_uid, actual_no_uid
    end
 
    def test_find

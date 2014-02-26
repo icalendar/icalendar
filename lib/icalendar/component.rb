@@ -108,7 +108,9 @@ module Icalendar
     end
 
     def print_subcomponents
-      @components.values.map(&:to_ical).join
+      @components.values.map do |component_parts|
+        Array(component_parts).map &:to_ical
+      end.join
     end
 
     def printer
@@ -121,7 +123,7 @@ module Icalendar
       excludes = %w(geo rrule categories exdate)
       properties.sort.map do |key, val|
         property = fix_conflict_with_built_in(key)
-        prelude = key.gsub(/_/, '-').upcase
+        prelude = property.gsub(/_/, '-').upcase
         params = print_parameters(val)
 
         value = ":#{val.to_ical}"
