@@ -6,6 +6,24 @@ iCalendar -- Internet calendaring, Ruby style
 
 <http://github.com/icalendar/icalendar>
 
+2.x Status
+---
+
+iCalendar 2.0 is under active development, and can be followed in the
+[2.0beta branch](https://github.com/icalendar/icalendar/tree/2.0beta).
+
+iCalendar 1.x (currently the master branch) will still survive for a
+while, but will only be accepting bug fixes from this point forward
+unless someone else wants to take over more active maintainership of
+the 1.x series.
+
+### 2.0 Goals ###
+
+* Implements [RFC 5545](http://tools.ietf.org/html/rfc5545)
+* More obvious access to parameters and values
+* Cleaner & easier timezone support
+
+
 DESCRIPTION
 ---
 
