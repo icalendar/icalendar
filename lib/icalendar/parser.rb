@@ -65,6 +65,14 @@ module Icalendar
       @@logger.debug("New Calendar Parser: #{@file.inspect}")
     end
 
+    def self.escape(value)
+      if value =~ %r{\A#{Parser::QSTR}\z|\A#{Parser::PTEXT}\z}
+        value
+      else
+        %|"#{value}"|
+      end
+    end
+
     # Define next line for an IO object.
     # Works for strings now with StringIO
     def next_line

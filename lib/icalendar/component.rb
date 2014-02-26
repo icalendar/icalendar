@@ -95,95 +95,80 @@ module Icalendar
 
     # Output in the icalendar format
     def to_ical
-      print_component do
-        s = ""
-        @components.each do |key, comps|
-          comps.each { |component| s << component.to_ical }
-        end
-        s
+      printer do
+        [print_headers,
+          print_properties,
+          print_subcomponents].join
       end
     end
 
     # Print this icalendar component
     def print_component
-      # Begin a new component
-      "BEGIN:#{@name.upcase}\r\n" +
-
-      # Then the properties
-      print_properties +
-
-      # sub components
-      yield +
-
-      # End of this component
-      "END:#{@name.upcase}\r\n"
+      to_ical
     end
 
-    def print_properties(properties = @properties)
-      s = ""
+    def print_subcomponents
+      @components.values.map(&:to_ical).join
+    end
 
-      properties.sort.each do |key,val|
-        # Take out underscore for property names that conflicted
-        # with built-in words.
-        if key =~ /ip_.*/
-          key = key[3..-1]
+    def printer
+      ["BEGIN:#{@name.upcase}\r\n",
+      yield,
+      "END:#{@name.upcase}\r\n"].join
+    end
+
+    def print_properties(properties = properties_to_print)
+      excludes = %w(geo rrule categories exdate)
+      properties.sort.map do |key, val|
+        property = fix_conflict_with_built_in(key)
+        prelude = key.gsub(/_/, '-').upcase
+        params = print_parameters(val)
+
+        value = ":#{val.to_ical}"
+        multiline = multiline_property?(property)
+        if multiline || (!multiline && !excludes.include?(property))
+          value = escape_chars(value)
         end
 
-        # Property name
-        if !multiline_property?(key)
-          prelude = "#{key.gsub(/_/, '-').upcase}#{print_parameters val}"
+        chunk_lines(prelude + params + value)
+      end.join
+    end
 
-          # Property value
-          value = ":#{val.to_ical}"
-          value = escape_chars(value) unless %w[geo rrule categories exdate].include?(key)
-          add_sliced_text(s, prelude + value)
-        else
-          prelude = "#{key.gsub(/_/, '-').upcase}"
-          val.each do |v|
-            params = print_parameters(v)
-            value = ":#{v.to_ical}"
-            value = escape_chars(value)
-            add_sliced_text(s, prelude + params + value)
-          end
-        end
-      end
-      s
+    # Take out underscore for property names that conflicted
+    # with built-in words.
+    def fix_conflict_with_built_in(key)
+      key.sub(/\Aip_/, '')
     end
 
     def escape_chars(value)
-      v = value.gsub("\\", "\\\\").gsub("\r\n", "\n").gsub("\r", "\n").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
-      return v
-       # return value
+      value.gsub("\\", "\\\\").gsub("\r\n", "\n").gsub("\r", "\n").gsub("\n", "\\n").gsub(",", "\\,").gsub(";", "\\;")
     end
 
-    def add_sliced_text(add_to,escaped)
-      escaped = escaped.split('') # split is unicdoe-aware when `$KCODE = 'u'`
-      add_to << escaped.slice!(0,MAX_LINE_LENGTH).join << "\r\n " while escaped.length != 0 # shift(MAX_LINE_LENGTH) does not work with ruby 1.8.6
-      add_to.gsub!(/ *$/, '')
+    def chunk_lines(str, length = MAX_LINE_LENGTH, separator = "\r\n ")
+      chunks = str.scan(/.{1,#{length}}/)
+      lines = chunks.join(separator) << separator
+      lines.gsub(/ *$/, '')
     end
 
     # Print the parameters for a specific property.
     def print_parameters(value)
-      s = ""
-      return s unless value.respond_to?(:ical_params) && !value.ical_params.nil?
+      return "" unless value.respond_to?(:ical_params)
 
-      value.ical_params.each do |key, val|
-        s << ";#{key}"
-        val = [ val ] unless val.is_a?(Array)
+      Array(value.ical_params).map do |key, val|
+        val = Array(val)
+        next if val.empty?
 
-        # Possible parameter values
-        unless val.empty?
-          s << "="
-          s << val.map do |pval|
-            if pval.respond_to? :to_ical
-              param = pval.to_ical
-              param = %|"#{param}"| unless param =~ %r{\A#{Parser::QSTR}\z|\A#{Parser::PTEXT}\z}
-              param
-            end
-          end.compact.join(',')
-        end
-      end
-      s
+        escaped = val.map { |v| Parser.escape(v.to_ical) }.join(',')
+        ";#{key}=" << escaped
+      end.join
+    end
+
+    def properties_to_print
+      @properties # subclasses can exclude properties
+    end
+
+    def print_headers
+      "" # subclasses can specify headers
     end
 
     # TODO: Look into the x-property, x-param stuff...
