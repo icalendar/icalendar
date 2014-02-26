@@ -40,73 +40,51 @@ module Icalendar
     end
 
     def event(&block)
-      e = Event.new
-      # Note: I'm not sure this is the best way to pass this down, but it works
-      e.tzid = self.timezones[0].tzid if self.timezones.length > 0
+      calendar_tzid = timezone_id
+      build_component Event.new do
+        # Note: I'm not sure this is the best way to pass this down, but it works
+        self.tzid = calendar_tzid
 
-      self.add_component e
-
-      if block
-        e.instance_eval(&block)
-        if e.tzid
-          e.dtstart.ical_params = { "TZID" => e.tzid }
-          e.dtend.ical_params = { "TZID" => e.tzid }
+        if block
+          instance_eval(&block)
+          if tzid
+            dtstart.ical_params = { "TZID" => e.tzid }
+            dtend.ical_params = { "TZID" => e.tzid }
+          end
         end
       end
-
-      e
     end
 
     def find_event(uid)
-      self.events.find {|e| e.uid == uid}
+      events.find {|e| e.uid == uid}
     end
 
     def todo(&block)
-      e = Todo.new
-      self.add_component e
-
-      e.instance_eval(&block) if block
-
-      e
+      build_component Todo.new, &block
     end
 
     def find_todo(uid)
-      self.todos.find {|t| t.uid == uid}
+      todos.find {|t| t.uid == uid}
     end
 
     def journal(&block)
-      e = Journal.new
-      self.add_component e
-
-      e.instance_eval(&block) if block
-
-      e
+      build_component Journal.new, &block
     end
 
     def find_journal(uid)
-      self.journals.find {|j| j.uid == uid}
+      journals.find {|j| j.uid == uid}
     end
 
     def freebusy(&block)
-      e = Freebusy.new
-      self.add_component e
-
-      e.instance_eval(&block) if block
-
-      e
+      build_component Freebusy.new, &block
     end
 
     def find_freebusy(uid)
-      self.freebusys.find {|f| f.uid == uid}
+      freebusys.find {|f| f.uid == uid}
     end
 
     def timezone(&block)
-      e = Timezone.new
-      self.add_component e
-
-      e.instance_eval(&block) if block
-
-      e
+      build_component Timezone.new, &block
     end
 
     # The "PUBLISH" method in a "VEVENT" calendar component is an
@@ -122,6 +100,17 @@ module Icalendar
       self.ip_method = "PUBLISH"
     end
 
+    private
+
+      def build_component(component, &block)
+        add_component component
+        component.instance_eval(&block) if block
+        component
+      end
+
+      def timezone_id
+        timezones[0].tzid if timezones.length > 0
+      end
   end # class Calendar
 
 end # module Icalendar
