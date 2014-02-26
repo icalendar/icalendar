@@ -49,7 +49,7 @@ module Icalendar
 
     def initialize(name)
       @name = name
-      @components = Hash.new([])
+      @components = Hash.new { |h, k| h[k] = [] }
       @properties = {}
 
       @@logger.info("New #{@name[1,@name.size].capitalize}...")
@@ -57,13 +57,7 @@ module Icalendar
 
     # Add a sub-component to the current component object.
     def add_component(component)
-      key = (component.class.to_s.downcase + 's').gsub('icalendar::', '').to_sym
-
-      unless @components.has_key? key
-        @components[key] = []
-      end
-
-      @components[key] << component
+      @components[component.key_name] << component
     end
 
     # Add a component to the calendar.
@@ -79,11 +73,7 @@ module Icalendar
     alias add_journal add_component
 
     def remove_component(component)
-      key = (component.class.to_s.downcase + 's').gsub('icalendar::', '').to_sym
-
-      if @components.has_key? key
-        @components[key].delete(component)
-      end
+      @components[component.key_name].delete(component)
     end
 
     # Remove a component from the calendar.
@@ -213,6 +203,10 @@ module Icalendar
 
     # Make it protected so we can monitor usage...
     protected
+
+    def key_name
+      (self.class.to_s.downcase + 's').gsub('icalendar::', '').to_sym
+    end
 
     def self.ical_component(*syms)
       hash_accessor :@components, *syms
