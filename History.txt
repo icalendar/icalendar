@@ -1,3 +1,7 @@
+=== 1.5.1 2014-02-27
+ * Check for dtend existence before setting timezone - Jonas Grau
+ * Clean up and refactor components - Kasper Timm Hansen
+
 === 1.5.0 2013-12-06
  * Support for custom x- properties - Jake Craige
 
