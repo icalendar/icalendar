@@ -8,3 +8,11 @@ Rake::TestTask.new do |t|
 end
 
 task default: [:test, :build]
+
+task :console do
+  require 'irb'
+  require 'irb/completion'
+  require 'icalendar'
+  ARGV.clear
+  IRB.start
+end
