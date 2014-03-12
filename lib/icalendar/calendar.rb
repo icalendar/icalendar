@@ -9,7 +9,7 @@
 module Icalendar
 
   class Calendar < Component
-    ical_component :events, :todos, :journals, :freebusys, :timezones
+    ical_component :timezones, :events, :todos, :journals, :freebusys
 
     ical_property :calscale, :calendar_scale
     ical_property :prodid, :product_id
