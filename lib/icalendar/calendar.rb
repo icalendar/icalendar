@@ -42,8 +42,8 @@ module Icalendar
         if block
           instance_eval(&block)
           if tzid
-            dtstart.ical_params = { "TZID" => e.tzid }
-            dtend.ical_params = { "TZID" => e.tzid } unless dtend.nil?
+            dtstart.ical_params = { "TZID" => tzid }
+            dtend.ical_params = { "TZID" => tzid } unless dtend.nil?
           end
         end
       end

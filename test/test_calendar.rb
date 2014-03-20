@@ -43,6 +43,26 @@ class TestCalendar < Test::Unit::TestCase
       end
    end
 
+   def test_block_creation_with_timezone
+      cal = Calendar.new
+
+      event_start = DateTime.new 1997, 9, 3, 19, 0, 0
+      tz = TZInfo::Timezone.get "Europe/Copenhagen"
+      timezone = tz.ical_timezone event_start
+      cal.add timezone
+
+      cal.event do
+         dtstart event_start
+         dtend "19970903T190000Z"
+         summary "This is my summary"
+      end
+
+      cal.events.each do |ev|
+         assert_equal(event_start, ev.dtstart)
+         assert_equal("19970903T190000Z", ev.dtend)
+      end
+   end
+
    def test_create_multiple_event_calendar
        # Create a fresh calendar
        Timecop.freeze DateTime.new(2013, 12, 26, 5, 0, 0, '+0000')
