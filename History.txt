@@ -1,3 +1,7 @@
+=== 1.5.2 2014-02-22
+ * Output timezone components first
+ * Fix undefined local variable or method 'e' - Jason Stirk
+
 === 1.5.1 2014-02-27
  * Check for dtend existence before setting timezone - Jonas Grau
  * Clean up and refactor components - Kasper Timm Hansen
