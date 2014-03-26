@@ -2,6 +2,7 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 
 require 'test/unit'
 require 'icalendar'
+require 'timecop'
 
 class TestTimeUtil < Test::Unit::TestCase
   include Icalendar
@@ -32,12 +33,14 @@ class TestTimeUtil < Test::Unit::TestCase
   end
 
   test ".timezone_to_hour_minute_utc_offset" do
+    Timecop.freeze("2014-01-01") # avoids DST changing offsets on us
     assert_equal "-08:00", TimeUtil.timezone_to_hour_minute_utc_offset("America/Los_Angeles"),                           "Handles negative offsets"
     assert_equal "+01:00", TimeUtil.timezone_to_hour_minute_utc_offset("Europe/Amsterdam"),                              "Handles positive offsets"
     assert_equal "+00:00", TimeUtil.timezone_to_hour_minute_utc_offset("GMT"),                                           "Handles UTC zones"
     assert_equal nil,      TimeUtil.timezone_to_hour_minute_utc_offset("Foo/Bar"),                                       "Returns nil when it doesn't know about the timezone"
     assert_equal "-08:00", TimeUtil.timezone_to_hour_minute_utc_offset("\"America/Los_Angeles\""),                       "Handles quoted strings (you get these from ICS files)"
     assert_equal "-07:00", TimeUtil.timezone_to_hour_minute_utc_offset("America/Los_Angeles", Date.parse("2014-05-01")), "Handles daylight savings offset"
+    Timecop.return
   end
 
   test ".timezone_to_hour_minute_utc_offset (daylight savings cases)" do
