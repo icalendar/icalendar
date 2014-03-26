@@ -121,9 +121,18 @@ module Icalendar
       a
     end
 
+    # This is the original way
     def occurrences_starting(time)
       recurrence_rules.first.occurrences_of_event_starting(self, time)
     end
 
+    # This is the ice_cube-powered way
+    def occurrences_between(begin_time, closing_time)
+      schedule.occurrences_between(begin_time, closing_time)
+    end
+
+    def schedule
+      @schedule ||= Schedule.new(self)
+    end
   end
 end

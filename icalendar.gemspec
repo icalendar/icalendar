@@ -22,9 +22,12 @@ Gem::Specification.new do |s|
   s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename f }
   s.require_paths = ['lib']
 
+  s.add_runtime_dependency 'ice_cube', '~> 0.11.1'
+
   s.add_development_dependency 'rake', '~> 10.0'
   s.add_development_dependency 'bundler', '~> 1.3'
   s.add_development_dependency 'tzinfo', '~> 0.3'
   s.add_development_dependency 'timecop', '~> 0.6.3'
+  s.add_development_dependency 'guard-test', '~> 2.0.3'
 end
 

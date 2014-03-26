@@ -25,6 +25,8 @@ module Icalendar
   class RRule < Icalendar::Base
 
     class Weekday
+      attr_accessor :day, :position
+
       def initialize(day, position)
         @day, @position = day, position
       end
