@@ -10,9 +10,9 @@ iCalendar -- Internet calendaring, Ruby style
 ---
 
 iCalendar 2.0 is under active development, and can be followed in the
-[2.0beta branch](https://github.com/icalendar/icalendar/tree/2.0beta).
+[master branch](https://github.com/icalendar/icalendar/tree/master).
 
-iCalendar 1.x (currently the master branch) will still survive for a
+iCalendar 1.x (currently the 1.x branch) will still survive for a
 while, but will only be accepting bug fixes from this point forward
 unless someone else wants to take over more active maintainership of
 the 1.x series.
