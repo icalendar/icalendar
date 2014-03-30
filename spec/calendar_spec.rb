@@ -157,4 +157,11 @@ END:VCALENDAR
       expect(subject.to_ical.gsub(/^UID:.*\r\n(?: .*\r\n)*/, '')).to eq expected_no_uid
     end
   end
+
+  describe '#publish' do
+    it 'sets ip_method to "PUBLISH"' do
+      subject.publish
+      expect(subject.ip_method).to eq 'PUBLISH'
+    end
+  end
 end

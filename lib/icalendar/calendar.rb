@@ -19,6 +19,9 @@ module Icalendar
       self.calscale = 'GREGORIAN'
     end
 
+    def publish
+      self.ip_method = 'PUBLISH'
+    end
   end
 
 end

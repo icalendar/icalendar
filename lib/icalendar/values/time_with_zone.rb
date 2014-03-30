@@ -1,6 +1,5 @@
 begin
   require 'active_support/time'
-  #require 'active_support/time'
 rescue LoadError
   $stderr.puts "Info: No TimeWithZone support"
 end
