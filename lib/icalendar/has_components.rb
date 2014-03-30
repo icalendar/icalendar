@@ -58,16 +58,15 @@ module Icalendar
 
         define_method singular_name do |c = nil, &block|
           if c.nil?
-            begin
+            c = begin
               klass ||= Icalendar.const_get singular_name.capitalize
-              add_component klass.new, &block
+              klass.new
             rescue NameError => ne
               puts "WARN: #{ne.message}"
-              add_component Component.new(singular_name), &block
+              Component.new singular_name
             end
-          else
-            add_component c, &block
           end
+          add_component c, &block
         end
 
         define_method "find_#{singular_name}" do |id|
