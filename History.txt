@@ -1,3 +1,6 @@
+=== 2.0.0.beta.1 2014-03-30
+ * Rewrite for easier development going forward.
+
 === 1.5.2 2014-02-22
  * Output timezone components first
  * Fix undefined local variable or method 'e' - Jason Stirk

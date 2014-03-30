@@ -15,6 +15,7 @@ Implements the iCalendar specification (RFC-5545) in Ruby.  This allows
 for the generation and parsing of .ics files, which are used by a
 variety of calendaring applications.
   EOD
+  s.post_install_message = "\nHEADS UP! iCalendar 2.0 is not backwards-compatible with 1.x. Please see the README for the new syntax\n\n"
 
   s.files = `git ls-files`.split "\n"
   s.test_files = `git ls-files -- {test,spec,features}/*`.split "\n"
@@ -29,4 +30,3 @@ variety of calendaring applications.
   s.add_development_dependency 'rspec', '~> 2.14'
   s.add_development_dependency 'simplecov', '~> 0.8'
 end
-
