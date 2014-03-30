@@ -1,14 +1,13 @@
 require 'bundler'
 Bundler::GemHelper.install_tasks
 
-require 'rake/testtask'
-Rake::TestTask.new do |t|
-  t.pattern = 'test/**/test*.rb'
-  t.verbose = true
-end
+require 'rspec/core/rake_task'
 
-task default: [:test, :build]
+RSpec::Core::RakeTask.new
 
+task default: [:spec, :build]
+
+desc "Load iCalendar in IRB"
 task :console do
   require 'irb'
   require 'irb/completion'

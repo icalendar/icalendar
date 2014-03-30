@@ -38,22 +38,22 @@
 # seems to work fine (tested in Mozilla Thunderbird + Lightning).
 # Future goal would be making this better.
 
-# require "rubygems"
-# require "tzinfo"
+
+require 'tzinfo'
 
 module TZInfo
   class Timezone
     def ical_timezone(date, dst = Timezone.default_dst)
       period = period_for_local(date, dst)
       timezone = Icalendar::Timezone.new
-      timezone.timezone_id = identifier
+      timezone.tzid = identifier
       if period.start_transition.nil?
-        timezone.add period.single
+        timezone.add_component period.single
       elsif period.end_transition.nil?
-        timezone.add period.dst? ? period.daylight : period.standard
+        timezone.add_component period.dst? ? period.daylight : period.standard
       else
-        timezone.add period.daylight
-        timezone.add period.standard
+        timezone.add_component period.daylight
+        timezone.add_component period.standard
       end
       timezone
     end
@@ -73,7 +73,7 @@ module TZInfo
       # this is somewhat of a hack, but seems to work ok
       [sprintf(
         'FREQ=YEARLY;BYMONTH=%d;BYDAY=%d%s',
-        start.month, 
+        start.month,
         ((start.day - 1)/ 7).to_i + 1,
         start.strftime('%a').upcase[0,2]
       )]
@@ -93,46 +93,46 @@ module TZInfo
 
   class TimezonePeriod
     def daylight
-      Icalendar::Daylight.new.tap do |day|
+      Icalendar::Timezone::Daylight.new.tap do |day|
         if dst?
-          day.timezone_name = abbreviation.to_s
-          day.timezone_offset_from = start_transition.offset_from
-          day.timezone_offset_to = start_transition.offset_to
+          day.tzname = abbreviation.to_s
+          day.tzoffsetfrom = start_transition.offset_from
+          day.tzoffsetto = start_transition.offset_to
           day.dtstart = start_transition.dtstart
-          day.recurrence_rules = start_transition.rrule unless end_transition.nil?
+          day.rrule = start_transition.rrule unless end_transition.nil?
         else
-          day.timezone_name = abbreviation.to_s.sub("ST","DT")
-          day.timezone_offset_from = end_transition.offset_from
-          day.timezone_offset_to = end_transition.offset_to
+          day.tzname = abbreviation.to_s.sub("ST","DT")
+          day.tzoffsetfrom = end_transition.offset_from
+          day.tzoffsetto = end_transition.offset_to
           day.dtstart = end_transition.dtstart
-          day.recurrence_rules = end_transition.rrule
+          day.rrule = end_transition.rrule
         end
       end
     end
 
     def standard
-      Icalendar::Standard.new.tap do |std|
+      Icalendar::Timezone::Standard.new.tap do |std|
         if dst?
-          std.timezone_name = abbreviation.to_s.sub('DT', 'ST')
-          std.timezone_offset_from = end_transition.offset_from
-          std.timezone_offset_to = end_transition.offset_to
+          std.tzname = abbreviation.to_s.sub('DT', 'ST')
+          std.tzoffsetfrom = end_transition.offset_from
+          std.tzoffsetto = end_transition.offset_to
           std.dtstart = end_transition.dtstart
-          std.recurrence_rules = end_transition.rrule
+          std.rrule = end_transition.rrule
         else
-          std.timezone_name = abbreviation.to_s
-          std.timezone_offset_from = start_transition.offset_from
-          std.timezone_offset_to = start_transition.offset_to
+          std.tzname = abbreviation.to_s
+          std.tzoffsetfrom = start_transition.offset_from
+          std.tzoffsetto = start_transition.offset_to
           std.dtstart = start_transition.dtstart
-          std.recurrence_rules = start_transition.rrule unless end_transition.nil?
+          std.rrule = start_transition.rrule unless end_transition.nil?
         end
       end
     end
 
     def single
-      Icalendar::Standard.new.tap do |std|
-        std.timezone_name = abbreviation.to_s
-        std.timezone_offset_from = offset.ical_offset
-        std.timezone_offset_to = offset.ical_offset
+      Icalendar::Timezone::Standard.new.tap do |std|
+        std.tzname = abbreviation.to_s
+        std.tzoffsetfrom = offset.ical_offset
+        std.tzoffsetto = offset.ical_offset
         std.dtstart = DateTime.new(1970).strftime '%Y%m%dT%H%M%S'
       end
     end

@@ -27,77 +27,56 @@ the 1.x series.
 DESCRIPTION
 ---
 
-iCalendar is a Ruby library for dealing with iCalendar files in the 
-iCalendar format defined by RFC-2445:
-
-The use of calendaring and scheduling has grown considerably in the
-last decade. Enterprise and inter-enterprise business has become
-dependent on rapid scheduling of events and actions using this
-information technology. However, the longer term growth of calendaring
-and scheduling, is currently limited by the lack of Internet standards
-for the message content types that are central to these knowledgeware
-applications. This memo is intended to progress the level of
-interoperability possible between dissimilar calendaring and
-scheduling applications. This memo defines a MIME content type for
-exchanging electronic calendaring and scheduling information. The
-Internet Calendaring and Scheduling Core Object Specification, or
-iCalendar, allows for the capture and exchange of information normally
-stored within a calendaring and scheduling application; such as a
-Personal Information Manager (PIM) or a Group Scheduling product. 
-
-The iCalendar format is suitable as an exchange format between
-applications or systems. The format is defined in terms of a MIME
-content type. This will enable the object to be exchanged using
-several transports, including but not limited to SMTP, HTTP, a file
-system, desktop interactive protocols such as the use of a memory-
-based clipboard or drag/drop interactions, point-to-point asynchronous
-communication, wired-network transport, or some form of unwired
-transport such as infrared might also be used.
-
+iCalendar is a Ruby library for dealing with iCalendar files in the
+iCalendar format defined by [RFC-5545](http://tools.ietf.org/html/rfc5545).
 
 EXAMPLES
 ---
 
-### Probably want to start with this ###
-
-    require 'icalendar'
-    require 'date'
-
-    include Icalendar # You should do this in your class to limit namespace overlap
-
 ### Creating calendars and events ###
 
+    require 'icalendar'
+
     # Create a calendar with an event (standard method)
-    cal = Calendar.new
-    cal.event do
-      dtstart       Date.new(2005, 04, 29)
-      dtend         Date.new(2005, 04, 28)
-      summary     "Meeting with the man."
-      description "Have a long lunch meeting and decide nothing..."
-      klass       "PRIVATE"
+    cal = Icalendar::Calendar.new
+    cal.event do |e|
+      e.dtstart     = Icalendar::Values::Date.new('20050428')
+      e.dtend       = Icalendar::Values::Date.new('20050429')
+      e.summary     = "Meeting with the man."
+      e.description = "Have a long lunch meeting and decide nothing..."
+      e.ip_class    = "PRIVATE"
     end
 
     cal.publish
 
 #### Or you can make events like this ####
 
-    event = Event.new
-    event.start = DateTime.civil(2006, 6, 23, 8, 30)
+    event = Icalendar::Event.new
+    event.dtstart = DateTime.civil(2006, 6, 23, 8, 30)
     event.summary = "A great event!"
     cal.add_event(event)
 
     event2 = cal.event  # This automatically adds the event to the calendar
-    event2.start = DateTime.civil(2006, 6, 24, 8, 30)
+    event2.dtstart = DateTime.civil(2006, 6, 24, 8, 30)
     event2.summary = "Another great event!"
 
-#### Now with support for property parameters ####
+#### Support for property parameters ####
 
-    params = {"ALTREP" =>['"http://my.language.net"'], "LANGUAGE" => ["SPANISH"]}
+    params = {"altrep" => "http://my.language.net", "language" => "SPANISH"}
 
-    cal.event do
-      dtstart Date.new(2005, 04, 29)
-      dtend   Date.new(2005, 04, 28)
-      summary "This is a summary with params.", params
+    cal.event do |e|
+      e.dtstart = Icalendar::Values::Date.new('20050428')
+      e.dtend   = Icalendar::Values::Date.new('20050429')
+      e.summary = Icalendar::Values::Text.new "This is a summary with params.", params
+    end
+
+    # or
+
+    cal.event do |e|
+      e.dtstart = Icalendar::Values::Date.new('20050428')
+      e.dtend   = Icalendar::Values::Date.new('20050429')
+      e.summary = "This is a summary with params."
+      e.summary.ical_params = params
     end
 
 #### We can output the calendar as a string ####
@@ -110,29 +89,28 @@ ALARMS
 
 ### Within an event ###
 
-    cal.event do
+    cal.event do |e|
       # ...other event properties
-      alarm do
-        action        "EMAIL"
-        description   "This is an event reminder" # email body (required)
-        summary       "Alarm notification"        # email subject (required)
-        attendees     %w(mailto:me@my-domain.com mailto:me-too@my-domain.com) # one or more email recipients (required)
-        add_attendee  "mailto:me-three@my-domain.com"
-        remove_attendee "mailto:me@my-domain.com"
-        trigger       "-PT15M" # 15 minutes before
-        add_attach    "ftp://host.com/novo-procs/felizano.exe", {"FMTTYPE" => "application/binary"} # email attachments (optional)
+      e.alarm do |a|
+        a.action          = "EMAIL"
+        a.description     = "This is an event reminder" # email body (required)
+        a.summary         = "Alarm notification"        # email subject (required)
+        a.attendee        = %w(mailto:me@my-domain.com mailto:me-too@my-domain.com) # one or more email recipients (required)
+        a.append_attendee "mailto:me-three@my-domain.com"
+        a.trigger         = "-PT15M" # 15 minutes before
+        a.append_attach   Icalendar::Values::Uri.new "ftp://host.com/novo-procs/felizano.exe", "fmttype" => "application/binary" # email attachments (optional)
       end
 
-      alarm do
-        action        "DISPLAY" # This line isn't necessary, it's the default
-        summary       "Alarm notification"
-        trigger       "-P1DT0H0M0S" # 1 day before
+      e.alarm do |a|
+        a.action  = "DISPLAY" # This line isn't necessary, it's the default
+        a.summary = "Alarm notification"
+        a.trigger = "-P1DT0H0M0S" # 1 day before
       end
 
-      alarm do
-        action        "AUDIO"
-        trigger       "-PT15M"
-        add_attach    "Basso", {"VALUE" => ["URI"]}  # only one attach allowed (optional)
+      e.alarm do |a|
+        a.action        = "AUDIO"
+        a.trigger       = "-PT15M"
+        a.append_attach "Basso"
       end
     end
 
@@ -160,27 +138,28 @@ ALARMS
     # TRIGGER:-PT15M
     # END:VALARM
 
+
 TIMEZONES
 ---
 
-    cal = Calendar.new
-    cal.timezone do
-      timezone_id             "America/Chicago"
+    cal = Icalendar::Calendar.new
+    cal.timezone do |t|
+      t.tzid = "America/Chicago"
 
-      daylight do
-        timezone_offset_from  "-0600"
-        timezone_offset_to    "-0500"
-        timezone_name         "CDT"
-        dtstart               "19700308TO20000"
-        add_recurrence_rule   "FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
+      t.daylight do |d|
+        d.tzoffsetfrom = "-0600"
+        d.tzoffsetto   = "-0500"
+        d.tzname       = "CDT"
+        d.dtstart      = "19700308T020000"
+        d.rrule        = "FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
       end
 
-      standard do
-        timezone_offset_from  "-0500"
-        timezone_offset_to    "-0600"
-        timezone_name         "CST"
-        dtstart               "19701101T020000"
-        add_recurrence_rule   "YEARLY;BYMONTH=11;BYDAY=1SU"
+      t.standard do |s|
+        s.tzoffsetfrom = "-0500"
+        s.tzoffsetto   = "-0600"
+        s.tzname       = "CST"
+        s.dtstart      = "19701101T020000"
+        s.rrule        = "FREQ=YEARLY;BYMONTH=11;BYDAY=1SU"
       end
     end
 
@@ -204,35 +183,30 @@ TIMEZONES
     # END:STANDARD
     # END:VTIMEZONE
 
-iCalendar has some basic support for creating VTIMEZONE blocks from timezone information pulled from `tzinfo`. You must require `tzinfo` support manually to take advantage, and iCalendar only supports `tzinfo` with versions `~> 0.3`
+iCalendar has some basic support for creating VTIMEZONE blocks from timezone information pulled from `tzinfo`.
+You must require `tzinfo` support manually to take advantage, and iCalendar only supports `tzinfo` with versions `~> 0.3`
 
 #### Example ####
 
-    require 'tzinfo'
     require 'icalendar/tzinfo'
-    
-    cal = Calendar.new
-    
+
+    cal = Icalendar::Calendar.new
+
     event_start = DateTime.new 2008, 12, 29, 8, 0, 0
     event_end = DateTime.new 2008, 12, 29, 11, 0, 0
-    
+
     tzid = "America/Chicago"
     tz = TZInfo::Timezone.get tzid
     timezone = tz.ical_timezone event_start
-    cal.add timezone
-  
-    cal.event do
-        dtstart     event_start.tap { |d| d.ical_params = {'TZID' => tzid} }
-        dtend       event_end.tap { |d| d.ical_params = {'TZID' => tzid} }
-        summary     "Meeting with the man."
-        description "Have a long lunch meeting and decide nothing..."
+    cal.add_timezone timezone
+
+    cal.event do |e|
+      e.dtstart = Icalendar::Values::DateTime.new event_start, 'tzid' => tzid
+      e.dtend   = Icalendar::Values::DateTime.new event_end, 'tzid' => tzid
+      e.summary = "Meeting with the man."
+      e.description = "Have a long lunch meeting and decide nothing..."
     end
 
-
-Unicode
----
-
-Add `$KCODE = 'u'` to make icalendar work correctly with Utf8 texts
 
 Parsing iCalendars
 ---
@@ -244,18 +218,18 @@ Parsing iCalendars
     # can have multiple calendars.
     cals = Icalendar.parse(cal_file)
     cal = cals.first
-    
+
     # Now you can access the cal object in just the same way I created it
     event = cal.events.first
 
     puts "start date-time: #{event.dtstart}"
-    puts "start date-time timezone: #{event.dtstart.icalendar_tzid}" if event.dtstart.is_a?(DateTime)
+    puts "start date-time timezone: #{event.dtstart.ical_params['tzid']}"
     puts "summary: #{event.summary}"
 
     # Some calendars contain non-standard parameters (e.g. Apple iCloud
     # calendars). You can pass in a `strict` value when creating a new parser.
     unstrict_parser = Icalendar::Parser.new(cal_file, false)
-    cal = unstrict_parser.parse()
+    cal = unstrict_parser.parse
 
 Finders
 ---
@@ -300,12 +274,13 @@ Testing
 To run the tests:
 
     $ bundle install
-    $ rake test
+    $ rake spec
 
 License
 ---
 
 This library is released under the same license as Ruby itself.
+
 
 Support & Contributions
 ---

@@ -1,39 +1,23 @@
-=begin
-  Copyright (C) 2005 Jeff Rose
+module Icalendar
 
-  This library is free software; you can redistribute it and/or modify it
-  under the same terms as the ruby language itself, see the file COPYING for
-  details.
-=end
+  MAX_LINE_LENGTH = 75
 
-$:.unshift(File.dirname(__FILE__))
+  def self.parse(source, single = false)
+    calendars = Parser.new(source).parse
+    single ? calendars.first : calendars
+  end
 
-### Base classes and mixin modules
+end
 
-# to_ical methods for built-in classes
-require 'icalendar/conversions'
-
-# Meta-programming helper methods
-require 'meta'
-
-# Hash attributes mixin module
-require 'hash_attrs'
-
-require 'icalendar/base'
+require 'icalendar/has_properties'
+require 'icalendar/has_components'
 require 'icalendar/component'
-require 'icalendar/rrule'
-
-# Calendar and components
+require 'icalendar/value'
+require 'icalendar/alarm'
+require 'icalendar/event'
+require 'icalendar/todo'
+require 'icalendar/journal'
+require 'icalendar/freebusy'
+require 'icalendar/timezone'
 require 'icalendar/calendar'
-require 'icalendar/component/event'
-require 'icalendar/component/journal'
-require 'icalendar/component/todo'
-require 'icalendar/component/freebusy'
-require 'icalendar/component/timezone'
-require 'icalendar/component/alarm'
-
-# Calendar parser
 require 'icalendar/parser'
-
-# TZINFO support
-# require 'icalendar/tzinfo'
