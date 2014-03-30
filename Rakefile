@@ -7,6 +7,7 @@ RSpec::Core::RakeTask.new
 
 task default: [:spec, :build]
 
+desc "Load iCalendar in IRB"
 task :console do
   require 'irb'
   require 'irb/completion'
