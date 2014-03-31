@@ -27,6 +27,10 @@ module Icalendar
       calendars
     end
 
+    def strict?
+      !!@strict
+    end
+
     private
 
     def parse_component(component)
@@ -62,10 +66,14 @@ module Icalendar
             prop_value = klass.new fields[:value], fields[:params]
           end
           prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
-          if component.class.multiple_properties.include? prop_name
-            component.send "append_#{prop_name}", prop_value
-          else
-            component.send "#{prop_name}=", prop_value
+          begin
+            if component.class.multiple_properties.include? prop_name
+              component.send "append_#{prop_name}", prop_value
+            else
+              component.send "#{prop_name}=", prop_value
+            end
+          rescue NoMethodError => nme
+            raise nme if strict?
           end
         end
       end
