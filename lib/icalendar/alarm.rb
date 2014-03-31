@@ -16,6 +16,10 @@ module Icalendar
 
     optional_property :attach, Icalendar::Values::Uri
 
+    # not part of base spec - need better abstraction for extensions
+    optional_single_property :uid
+    optional_single_property :acknowledged, Icalendar::Values::DateTime
+
     def initialize
       super 'alarm'
     end
