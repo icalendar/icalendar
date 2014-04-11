@@ -12,12 +12,13 @@ module Icalendar
       else
         raise ArgumentError, 'Icalendar::Parser.new must be called with a String or IO object'
       end
+      read_in_data
       @strict = strict
     end
 
     def parse
       source.rewind
-      @data = source.gets and @data.chomp!
+      read_in_data
       calendars = []
       while (fields = next_fields)
         if fields[:name] == 'begin' && fields[:value].downcase == 'vcalendar'
@@ -25,6 +26,37 @@ module Icalendar
         end
       end
       calendars
+    end
+
+    def parse_property(component, fields = nil)
+      fields = next_fields if fields.nil?
+      klass = component.class.default_property_types[fields[:name]]
+      if !fields[:params]['value'].nil?
+        klass_name = fields[:params].delete('value').first
+        unless klass_name.upcase == klass.value_type
+          klass_name = klass_name.downcase.gsub(/(?:\A|-)(.)/) { |m| m[-1].upcase }
+          klass = Icalendar::Values.const_get klass_name if Icalendar::Values.const_defined?(klass_name)
+        end
+      end
+      if klass.value_type != 'RECUR' && fields[:value] =~ /(?<!\\)([,;])/
+        delimiter = $1
+        prop_value = Icalendar::Values::Array.new fields[:value].split(/(?<!\\)[;,]/),
+                                                  klass,
+                                                  fields[:params],
+                                                  delimiter: delimiter
+      else
+        prop_value = klass.new fields[:value], fields[:params]
+      end
+      prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
+      begin
+        if component.class.multiple_properties.include? prop_name
+          component.send "append_#{prop_name}", prop_value
+        else
+          component.send "#{prop_name}=", prop_value
+        end
+      rescue NoMethodError => nme
+        raise nme if strict?
+      end
     end
 
     def strict?
@@ -48,42 +80,20 @@ module Icalendar
           end
         else
           # new property
-          klass = component.class.default_property_types[fields[:name]]
-          if !fields[:params]['value'].nil?
-            klass_name = fields[:params].delete('value').first
-            unless klass_name.upcase == klass.value_type
-              klass_name = klass_name.downcase.gsub(/(?:\A|-)(.)/) { |m| m[-1].upcase }
-              klass = Icalendar::Values.const_get klass_name if Icalendar::Values.const_defined?(klass_name)
-            end
-          end
-          if klass.value_type != 'RECUR' && fields[:value] =~ /(?<!\\)([,;])/
-            delimiter = $1
-            prop_value = Icalendar::Values::Array.new fields[:value].split(/(?<!\\)[;,]/),
-                                                      klass,
-                                                      fields[:params],
-                                                      delimiter: delimiter
-          else
-            prop_value = klass.new fields[:value], fields[:params]
-          end
-          prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
-          begin
-            if component.class.multiple_properties.include? prop_name
-              component.send "append_#{prop_name}", prop_value
-            else
-              component.send "#{prop_name}=", prop_value
-            end
-          rescue NoMethodError => nme
-            raise nme if strict?
-          end
+          parse_property component, fields
         end
       end
       component
     end
 
+    def read_in_data
+      @data = source.gets and @data.chomp!
+    end
+
     def next_fields
       line = @data or return nil
       loop do
-        @data = source.gets and @data.chomp!
+        read_in_data
         if @data =~ /\A[ \t].+\z/
           line << @data[1, @data.size]
         elsif @data !~ /\A\s*\z/
