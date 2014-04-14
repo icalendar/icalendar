@@ -21,6 +21,8 @@ module Icalendar
     # Access classification (PUBLIC, PRIVATE, CONFIDENTIAL...)
     ical_property :ip_class, :klass
 
+    ical_property :ip_name
+
     # Date & time of creation
     ical_property :created
 

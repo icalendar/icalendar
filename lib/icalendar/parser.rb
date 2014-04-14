@@ -182,7 +182,7 @@ module Icalendar
           name = name.downcase
 
           # TODO: check to see if there are any more conflicts.
-          if name == 'class' or name == 'method'
+          if name == 'class' or name == 'method' or name == 'name'
             name = "ip_" + name
           end
 
