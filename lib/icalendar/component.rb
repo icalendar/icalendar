@@ -124,15 +124,19 @@ module Icalendar
       properties.sort.map do |key, val|
         property = fix_conflict_with_built_in(key)
         prelude = property.gsub(/_/, '-').upcase
-        params = print_parameters(val)
 
-        value = ":#{val.to_ical}"
-        multiline = multiline_property?(property)
-        if multiline || (!multiline && !excludes.include?(property))
-          value = escape_chars(value)
+        if multiline_property? property
+          val.map do |part|
+            params = print_parameters part
+            value = escape_chars ":#{part.to_ical}"
+            chunk_lines "#{prelude}#{params}#{value}"
+          end.join
+        else
+          params = print_parameters val
+          value = ":#{val.to_ical}"
+          value = escape_chars(value) unless excludes.include? property
+          chunk_lines "#{prelude}#{params}#{value}"
         end
-
-        chunk_lines(prelude + params + value)
       end.join
     end
 

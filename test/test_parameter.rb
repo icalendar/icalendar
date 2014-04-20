@@ -38,6 +38,24 @@ class TestParameter < Test::Unit::TestCase
     end
   end
 
+  def test_attachment_parameters
+    params = {
+      'ENCODING' => ['BASE64'],
+      'FMTYPE' => ['text/directory'],
+      'VALUE' => ['BINARY'],
+      'X-APPLE-FILENAME' => ['1234.vcf']
+    }
+    @event.add_attachment 'binarystring', params
+
+    assert_equal params, @event.attachments[0].ical_params
+    @cal.add_event @event
+    cal_str = @cal.to_ical
+
+    cals = Icalendar::Parser.new(cal_str).parse
+    event = cals.first.events.first
+    assert_equal params, event.attachments[0].ical_params
+  end
+
   def test_unquoted_property_parameters
     params = {'ALTREP' => ['"http://my.language.net"'],
               'LANGUAGE' => ['SPANISH:CATILLAN'],

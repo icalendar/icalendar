@@ -33,13 +33,13 @@ module Icalendar
     ical_property :summary
     ical_property :uid, :user_id
     ical_property :url
-    
+
     # Single but mutually exclusive TODO: not testing anything yet
     ical_property :due
     ical_property :duration
 
     # Multi-properties
-    ical_multi_property :attach, :attachment, :attachments
+    ical_multiline_property :attach, :attachment, :attachments
     ical_multiline_property :attendee, :attendee, :attendees
     ical_multi_property :categories, :category, :categories
     ical_multi_property :comment, :comment, :comments
@@ -51,7 +51,7 @@ module Icalendar
     ical_multi_property :resources, :resource, :resources
     ical_multi_property :rdate, :recurrence_date, :recurrence_dates
     ical_multi_property :rrule, :recurrence_rule, :recurrence_rules
-    
+
     def initialize()
       super("VTODO")
 

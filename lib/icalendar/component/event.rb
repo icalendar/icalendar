@@ -79,7 +79,7 @@ module Icalendar
     ## Multi-instance properties
 
     # Associates a URI or binary blob with this item
-    ical_multi_property :attach, :attachment, :attachments
+    ical_multiline_property :attach, :attachment, :attachments
 
     # Defines an attendee for this calendar item
     ical_multiline_property :attendee, :attendee, :attendees

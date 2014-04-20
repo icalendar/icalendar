@@ -35,7 +35,7 @@ module Icalendar
     ical_property :recurid, :recurrence_id
 
     # Multi-properties
-    ical_multi_property :attach, :attachment, :attachments
+    ical_multiline_property :attach, :attachment, :attachments
     ical_multiline_property :attendee, :attendee, :attendees
     ical_multi_property :categories, :category, :categories
     ical_multi_property :comment, :comment, :comments
@@ -58,4 +58,3 @@ module Icalendar
 
   end
 end
-
