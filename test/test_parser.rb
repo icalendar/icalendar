@@ -74,6 +74,7 @@ class TestIcalendarParser < Test::Unit::TestCase
     
     event = cal.events.first
     assert_equal("bsuidfortestabc123", event.uid)
+    assert_equal("SomeName", event.ip_name)
     
     summary = "This is a really long summary to test the method of unfolding lines, so I'm just going to make it a whole bunch of lines."
 
