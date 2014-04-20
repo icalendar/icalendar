@@ -1,3 +1,8 @@
+=== 1.5.3 2014-04-20
+ * Restore printing of parameters on multiline properties
+ * Prevent crash on parsing calendar with NAME properties - Philip Müller
+ * Enforce lack of ruby 1.8.7 support
+
 === 1.5.2 2014-02-22
  * Output timezone components first
  * Fix undefined local variable or method 'e' - Jason Stirk
