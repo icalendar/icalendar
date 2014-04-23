@@ -26,7 +26,15 @@ variety of calendaring applications.
 
   s.add_development_dependency 'rake', '~> 10.0'
   s.add_development_dependency 'bundler', '~> 1.3'
-  s.add_development_dependency 'tzinfo', '~> 0.3'
+
+  # test with both groups of tzinfo dependencies
+  # tzinfo 1.x
+  s.add_development_dependency 'tzinfo', '~> 1.1'
+  s.add_development_dependency 'tzinfo-data', '~> 1.2014'
+  # tzinfo 0.x
+  # s.add_development_dependency 'tzinfo', '~> 0.3'
+  # end tzinfo
+
   s.add_development_dependency 'activesupport', '~> 3.2'
   s.add_development_dependency 'timecop', '~> 0.7.0'
   s.add_development_dependency 'rspec', '~> 2.14'

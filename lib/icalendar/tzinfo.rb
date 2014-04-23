@@ -21,7 +21,7 @@
 #   # the mixins now generate all the timezone info for the date in question
 #   timezone = tz.ical_timezone(estart)
 #   cal.add(timezone)
-#  
+#
 #   cal.event do
 #       dtstart       estart
 #       dtend        eend
@@ -40,6 +40,46 @@
 
 
 require 'tzinfo'
+begin
+  require 'tzinfo/data'
+rescue LoadError
+  Icalendar.logger.info "Could not load tzinfo/data, hopefully tzinfo is accurate (ignore for tzinfo 0.x)"
+end
+
+module Icalendar
+  module TimezoneTransition
+    def offset_from
+      previous_offset.ical_offset
+    end
+
+    def offset_to
+      offset.ical_offset
+    end
+
+    def rrule
+      start = local_start.to_datetime
+      # this is somewhat of a hack, but seems to work ok
+      [sprintf(
+        'FREQ=YEARLY;BYMONTH=%d;BYDAY=%d%s',
+        start.month,
+        ((start.day - 1)/ 7).to_i + 1,
+        start.strftime('%a').upcase[0,2]
+      )]
+    end
+
+    def dtstart
+      local_start.to_datetime.strftime '%Y%m%dT%H%M%S'
+    end
+  end
+
+  module TimezoneOffset
+    def ical_offset
+      o = utc_total_offset
+      sprintf '%+-2.2d%2.2d', (o / 3600).to_i, ((o / 60) % 60).to_i
+    end
+  end
+end
+
 
 module TZInfo
   class Timezone
@@ -59,35 +99,23 @@ module TZInfo
     end
   end
 
-  class TimezoneTransitionInfo
-    def offset_from
-      previous_offset.ical_offset
+  if defined? TimezoneTransitionInfo
+    class TimezoneTransitionInfo
+      include Icalendar::TimezoneTransition
     end
-
-    def offset_to
-      offset.ical_offset
-    end
-
-    def rrule 
-      start = local_start.to_datetime
-      # this is somewhat of a hack, but seems to work ok
-      [sprintf(
-        'FREQ=YEARLY;BYMONTH=%d;BYDAY=%d%s',
-        start.month,
-        ((start.day - 1)/ 7).to_i + 1,
-        start.strftime('%a').upcase[0,2]
-      )]
-    end
-
-    def dtstart
-      local_start.to_datetime.strftime '%Y%m%dT%H%M%S'
+  else
+    class TimezoneTransition
+      include Icalendar::TimezoneTransition
     end
   end
 
-  class TimezoneOffsetInfo
-    def ical_offset
-      o = utc_total_offset
-      sprintf '%+-2.2d%2.2d', (o / 3600).to_i, ((o / 60) % 60).to_i
+  if defined? TimezoneOffsetInfo
+    class TimezoneOffsetInfo
+      include Icalendar::TimezoneOffset
+    end
+  else
+    class TimezoneOffset
+      include Icalendar::TimezoneOffset
     end
   end
 
