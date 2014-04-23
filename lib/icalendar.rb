@@ -1,6 +1,16 @@
+require 'icalendar/logger'
+
 module Icalendar
 
   MAX_LINE_LENGTH = 75
+
+  def self.logger
+    @logger ||= Icalendar::Logger.new(STDERR)
+  end
+
+  def self.logger=(logger)
+    @logger = logger
+  end
 
   def self.parse(source, single = false)
     calendars = Parser.new(source).parse
