@@ -37,4 +37,21 @@ describe Icalendar do
       expect(subject.dtend.to_ical(subject.class.default_property_types['dtend'])).to match /^;VALUE=DATE:20061215$/
     end
   end
+
+  describe 'non-standard values' do
+    before(:all) { Icalendar.logger = Icalendar::Logger.new File::NULL }
+    after(:all) { Icalendar.logger = nil }
+    let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'nonstandard.ics') }
+    subject { Icalendar::Parser.new(source, strict) }
+
+    context 'strict parser' do
+      let(:strict) { true }
+      specify { expect { subject.parse }.to raise_error }
+    end
+
+    context 'lenient parser' do
+      let(:strict) { false }
+      specify { expect { subject.parse}.to_not raise_error }
+    end
+  end
 end
