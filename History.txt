@@ -1,3 +1,7 @@
+=== 2.0.0 2014-04-22
+ * Add Icalendar.logger class & logging in Parser
+ * Support tzinfo ~> 0.3 and ~> 1.1
+
 === 2.0.0.beta.2 2014-04-11
  * Add uid & acknowledged fields from valarm extensions
  * Swallow NoMethodError on non-strict parsers
