@@ -64,20 +64,22 @@ EXAMPLES
 
     params = {"altrep" => "http://my.language.net", "language" => "SPANISH"}
 
-    cal.event do |e|
+    event = cal.event do |e|
       e.dtstart = Icalendar::Values::Date.new('20050428')
       e.dtend   = Icalendar::Values::Date.new('20050429')
       e.summary = Icalendar::Values::Text.new "This is a summary with params.", params
     end
+    event.summary.ical_params #=> {'altrep' => 'http://my.language.net', 'language' => 'SPANISH'}
 
     # or
 
-    cal.event do |e|
+    event = cal.event do |e|
       e.dtstart = Icalendar::Values::Date.new('20050428')
       e.dtend   = Icalendar::Values::Date.new('20050429')
       e.summary = "This is a summary with params."
       e.summary.ical_params = params
     end
+    event.summary.ical_params #=> {'altrep' => 'http://my.language.net', 'language' => 'SPANISH'}
 
 #### We can output the calendar as a string ####
 
