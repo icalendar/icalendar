@@ -1,3 +1,6 @@
+=== 1.5.4 2014-04-27
+ * Accidentally cut off support for Ruby 1.9.2
+
 === 1.5.3 2014-04-20
  * Restore printing of parameters on multiline properties
  * Prevent crash on parsing calendar with NAME properties - Philip Müller

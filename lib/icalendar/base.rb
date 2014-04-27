@@ -11,7 +11,7 @@ require 'logger'
 
 module Icalendar #:nodoc:
 
-  VERSION = '1.5.3'
+  VERSION = '1.5.4'
 
   # A simple error class to differentiate iCalendar library exceptions
   # from ruby language exceptions or others.
