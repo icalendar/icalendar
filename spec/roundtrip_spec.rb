@@ -39,8 +39,10 @@ describe Icalendar do
   end
 
   describe 'non-standard values' do
-    before(:all) { Icalendar.logger = Icalendar::Logger.new File::NULL }
-    after(:all) { Icalendar.logger = nil }
+    if defined? File::NULL
+      before(:all) { Icalendar.logger = Icalendar::Logger.new File::NULL }
+      after(:all) { Icalendar.logger = nil }
+    end
     let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'nonstandard.ics') }
     subject { Icalendar::Parser.new(source, strict) }
 
