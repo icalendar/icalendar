@@ -23,6 +23,9 @@ the 1.x series.
 * More obvious access to parameters and values
 * Cleaner & easier timezone support
 
+### Upgrade from 1.x ###
+
+Better documentation is still to come, but in the meantime the changes needed to move from 1.x to 2.0 are summarized by the [diff needed to update the README](https://github.com/icalendar/icalendar/commit/bc3701e004c915a250054030a9375d1e7618857f)
 
 DESCRIPTION
 ---
