@@ -33,7 +33,7 @@ module Icalendar
 
     def ical_properties
       (self.class.properties + custom_properties.keys).map do |prop|
-        value = send prop
+        value = property prop
         unless value.nil?
           if value.is_a? ::Array
             value.map do |part|

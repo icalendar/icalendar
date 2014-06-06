@@ -53,7 +53,18 @@ describe Icalendar do
 
     context 'lenient parser' do
       let(:strict) { false }
-      specify { expect { subject.parse}.to_not raise_error }
+      specify { expect { subject.parse }.to_not raise_error }
+
+      context 'saves non-standard fields' do
+        let(:parsed) { subject.parse.first.events.first }
+        specify { expect(parsed.custom_property('customfield').first).to eq 'Not properly noted as custom with X- prefix.' }
+        specify { expect(parsed.custom_property('CUSTOMFIELD').first).to eq 'Not properly noted as custom with X- prefix.' }
+      end
+
+      it 'can output custom fields' do
+        ical = subject.parse.first.to_ical
+        expect(ical).to include 'CUSTOMFIELD:Not properly noted as custom with X- prefix.'
+      end
     end
   end
 end

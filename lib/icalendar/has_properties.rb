@@ -29,17 +29,35 @@ module Icalendar
       true
     end
 
+    def property(property_name)
+      property_name = property_name.downcase
+      if self.class.properties.include? property_name
+        send property_name
+      else
+        custom_property property_name
+      end
+    end
+
+    def custom_property(property_name)
+      custom_properties[property_name.downcase]
+    end
+
+    def append_custom_property(property_name, value)
+      property_name = property_name.downcase
+      if value.is_a? Icalendar::Value
+        custom_properties[property_name] << value
+      else
+        custom_properties[property_name] << Icalendar::Values::Text.new(value)
+      end
+    end
+
     def method_missing(method, *args, &block)
       method_name = method.to_s
       if method_name.start_with? 'x_'
         if method_name.end_with? '='
-          if args.first.is_a? Icalendar::Value
-            custom_properties[method_name.chomp('=')] << args.first
-          else
-            custom_properties[method_name.chomp('=')] << Icalendar::Values::Text.new(args.first)
-          end
+          append_custom_property method_name.chomp('='), args.first
         else
-          custom_properties[method_name]
+          custom_property method_name
         end
       else
         super
