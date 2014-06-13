@@ -6,10 +6,10 @@ module Icalendar
     class UtcOffset < Value
 
       def initialize(value, params = {})
-        if value.is_a? String
-          value = OpenStruct.new parse_fields(value)
+        if value.is_a? Icalendar::Values::UtcOffset
+          value = value.value
         else
-          value = OpenStruct.new value
+          value = OpenStruct.new parse_fields(value)
         end
         super value, params
       end
