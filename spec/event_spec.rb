@@ -51,8 +51,8 @@ describe Icalendar::Event do
   context 'suggested single values' do
     before(:each) do
       subject.dtstart = DateTime.now
-      subject.append_rrule double('RRule')
-      subject.append_rrule double('RRule')
+      subject.append_rrule double('RRule').as_null_object
+      subject.append_rrule double('RRule').as_null_object
     end
 
     it 'is valid by default' do

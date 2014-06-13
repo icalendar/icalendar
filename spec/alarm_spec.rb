@@ -7,7 +7,7 @@ describe Icalendar::Alarm do
     subject do
       described_class.new.tap do |a|
         a.action = 'AUDIO'
-        a.trigger = Time.now.utc.to_datetime
+        a.trigger = Icalendar::Values::DateTime.new(Time.now.utc)
       end
     end
     context 'neither duration or repeat is set' do
@@ -82,8 +82,8 @@ describe Icalendar::Alarm do
     context 'strict validations check parent' do
       subject do
         described_class.new.tap do |a|
-        a.action = 'AUDIO'
-          a.trigger = Time.now.utc.to_datetime
+          a.action = 'AUDIO'
+          a.trigger = Icalendar::Values::DateTime.new(Time.now.utc)
         end
       end
       specify { subject.valid?(true).should be_true }

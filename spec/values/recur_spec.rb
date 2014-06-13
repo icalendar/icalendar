@@ -21,6 +21,18 @@ describe Icalendar::Values::Recur do
       specify { expect(subject.by_day).to eq %w(2SU) }
       specify { expect(subject.by_month).to eq [3] }
     end
+
+    context 'neverending yearly' do
+      let(:value) { 'FREQ=YEARLY' }
+
+      specify { expect(subject.frequency).to eq 'YEARLY' }
+      it 'can be added to another event by sending' do
+        event = Icalendar::Event.new
+        event.send "rrule=", [subject]
+        rule = event.send "rrule"
+        expect(rule.first.frequency).to eq 'YEARLY'
+      end
+    end
   end
 
   describe '#valid?' do
