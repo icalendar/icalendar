@@ -28,7 +28,7 @@ describe Icalendar::Values::Recur do
       specify { expect(subject.frequency).to eq 'YEARLY' }
       it 'can be added to another event by sending' do
         event = Icalendar::Event.new
-        event.send "rrule=", [subject]
+        event.send "rrule=", subject
         rule = event.send "rrule"
         expect(rule.first.frequency).to eq 'YEARLY'
       end

@@ -8,7 +8,7 @@ describe Icalendar::Calendar do
     %w(prodid version calscale ip_method).each do |prop|
       it "##{prop} sets and gets" do
         subject.send("#{prop}=", property)
-        subject.send(prop).should == property
+        expect(subject.send prop).to eq property
       end
     end
 
