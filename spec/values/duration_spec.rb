@@ -7,17 +7,17 @@ describe Icalendar::Values::Duration do
   describe '#past?' do
     context 'positive explicit' do
       let(:value) { '+P15M' }
-      specify { expect(subject.past?).to be_false }
+      specify { expect(subject.past?).to be false }
     end
 
     context 'positive implicit' do
       let(:value) { 'P15M' }
-      specify { expect(subject.past?).to be_false }
+      specify { expect(subject.past?).to be false }
     end
 
     context 'negative' do
       let(:value) { '-P15M' }
-      specify { expect(subject.past?).to be_true }
+      specify { expect(subject.past?).to be true }
     end
   end
 

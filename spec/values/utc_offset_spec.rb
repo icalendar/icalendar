@@ -20,21 +20,21 @@ describe Icalendar::Values::UtcOffset do
   describe '#behind?' do
     context 'negative offset' do
       let(:value) { '-0500' }
-      specify { expect(subject.behind?).to be_true }
+      specify { expect(subject.behind?).to be true }
     end
 
     context 'positive offset' do
       let(:value) { '+0200' }
-      specify { expect(subject.behind?).to be_false }
+      specify { expect(subject.behind?).to be false }
     end
 
     context 'no offset' do
       let(:value) { '-0000' }
-      specify { expect(subject.behind?).to be_false }
+      specify { expect(subject.behind?).to be false }
 
       it 'does not allow override' do
         subject.behind = true
-        expect(subject.behind?).to be_false
+        expect(subject.behind?).to be false
       end
     end
   end

@@ -19,39 +19,39 @@ describe Icalendar::Calendar do
 
     it 'can set params on a property' do
       subject.prodid.ical_params = {'hello' => 'world'}
-      subject.prodid.value.should == 'icalendar-ruby'
-      subject.prodid.ical_params.should == {'hello' => 'world'}
+      expect(subject.prodid.value).to eq 'icalendar-ruby'
+      expect(subject.prodid.ical_params).to eq('hello' => 'world')
     end
 
     context "required values" do
       it 'is not valid when prodid is not set' do
         subject.prodid = nil
-        subject.should_not be_valid
+        expect(subject).to_not be_valid
       end
 
       it 'is not valid when version is not set' do
         subject.version = nil
-        subject.should_not be_valid
+        expect(subject).to_not be_valid
       end
 
       it 'is valid when both prodid and version are set' do
         subject.version = '2.0'
         subject.prodid = 'my-product'
-        subject.should be_valid
+        expect(subject).to be_valid
       end
 
       it 'is valid by default' do
-        subject.should be_valid
+        expect(subject).to be_valid
       end
     end
   end
 
   context 'components' do
-    let(:ical_component) { double 'Component', name: 'event', 'parent=' => nil }
+    let(:ical_component) { double 'Component', name: 'event', :'parent=' => nil }
 
     %w(event todo journal freebusy timezone).each do |component|
       it "##{component} adds a new component" do
-        subject.send("#{component}").should be_a_kind_of Icalendar::Component
+        expect(subject.send "#{component}").to be_a_kind_of Icalendar::Component
       end
 
       it "##{component} passes a component to a block to build parts" do
@@ -60,13 +60,13 @@ describe Icalendar::Calendar do
 
       it "##{component} can be passed in" do
         expect { |b| subject.send("#{component}", ical_component, &b) }.to yield_with_args ical_component
-        subject.send("#{component}", ical_component).should == ical_component
+        expect(subject.send "#{component}", ical_component).to eq ical_component
       end
     end
 
     it "adds event to events list" do
       subject.event ical_component
-      subject.events.should == [ical_component]
+      expect(subject.events).to eq [ical_component]
     end
 
     describe '#add_event' do
@@ -85,7 +85,7 @@ describe Icalendar::Calendar do
       end
 
       it 'finds by uid' do
-        subject.find_event('uid').should == ical_component
+        expect(subject.find_event 'uid').to eq ical_component
       end
     end
 
@@ -98,19 +98,19 @@ describe Icalendar::Calendar do
       end
 
       it 'finds by tzid' do
-        subject.find_timezone('Eastern').should == ical_timezone
+        expect(subject.find_timezone 'Eastern').to eq ical_timezone
       end
     end
 
     it "adds reference to parent" do
       e = subject.event
-      e.parent.should == subject
+      expect(e.parent).to eq subject
     end
 
     it 'can be added with add_x_ for custom components' do
-      subject.add_x_custom_component.should be_a_kind_of Icalendar::Component
+      expect(subject.add_x_custom_component).to be_a_kind_of Icalendar::Component
       expect { |b| subject.add_x_custom_component(&b) }.to yield_with_args Icalendar::Component
-      subject.add_x_custom_component(ical_component).should == ical_component
+      expect(subject.add_x_custom_component ical_component).to eq ical_component
     end
   end
 

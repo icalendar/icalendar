@@ -32,9 +32,9 @@ describe Icalendar::Alarm do
     context 'display action' do
       before(:each) { subject.action = 'DISPLAY' }
       it 'requires description' do
-        subject.should_not be_valid
+        expect(subject).to_not be_valid
         subject.description = 'Display Text'
-        subject.should be_valid
+        expect(subject).to be_valid
       end
     end
 
@@ -44,15 +44,15 @@ describe Icalendar::Alarm do
         before(:each) { subject.attendee = ['mailto:test@email.com'] }
         it 'requires description' do
           subject.summary = 'Email subject'
-          subject.should_not be_valid
+          expect(subject).to_not be_valid
           subject.description = 'Email Body'
-          subject.should be_valid
+          expect(subject).to be_valid
         end
         it 'requires summary' do
           subject.description = 'Email body'
-          subject.should_not be_valid
+          expect(subject).to_not be_valid
           subject.summary = 'Email subject'
-          subject.should be_valid
+          expect(subject).to be_valid
         end
       end
       context 'attendees are required' do
@@ -63,18 +63,18 @@ describe Icalendar::Alarm do
 
         it 'must be present' do
           subject.attendee = nil
-          subject.should_not be_valid
+          expect(subject).to_not be_valid
         end
 
         it 'can be single' do
           subject.attendee << 'mailto:test@email.com'
-          subject.should be_valid
+          expect(subject).to be_valid
         end
 
         it 'can be multi' do
           subject.attendee << 'mailto:test@email.com'
           subject.attendee << 'mailto:email@test.com'
-          subject.should be_valid
+          expect(subject).to be_valid
         end
       end
     end
@@ -86,20 +86,20 @@ describe Icalendar::Alarm do
           a.trigger = Icalendar::Values::DateTime.new(Time.now.utc)
         end
       end
-      specify { subject.valid?(true).should be_true }
+      specify { expect(subject.valid? true).to be true }
       context 'with parent' do
         before(:each) { subject.parent = parent }
         context 'event' do
           let(:parent) { Icalendar::Event.new }
-          specify { subject.valid?(true).should be_true }
+          specify { expect(subject.valid? true).to be true }
         end
         context 'todo' do
           let(:parent) { Icalendar::Todo.new }
-          specify { subject.valid?(true).should be_true }
+          specify { expect(subject.valid? true).to be true }
         end
         context 'journal' do
           let(:parent) { Icalendar::Journal.new }
-          specify { subject.valid?(true).should be_false }
+          specify { expect(subject.valid? true).to be false }
         end
       end
     end

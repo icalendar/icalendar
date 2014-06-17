@@ -37,15 +37,15 @@ describe Icalendar::Values::Recur do
 
   describe '#valid?' do
     it 'requires frequency' do
-      expect(subject.valid?).to be_true
+      expect(subject.valid?).to be true
       subject.frequency = nil
-      expect(subject.valid?).to be_false
+      expect(subject.valid?).to be false
     end
 
     it 'cannot have both until and count' do
       subject.until = '20140201'
       subject.count = 4
-      expect(subject.valid?).to be_false
+      expect(subject.valid?).to be false
     end
   end
 

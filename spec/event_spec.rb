@@ -5,12 +5,12 @@ describe Icalendar::Event do
   describe '#dtstart' do
     context 'no parent' do
       it 'is invalid if not set' do
-        subject.should_not be_valid
+        expect(subject).to_not be_valid
       end
 
       it 'is valid if set' do
         subject.dtstart = DateTime.now
-        subject.should be_valid
+        expect(subject).to be_valid
       end
     end
 
@@ -18,12 +18,12 @@ describe Icalendar::Event do
       before(:each) { subject.parent = Icalendar::Calendar.new }
 
       it 'is invalid without method set' do
-        subject.should_not be_valid
+        expect(subject).to_not be_valid
       end
 
       it 'is valid with parent method set' do
         subject.parent.ip_method = 'UPDATE'
-        subject.should be_valid
+        expect(subject).to be_valid
       end
     end
   end
@@ -34,17 +34,17 @@ describe Icalendar::Event do
     it 'is invalid if both dtend and duration are set' do
       subject.dtend = Date.today + 1;
       subject.duration = 'PT15M'
-      subject.should_not be_valid
+      expect(subject).to_not be_valid
     end
 
     it 'is valid if dtend is set' do
       subject.dtend = Date.today + 1;
-      subject.should be_valid
+      expect(subject).to be_valid
     end
 
     it 'is valid if duration is set' do
       subject.duration = 'PT15M'
-      subject.should be_valid
+      expect(subject).to be_valid
     end
   end
 
@@ -56,11 +56,11 @@ describe Icalendar::Event do
     end
 
     it 'is valid by default' do
-      subject.should be_valid
+      expect(subject).to be_valid
     end
 
     it 'is invalid with strict checking' do
-      expect(subject.valid?(true)).to be_false
+      expect(subject.valid?(true)).to be false
     end
   end
 
@@ -68,25 +68,25 @@ describe Icalendar::Event do
     describe '#comment' do
       it 'will return an array when set singly' do
         subject.comment = 'a comment'
-        subject.comment.should == ['a comment']
+        expect(subject.comment).to eq ['a comment']
       end
 
       it 'can be appended' do
         subject.comment << 'a comment'
         subject.comment << 'b comment'
-        subject.comment.should == ['a comment', 'b comment']
+        expect(subject.comment).to eq ['a comment', 'b comment']
       end
 
       it 'can be added' do
         subject.append_comment 'a comment'
-        subject.comment.should == ['a comment']
+        expect(subject.comment).to eq ['a comment']
       end
     end
   end
 
   describe '#find_alarm' do
     it 'should not respond_to find_alarm' do
-      expect(subject.respond_to?(:find_alarm)).to be_false
+      expect(subject.respond_to?(:find_alarm)).to be false
     end
   end
 
