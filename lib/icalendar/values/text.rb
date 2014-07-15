@@ -20,6 +20,10 @@ module Icalendar
         end
       end
 
+      def to_ary
+        [ self ]
+      end
+
     end
 
   end
