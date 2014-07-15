@@ -1,4 +1,4 @@
-require 'socket'
+require 'securerandom'
 
 module Icalendar
 
@@ -17,7 +17,7 @@ module Icalendar
     end
 
     def new_uid
-      "#{DateTime.now}_#{rand(999999999)}@#{Socket.gethostname}"
+      SecureRandom.uuid
     end
 
     def to_ical
