@@ -11,6 +11,7 @@ desc "Load iCalendar in IRB"
 task :console do
   require 'irb'
   require 'irb/completion'
+  $:.unshift File.join(File.dirname(__FILE__), 'lib')
   require 'icalendar'
   ARGV.clear
   IRB.start

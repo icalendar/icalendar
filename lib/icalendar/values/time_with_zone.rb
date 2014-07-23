@@ -1,7 +1,7 @@
 begin
   require 'active_support/time'
 rescue LoadError
-  $stderr.puts "Info: No TimeWithZone support"
+  # tis ok, just a bit less fancy
 end
 
 module Icalendar
