@@ -1,3 +1,7 @@
+=== 2.1.1 2014-07-23
+ * Quiet TimeWithZone support logging
+ * Use SecureRandom.uuid - antoinelyset
+
 === 2.1.0 2014-06-17
  * Enable parsing all custom properties, not just X- prefixed ones
    Requires non-strict parsing
