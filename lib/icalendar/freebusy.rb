@@ -10,6 +10,7 @@ module Icalendar
     optional_single_property :dtend, Icalendar::Values::DateTime
     optional_single_property :organizer, Icalendar::Values::CalAddress
     optional_single_property :url, Icalendar::Values::Uri
+    optional_single_property :summary
 
     optional_property :attendee, Icalendar::Values::CalAddress
     optional_property :comment
