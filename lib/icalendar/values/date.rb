@@ -20,6 +20,10 @@ module Icalendar
         value.strftime FORMAT
       end
 
+      def <=>(other)
+        self.to_date <=> other.to_date
+      end
+
     end
 
   end

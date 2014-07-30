@@ -28,6 +28,10 @@ module Icalendar
         end
       end
 
+      def <=>(other)
+        self.to_datetime <=> other.to_datetime
+      end
+
     end
 
   end
