@@ -29,7 +29,7 @@ module Icalendar
       end
 
       def <=>(other)
-        self.to_datetime <=> other.to_datetime
+        self.value <=> other.value
       end
 
     end
