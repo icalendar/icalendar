@@ -38,6 +38,52 @@ describe Icalendar do
     end
   end
 
+  describe 'sorting daily events' do
+    let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'two_day_events.ics') }
+    subject { Icalendar.parse(source, true).events }
+
+    it 'sorts day events' do
+      events = subject.sort_by(&:dtstart)
+
+      expect(events.first.dtstart).to eq ::Date.new(2014, 7, 13)
+      expect(events.last.dtstart).to eq ::Date.new(2014, 7, 14)
+    end
+  end
+
+  describe 'sorting time events' do
+    let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'two_time_events.ics') }
+    subject { Icalendar.parse(source, true).events }
+
+    it 'sorts time events by start time' do
+      events = subject.sort_by(&:dtstart)
+
+      expect(events.first.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
+
+      expect(events.last.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 1, 0, '-4')
+      expect(events.last.dtend).to eq ::DateTime.new(2014, 7, 14, 9, 59, 0, '-4')
+    end
+
+    it 'sorts time events by end time' do
+      events = subject.sort_by(&:dtend)
+
+      expect(events.first.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 1, 0, '-4')
+      expect(events.first.dtend).to eq ::DateTime.new(2014, 7, 14, 9, 59, 0, '-4')
+      expect(events.last.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
+    end
+  end
+
+  describe 'sorting date / time events' do
+    let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'two_date_time_events.ics') }
+    subject { Icalendar.parse(source, true).events }
+
+    it 'sorts time events' do
+      events = subject.sort_by(&:dtstart)
+
+      expect(events.first.dtstart).to eq ::Date.new(2014, 7, 14)
+      expect(events.last.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
+    end
+  end
+
   describe 'non-standard values' do
     if defined? File::NULL
       before(:all) { Icalendar.logger = Icalendar::Logger.new File::NULL }
