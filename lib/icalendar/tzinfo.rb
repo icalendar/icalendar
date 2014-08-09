@@ -59,10 +59,14 @@ module Icalendar
     def rrule
       start = local_start.to_datetime
       # this is somewhat of a hack, but seems to work ok
+      # assumes that no timezone transition is in law as "4th X of the month"
+      # but only as 1st X, 2nd X, 3rd X, or Last X
+      start_week = ((start.day - 1) / 7).to_i + 1
+      start_week = (start_week > 3) ? -1 : start_week
       [sprintf(
         'FREQ=YEARLY;BYMONTH=%d;BYDAY=%d%s',
         start.month,
-        ((start.day - 1)/ 7).to_i + 1,
+        start_week,
         start.strftime('%a').upcase[0,2]
       )]
     end

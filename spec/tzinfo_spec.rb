@@ -4,7 +4,7 @@ require_relative '../lib/icalendar/tzinfo'
 describe 'TZInfo::Timezone' do
 
   let(:tz) { TZInfo::Timezone.get 'Europe/Copenhagen' }
-  let(:date) { DateTime.new 1970 }
+  let(:date) { DateTime.new 2014 }
   subject { tz.ical_timezone date }
 
   describe 'daylight offset' do
@@ -15,6 +15,14 @@ describe 'TZInfo::Timezone' do
   describe 'standard offset' do
     specify { expect(subject.standards.first.tzoffsetto.value_ical).to eq "+0100" }
     specify { expect(subject.standards.first.tzoffsetfrom.value_ical).to eq "+0200" }
+  end
+
+  describe 'daylight recurrence rule' do
+    specify { expect(subject.daylights.first.rrule.first.value_ical).to eq "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3" }
+  end
+
+  describe 'standard recurrence rule' do
+    specify { expect(subject.standards.first.rrule.first.value_ical).to eq "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10" }
   end
 
   describe 'no end transition' do
