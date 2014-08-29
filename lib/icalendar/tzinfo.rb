@@ -56,6 +56,10 @@ module Icalendar
       offset.ical_offset
     end
 
+    def offset_abbreviation
+      offset.abbreviation.to_s
+    end
+
     def rrule
       start = local_start.to_datetime
       # this is somewhat of a hack, but seems to work ok
@@ -133,7 +137,7 @@ module TZInfo
           day.dtstart = start_transition.dtstart
           day.rrule = start_transition.rrule unless end_transition.nil?
         else
-          day.tzname = abbreviation.to_s.sub("ST","DT")
+          day.tzname = end_transition.offset_abbreviation
           day.tzoffsetfrom = end_transition.offset_from
           day.tzoffsetto = end_transition.offset_to
           day.dtstart = end_transition.dtstart
@@ -145,7 +149,7 @@ module TZInfo
     def standard
       Icalendar::Timezone::Standard.new.tap do |std|
         if dst?
-          std.tzname = abbreviation.to_s.sub('DT', 'ST')
+          std.tzname = end_transition.offset_abbreviation
           std.tzoffsetfrom = end_transition.offset_from
           std.tzoffsetto = end_transition.offset_to
           std.dtstart = end_transition.dtstart

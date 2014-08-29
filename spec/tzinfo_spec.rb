@@ -90,4 +90,21 @@ END:VTIMEZONE
     end
   end
 
+  describe 'tzname for offset' do
+    # Check for CET/CEST correctness, which doesn't follow
+    # the more common *ST/*DT style abbreviations.
+    let(:tz) { TZInfo::Timezone.get 'Europe/Prague' }
+    let(:ical_tz) { tz.ical_timezone date }
+
+    describe '#daylight' do
+      subject(:tzname) { ical_tz.daylights.first.tzname.first }
+      it { should eql 'CEST' }
+    end
+
+    describe '#standard' do
+      subject(:tzname) { ical_tz.standards.first.tzname.first }
+      it { should eql 'CET' }
+    end
+  end
+
 end
