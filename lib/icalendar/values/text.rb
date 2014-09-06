@@ -1,8 +1,6 @@
 module Icalendar
   module Values
-
     class Text < Value
-
       def initialize(value, params = {})
         value = value.gsub '\n', "\n"
         value.gsub! '\,', ','
@@ -16,11 +14,9 @@ module Icalendar
           v.gsub!('\\') { '\\\\' }
           v.gsub! ';', '\;'
           v.gsub! ',', '\,'
-          v.gsub! /\r?\n/, '\n'
+          v.gsub!(/\r?\n/, '\n')
         end
       end
-
     end
-
   end
 end

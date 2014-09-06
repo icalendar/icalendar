@@ -2,9 +2,7 @@ require 'ostruct'
 
 module Icalendar
   module Values
-
     class UtcOffset < Value
-
       def initialize(value, params = {})
         if value.is_a? Icalendar::Values::UtcOffset
           value = value.value
@@ -30,7 +28,7 @@ module Icalendar
       end
 
       def parse_fields(value)
-        value.gsub! /\s+/, ''
+        value.gsub!(/\s+/, '')
         md = /\A(?<behind>[+-])(?<hours>\d{2})(?<minutes>\d{2})(?<seconds>\d{2})?\z/.match value
         {
           behind: (md[:behind] == '-'),
