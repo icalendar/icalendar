@@ -23,6 +23,7 @@ module Icalendar
       read_in_data
       calendars = []
       while (fields = next_fields)
+        next unless fields[:name]
         if fields[:name] == 'begin' && fields[:value].downcase == 'vcalendar'
           calendars << parse_component(Calendar.new)
         end
@@ -52,10 +53,10 @@ module Icalendar
       prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
       begin
         method_name = if component.class.multiple_properties.include? prop_name
-          "append_#{prop_name}"
-        else
-          "#{prop_name}="
-        end
+                        "append_#{prop_name}"
+                      else
+                        "#{prop_name}="
+                      end
         component.send method_name, prop_value
       rescue NoMethodError => nme
         if strict?
@@ -76,6 +77,7 @@ module Icalendar
 
     def parse_component(component)
       while (fields = next_fields)
+        next unless fields[:name]
         if fields[:name] == 'end'
           break
         elsif fields[:name] == 'begin'
@@ -109,7 +111,11 @@ module Icalendar
           break
         end
       end
-      parse_fields line
+      if line =~ OUTLOOK_DIRECTIVE
+        {}
+      else
+        parse_fields line
+      end
     end
 
     NAME = '[-a-zA-Z0-9]+'
@@ -119,6 +125,7 @@ module Icalendar
     PARAM = "(#{NAME})=(#{PVALUE}(?:,#{PVALUE})*)"
     VALUE = '.*'
     LINE = "(?<name>#{NAME})(?<params>(?:;#{PARAM})*):(?<value>#{VALUE})"
+    OUTLOOK_DIRECTIVE = /X-MICROSOFT|X-MS-OLK/
 
     def parse_fields(input)
       parts = %r{#{LINE}}.match(input) or fail "Invalid iCalendar input line: #{input}"
@@ -132,9 +139,9 @@ module Icalendar
       end
       Icalendar.logger.debug "Found fields: #{parts.inspect} with params: #{params.inspect}"
       {
-        name: parts[:name].downcase.gsub('-', '_'),
-        params: params,
-        value: parts[:value]
+          name: parts[:name].downcase.gsub('-', '_'),
+          params: params,
+          value: parts[:value]
       }
     end
   end
