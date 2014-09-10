@@ -1,3 +1,7 @@
+=== 2.1.2 2014-09-10
+ * Fix timezone abbreviation generation - Jan Vlnas
+ * Fix timezone repeat rules for end of month
+
 === 2.1.1 2014-07-23
  * Quiet TimeWithZone support logging
  * Use SecureRandom.uuid - antoinelyset
