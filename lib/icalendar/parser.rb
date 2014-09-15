@@ -119,9 +119,18 @@ module Icalendar
     PARAM = "(#{NAME})=(#{PVALUE}(?:,#{PVALUE})*)"
     VALUE = '.*'
     LINE = "(?<name>#{NAME})(?<params>(?:;#{PARAM})*):(?<value>#{VALUE})"
+    BAD_LINE = "(?<name>#{NAME})(?<params>(?:;#{PARAM})*)"
 
     def parse_fields(input)
-      parts = %r{#{LINE}}.match(input) or fail "Invalid iCalendar input line: #{input}"
+      if parts = %r{#{LINE}}.match(input)
+        value = parts[:value]
+      else
+        parts = %r{#{BAD_LINE}}.match(input) unless strict?
+        parts or fail "Invalid iCalendar input line: #{input}"
+        # Non-strict and bad line so use a value of empty string
+        value = ''
+      end
+
       params = {}
       parts[:params].scan %r{#{PARAM}} do |match|
         param_name = match[0].downcase
@@ -134,7 +143,7 @@ module Icalendar
       {
         name: parts[:name].downcase.gsub('-', '_'),
         params: params,
-        value: parts[:value]
+        value: value
       }
     end
   end
