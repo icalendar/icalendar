@@ -41,5 +41,10 @@ describe Icalendar::Parser do
       event = subject.parse.first.events.first
       expect(event.dtstart.ical_params).to eq('tzid' => ['US-Mountain'])
     end
+
+    it 'tolerates the truncated time' do
+      event = subject.parse.first.events.first
+      expect(event.dtstart.value_ical).to eq('20050120T170000')
+    end
   end
 end

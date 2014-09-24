@@ -76,5 +76,19 @@ describe Icalendar::Values::DateTime do
         expect(subject.to_ical described_class).to eq ":#{value}"
       end
     end
+
+    context 'tolerate truncated time in non-strict mode' do
+      let(:value) { '20140209T16' }
+      let(:padded_value) { '20140209T160000' }
+      let(:params) { { :strict => false } }
+
+      it 'keeps the value as a DateTime' do
+        expect(subject.value).to be_a_kind_of ::DateTime
+      end
+
+      it 'does not append a Z on output' do
+        expect(subject.to_ical described_class).to eq ":#{padded_value}"
+      end
+    end
   end
 end

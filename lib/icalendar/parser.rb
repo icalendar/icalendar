@@ -47,7 +47,7 @@ module Icalendar
                                                   fields[:params],
                                                   delimiter: delimiter
       else
-        prop_value = klass.new fields[:value], fields[:params]
+        prop_value = klass.new fields[:value], fields[:params].merge(:strict => strict?)
       end
       prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
       begin
@@ -60,6 +60,7 @@ module Icalendar
       rescue NoMethodError => nme
         if strict?
           Icalendar.logger.error "No method \"#{method_name}\" for component #{component}"
+
           raise nme
         else
           Icalendar.logger.warn "No method \"#{method_name}\" for component #{component}. Appending to custom."
