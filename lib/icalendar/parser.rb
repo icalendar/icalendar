@@ -4,7 +4,7 @@ module Icalendar
 
     attr_reader :source, :strict
 
-    def initialize(source, strict = true)
+    def initialize(source, strict = false)
       if source.respond_to? :gets
         @source = source
       elsif source.respond_to? :to_s

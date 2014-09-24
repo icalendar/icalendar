@@ -233,13 +233,13 @@ Parsing iCalendars
     puts "start date-time timezone: #{event.dtstart.ical_params['tzid']}"
     puts "summary: #{event.summary}"
 
-You can also create a `Parser` instance directly, this can be used to disable
-the strict parsing:
+You can also create a `Parser` instance directly, this can be used to enable
+strict parsing:
 
-    # Some calendars contain non-standard parameters (e.g. Apple iCloud
-    # calendars). You can pass in a `strict` value when creating a new parser.
-    unstrict_parser = Icalendar::Parser.new(cal_file, false)
-    cal = unstrict_parser.parse
+    # Sometimes you want to strongly verify only rfc-approved properties are
+    # used
+    strict_parser = Icalendar::Parser.new(cal_file, true)
+    cal = strict_parser.parse
 
 Finders
 ---
