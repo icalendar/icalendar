@@ -128,38 +128,29 @@ module TZInfo
   end
 
   class TimezonePeriod
+
+    # For DST, use the start_transition,
+    # for standard TZ, use the following period (starting from the end_transition).
     def daylight
-      Icalendar::Timezone::Daylight.new.tap do |day|
-        if dst?
-          day.tzname = abbreviation.to_s
-          day.tzoffsetfrom = start_transition.offset_from
-          day.tzoffsetto = start_transition.offset_to
-          day.dtstart = start_transition.dtstart
-          day.rrule = start_transition.rrule unless end_transition.nil?
-        else
-          day.tzname = end_transition.offset_abbreviation
-          day.tzoffsetfrom = end_transition.offset_from
-          day.tzoffsetto = end_transition.offset_to
-          day.dtstart = end_transition.dtstart
-          day.rrule = end_transition.rrule
+      transition = dst? ? start_transition : end_transition
+      day = Icalendar::Timezone::Daylight.new
+      build_timezone(day, transition) do |tz|
+        # rrule should not be set for the current [==DST/daylight] period
+        # if there is no recurrence rule for the end transition
+        if !dst? || !end_transition.nil?
+          tz.rrule = transition.rrule
         end
       end
     end
 
+    # For standard TZ, use the start_transition,
+    # for DST, use the following period, (starting from the end_transition)
     def standard
-      Icalendar::Timezone::Standard.new.tap do |std|
-        if dst?
-          std.tzname = end_transition.offset_abbreviation
-          std.tzoffsetfrom = end_transition.offset_from
-          std.tzoffsetto = end_transition.offset_to
-          std.dtstart = end_transition.dtstart
-          std.rrule = end_transition.rrule
-        else
-          std.tzname = abbreviation.to_s
-          std.tzoffsetfrom = start_transition.offset_from
-          std.tzoffsetto = start_transition.offset_to
-          std.dtstart = start_transition.dtstart
-          std.rrule = start_transition.rrule unless end_transition.nil?
+      transition = dst? ? end_transition : start_transition
+      std = Icalendar::Timezone::Standard.new
+      build_timezone(std, transition) do |tz|
+        if dst? || !end_transition.nil?
+          tz.rrule = transition.rrule
         end
       end
     end
@@ -170,6 +161,17 @@ module TZInfo
         std.tzoffsetfrom = offset.ical_offset
         std.tzoffsetto = offset.ical_offset
         std.dtstart = DateTime.new(1970).strftime '%Y%m%dT%H%M%S'
+      end
+    end
+
+    private
+    def build_timezone(timezone, transition)
+      timezone.tap do |tz|
+        tz.tzname = transition.offset_abbreviation
+        tz.tzoffsetfrom = transition.offset_from
+        tz.tzoffsetto = transition.offset_to
+        tz.dtstart = transition.dtstart
+        yield tz
       end
     end
   end
