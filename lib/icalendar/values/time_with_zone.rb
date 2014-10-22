@@ -12,7 +12,7 @@ module Icalendar
       def initialize(value, params = {})
         @tz_utc = params['tzid'] == 'UTC'
 
-        if defined?(ActiveSupport) && !params['tzid'].nil?
+        if defined?(ActiveSupport::TimeZone) && defined?(ActiveSupport::TimeWithZone) && !params['tzid'].nil?
           tzid = params['tzid'].is_a?(::Array) ? params['tzid'].first : params['tzid']
           zone = ActiveSupport::TimeZone[tzid]
           value = ActiveSupport::TimeWithZone.new nil, zone, value unless zone.nil?
