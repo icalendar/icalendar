@@ -8,6 +8,7 @@ module Icalendar
 
     def initialize(value, params = {})
       @ical_params = params.dup
+      @ical_params.delete(:strict)
       super value
     end
 

@@ -12,7 +12,24 @@ module Icalendar
       def initialize(value, params = {})
         if value.is_a? String
           params['tzid'] = 'UTC' if value.end_with? 'Z'
-          super ::DateTime.strptime(value, FORMAT), params
+          date = nil
+
+          begin
+            date = ::DateTime.strptime(value, FORMAT)
+          rescue ArgumentError => e
+            if params.fetch(:strict, true)
+              raise "Failed to parse \"#{value}\" - #{e.message}"
+            else
+              begin
+                # Tolerate the time being truncated by padding out with zeroes
+                date = ::DateTime.strptime(value + '000000', FORMAT)
+              rescue ArgumentError => e
+                raise "Failed to parse \"#{value}\" - #{e.message}"
+              end
+            end
+          end
+
+          super date, params
         elsif value.respond_to? :to_datetime
           super value.to_datetime, params
         else
