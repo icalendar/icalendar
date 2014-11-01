@@ -76,5 +76,13 @@ describe Icalendar::Values::DateTime do
         expect(subject.to_ical described_class).to eq ":#{value}"
       end
     end
+
+    context 'unparseable time' do
+      let(:value) { 'unparseable_time' }
+
+      it 'raises an error including the unparseable time' do
+        expect { subject }.to raise_error(ArgumentError, %r{Failed to parse \"#{value}\"})
+      end
+    end
   end
 end
