@@ -1,5 +1,9 @@
 begin
   require 'active_support/time'
+
+  if defined?(ActiveSupport::TimeWithZone)
+    require 'icalendar/values/active_support_time_with_zone_adapter'
+  end
 rescue LoadError
   # tis ok, just a bit less fancy
 end
@@ -12,10 +16,10 @@ module Icalendar
       def initialize(value, params = {})
         @tz_utc = params['tzid'] == 'UTC'
 
-        if defined?(ActiveSupport::TimeZone) && defined?(ActiveSupport::TimeWithZone) && !params['tzid'].nil?
+        if defined?(ActiveSupport::TimeZone) && defined?(ActiveSupportTimeWithZoneAdapter) && !params['tzid'].nil?
           tzid = params['tzid'].is_a?(::Array) ? params['tzid'].first : params['tzid']
           zone = ActiveSupport::TimeZone[tzid]
-          value = ActiveSupport::TimeWithZone.new nil, zone, value unless zone.nil?
+          value = ActiveSupportTimeWithZoneAdapter.new nil, zone, value unless zone.nil?
           super value, params
         else
           super

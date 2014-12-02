@@ -82,6 +82,18 @@ describe Icalendar::Event do
         expect(subject.comment).to eq ['a comment']
       end
     end
+
+    if defined? ActiveSupport
+      describe '#rdate' do
+        it 'does not convert a DateTime delegating for an ActiveSupport::TimeWithZone into an Array' do
+          timestamp = '20140130T230000Z'
+          expected = [Icalendar::Values::DateTime.new(timestamp)]
+
+          subject.rdate = timestamp
+          expect(subject.rdate).to eq(expected)
+        end
+      end
+    end
   end
 
   describe '#find_alarm' do
