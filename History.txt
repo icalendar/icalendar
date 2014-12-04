@@ -1,3 +1,8 @@
+=== 2.2.1 2014-12-03
+ * Prevent crashes when using ActiveSupport::TimeWithZone in multi-property DateTime fields - Danny (tdg5)
+ * Ensure TimeWithZone is loaded before using, not just ActiveSupport - Jeremy Evans
+ * Improve error message on unparseable DateTimes - Garry Shutler
+
 === 2.2.0 2014-09-23
  * Default to non-strict parsing
  * Enable sorting events by dtstart - Mark Rickert
