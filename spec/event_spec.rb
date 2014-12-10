@@ -102,6 +102,12 @@ describe Icalendar::Event do
     end
   end
 
+  describe '#alarm' do
+    it 'should be nil by default' do
+      expect(subject.alarm).to be_nil
+    end
+  end
+
   describe '#to_ical' do
     before(:each) do
       subject.dtstart = "20131227T013000Z"
