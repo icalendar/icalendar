@@ -102,9 +102,15 @@ describe Icalendar::Event do
     end
   end
 
-  describe '#alarm' do
-    it 'should be nil by default' do
-      expect(subject.alarm).to be_nil
+  describe '#has_alarm?' do
+    context 'without a set valarm' do
+      it { is_expected.not_to have_alarm }
+    end
+
+    context 'with a set valarm' do
+      before { subject.alarm }
+
+      it { is_expected.to have_alarm }
     end
   end
 
