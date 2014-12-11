@@ -143,6 +143,18 @@ ALARMS
     # TRIGGER:-PT15M
     # END:VALARM
 
+#### Checking for an Alarm ####
+
+Calling the `event.alarm` method will create an alarm if one doesn't exist. To check if an event has an alarm use the `has_alarm?` method.
+
+    event.has_alarm?
+    # => false
+    
+    event.alarm
+    # => #<Icalendar::Alarm ... >
+    
+    event.has_alarm?
+    #=> true
 
 TIMEZONES
 ---
