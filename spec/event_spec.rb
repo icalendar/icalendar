@@ -102,6 +102,18 @@ describe Icalendar::Event do
     end
   end
 
+  describe '#has_alarm?' do
+    context 'without a set valarm' do
+      it { is_expected.not_to have_alarm }
+    end
+
+    context 'with a set valarm' do
+      before { subject.alarm }
+
+      it { is_expected.to have_alarm }
+    end
+  end
+
   describe '#to_ical' do
     before(:each) do
       subject.dtstart = "20131227T013000Z"

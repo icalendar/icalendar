@@ -66,6 +66,7 @@ module Icalendar
               Component.new singular_name
             end
           end
+
           add_component c, &block
         end
 
@@ -75,6 +76,10 @@ module Icalendar
 
         define_method "add_#{singular_name}" do |c|
           send singular_name, c
+        end
+
+        define_method "has_#{singular_name}?" do
+          !send(components).empty?
         end
       end
     end
