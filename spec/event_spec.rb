@@ -139,7 +139,7 @@ describe Icalendar::Event do
 
     context 'complex organizer' do
       before :each do
-        subject.organizer = Icalendar::Values::CalAddress.new("MAILTO:jsmith@example.com", cn: 'John Smith')
+        subject.organizer = Icalendar::Values::CalAddress.new("mailto:jsmith@example.com", cn: 'John Smith')
       end
 
       it { expect(subject.to_ical).to include 'ORGANIZER;CN=John Smith:mailto:jsmith@example.com' }
