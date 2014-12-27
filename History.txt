@@ -1,3 +1,6 @@
+=== 2.2.2 2014-12-27
+ * add a `has_#{component}?` method for testing if component exists - John Hope
+
 === 2.2.1 2014-12-03
  * Prevent crashes when using ActiveSupport::TimeWithZone in multi-property DateTime fields - Danny (tdg5)
  * Ensure TimeWithZone is loaded before using, not just ActiveSupport - Jeremy Evans
