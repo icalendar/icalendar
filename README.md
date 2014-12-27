@@ -224,6 +224,8 @@ iCalendar has been tested and works with `tzinfo` versions 0.3 and 1.1
       e.dtend   = Icalendar::Values::DateTime.new event_end, 'tzid' => tzid
       e.summary = "Meeting with the man."
       e.description = "Have a long lunch meeting and decide nothing..."
+      e.organizer = "mailto:jsmith@example.com"
+      e.organizer = Icalendar::Values::CalAddress.new("mailto:jsmith@example.com", cn: 'John Smith')
     end
 
 
