@@ -43,6 +43,9 @@ ActiveSupport is required for TimeWithZone support, but not required for general
   # end tzinfo
 
   s.add_development_dependency 'activesupport', '~> 3.2'
+  # lock i18n to < 0.7 to maintain ruby 1.9.2 compatibility
+  s.add_development_dependency 'i18n', '< 0.7.0'
+
   s.add_development_dependency 'timecop', '~> 0.7.0'
   s.add_development_dependency 'rspec', '~> 2.14'
   s.add_development_dependency 'simplecov', '~> 0.8'
