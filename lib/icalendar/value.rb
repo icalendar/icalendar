@@ -20,7 +20,7 @@ module Icalendar
     end
 
     def to_ical(default_type)
-      ical_param 'value', self.class.value_type if needs_value_type?(default_type)
+      ical_param 'value', self.value_type if needs_value_type?(default_type)
       "#{params_ical}:#{value_ical}"
     end
 
@@ -32,6 +32,10 @@ module Icalendar
 
     def self.value_type
       name.gsub(/\A.*::/, '').gsub(/(?<!\A)[A-Z]/, '-\0').upcase
+    end
+
+    def value_type
+      self.class.value_type
     end
 
     private

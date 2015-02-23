@@ -31,6 +31,10 @@ module Icalendar
         !value.all? { |v| v.class == klass }
       end
 
+      def value_type
+        value.first.value_type
+      end
+
       private
 
       def needs_value_type?(default_type)
