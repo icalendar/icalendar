@@ -14,7 +14,7 @@ module Icalendar
     component :journal
     component :freebusy
 
-    def initialize(name = null, timezone = null)
+    def initialize(name = nil, timezone = nil)
       super 'calendar'
       self.prodid = 'icalendar-ruby'
       self.version = '2.0'
