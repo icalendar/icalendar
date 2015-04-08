@@ -8,6 +8,14 @@ describe Icalendar do
     it 'will generate the same file as is parsed' do
       expect(Icalendar.parse(source, true).to_ical).to eq source
     end
+
+    it 'array properties can be assigned to a new event' do
+      event = Icalendar::Event.new
+      parsed = Icalendar.parse source, true
+      event.rdate = parsed.events.first.rdate
+      expect(event.rdate.first).to be_kind_of Icalendar::Values::Array
+      expect(event.rdate.first.ical_params).to eq 'tzid' => ['US-Mountain']
+    end
   end
 
   describe 'timezone round trip' do
