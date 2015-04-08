@@ -62,7 +62,7 @@ module Icalendar
               klass ||= Icalendar.const_get singular_name.capitalize
               klass.new
             rescue NameError => ne
-              puts "WARN: #{ne.message}"
+              Icalendar.logger.warn ne.message
               Component.new singular_name
             end
           end
