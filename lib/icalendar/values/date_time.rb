@@ -16,7 +16,7 @@ module Icalendar
           begin
             parsed_date = ::DateTime.strptime(value, FORMAT)
           rescue ArgumentError => e
-            raise ArgumentError.new("Failed to parse \"#{value}\" - #{e.message}")
+            raise FormatError.new("Failed to parse \"#{value}\" - #{e.message}")
           end
 
           super parsed_date, params
@@ -43,6 +43,8 @@ module Icalendar
         end
       end
 
+      class FormatError < ArgumentError
+      end
     end
 
   end

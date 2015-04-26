@@ -53,4 +53,13 @@ describe Icalendar::Parser do
       expect(event.dtstart.ical_params).to eq('tzid' => ['US-Mountain'])
     end
   end
+
+  describe 'missing date value parameter' do
+    let(:fn) { 'single_event_bad_dtstart.ics' }
+
+    it 'falls back to date type for dtstart' do
+      event = subject.parse.first.events.first
+      expect(event.dtstart).to be_kind_of Icalendar::Values::Date
+    end
+  end
 end
