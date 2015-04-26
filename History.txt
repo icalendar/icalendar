@@ -1,3 +1,9 @@
+=== 2.3.0 2015-04-26
+ * fix value parameter for properties with multiple values
+ * fix error when assigning Icalendar::Values::Array to a component
+ * Fall back to Icalendar::Values::Date if Icalendar::Values::DateTime is not given a properly formatted value
+ * Downcase the keys in ical_params to ensure we aren't assigning both tzid and TZID
+
 === 2.2.2 2014-12-27
  * add a `has_#{component}?` method for testing if component exists - John Hope
  * add documentation & tests for organizer attribute - Ben Walding
