@@ -14,6 +14,7 @@ module Icalendar
       attr_reader :tz_utc
 
       def initialize(value, params = {})
+        params = Icalendar::DowncasedHash(params)
         @tz_utc = params['tzid'] == 'UTC'
 
         if defined?(ActiveSupport::TimeZone) && defined?(ActiveSupportTimeWithZoneAdapter) && !params['tzid'].nil?
@@ -22,7 +23,7 @@ module Icalendar
           value = ActiveSupportTimeWithZoneAdapter.new nil, zone, value unless zone.nil?
           super value, params
         else
-          super
+          super value, params
         end
       end
 

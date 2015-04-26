@@ -1,4 +1,5 @@
 require 'delegate'
+require 'icalendar/downcased_hash'
 
 module Icalendar
 
@@ -7,12 +8,12 @@ module Icalendar
     attr_accessor :ical_params
 
     def initialize(value, params = {})
-      @ical_params = params.dup
+      @ical_params = Icalendar::DowncasedHash(params)
       super value
     end
 
     def ical_param(key, value)
-      @ical_params[key.to_s] = value
+      @ical_params[key] = value
     end
 
     def value
