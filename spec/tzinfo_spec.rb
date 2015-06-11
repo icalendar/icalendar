@@ -26,18 +26,18 @@ describe 'TZInfo::Timezone' do
   end
 
   describe 'no end transition' do
-    let(:tz) { TZInfo::Timezone.get 'America/Cayman' }
+    let(:tz) { TZInfo::Timezone.get 'Asia/Shanghai' }
     let(:date) { DateTime.now }
 
     it 'only creates a standard component' do
       expect(subject.to_ical).to eq <<-EXPECTED.gsub "\n", "\r\n"
 BEGIN:VTIMEZONE
-TZID:America/Cayman
+TZID:Asia/Shanghai
 BEGIN:STANDARD
-DTSTART:19120201T000711
-TZOFFSETFROM:-0652
-TZOFFSETTO:-0500
-TZNAME:EST
+DTSTART:19910914T230000
+TZOFFSETFROM:+0900
+TZOFFSETTO:+0800
+TZNAME:CST
 END:STANDARD
 END:VTIMEZONE
       EXPECTED
