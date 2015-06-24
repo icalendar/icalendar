@@ -141,7 +141,12 @@ module Icalendar
         property_var = "@#{prop}"
 
         define_method "#{prop}=" do |value|
-          instance_variable_set property_var, Array(map_property_value(value, klass, true)).compact
+          mapped = map_property_value value, klass, true
+          if mapped.is_a? Icalendar::Values::Array
+            instance_variable_set property_var, mapped.to_a.compact
+          else
+            instance_variable_set property_var, [mapped].compact
+          end
         end
 
         define_method prop do
