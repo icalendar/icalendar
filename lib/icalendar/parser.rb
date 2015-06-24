@@ -32,10 +32,11 @@ module Icalendar
 
     def parse_property(component, fields = nil)
       fields = next_fields if fields.nil?
-      prop_value = wrap_property_value component, fields
       prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
+      multi_property = component.class.multiple_properties.include? prop_name
+      prop_value = wrap_property_value component, fields, multi_property
       begin
-        method_name = if component.class.multiple_properties.include? prop_name
+        method_name = if multi_property
           "append_#{prop_name}"
         else
           "#{prop_name}="
@@ -52,10 +53,10 @@ module Icalendar
       end
     end
 
-    def wrap_property_value(component, fields)
+    def wrap_property_value(component, fields, multi_property)
       klass = get_wrapper_class component, fields
-      if klass.value_type != 'RECUR' && fields[:value] =~ /(?<!\\)([,;])/
-        delimiter = $1
+      if wrap_in_array? klass, fields[:value], multi_property
+        delimiter = fields[:value].match(/(?<!\\)([,;])/)[1]
         Icalendar::Values::Array.new fields[:value].split(/(?<!\\)[;,]/),
                                      klass,
                                      fields[:params],
@@ -67,6 +68,11 @@ module Icalendar
       raise fe if strict?
       fields[:params]['value'] = ['DATE']
       retry
+    end
+
+    def wrap_in_array?(klass, value, multi_property)
+      klass.value_type != 'RECUR' &&
+        ((multi_property && value =~ /(?<!\\)([,;])/) || value =~ /(?<!\\)([;])/)
     end
 
     def get_wrapper_class(component, fields)
