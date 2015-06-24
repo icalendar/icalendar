@@ -84,6 +84,16 @@ EXAMPLES
     end
     event.summary.ical_params #=> {'altrep' => 'http://my.language.net', 'language' => 'SPANISH'}
 
+#### Support for Dates or DateTimes
+
+Sometimes we don't care if an event's start or end are `Date` or `DateTime` objects. For this, we can use `DateOrDateTime.new(value).call`
+
+    event = cal.event do |e|
+      e.dtstart = Icalendar::Values::DateOrDateTime.new('20140924').call
+      e.dtend   = Icalendar::Values::DateOrDateTime.new('20140924').call
+      e.summary = 'This is an all-day event, because DateOrDateTime will return Dates'
+    end
+
 #### We can output the calendar as a string ####
 
     cal_string = cal.to_ical
