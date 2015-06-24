@@ -72,7 +72,7 @@ module Icalendar
 
     def wrap_in_array?(klass, value, multi_property)
       klass.value_type != 'RECUR' &&
-        ((multi_property && value =~ /(?<!\\)([,;])/) || value =~ /(?<!\\)([;])/)
+        ((multi_property && value =~ /(?<!\\)[,;]/) || value =~ /(?<!\\);/)
     end
 
     def get_wrapper_class(component, fields)
