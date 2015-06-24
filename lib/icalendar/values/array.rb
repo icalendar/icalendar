@@ -11,6 +11,10 @@ module Icalendar
                    value.map do |v|
                      if v.is_a? Icalendar::Values::Array
                        Icalendar::Values::Array.new v.value, klass, v.ical_params, delimiter: v.value_delimiter
+                     elsif v.is_a? ::Array
+                       Icalendar::Values::Array.new v, klass, params, delimiter: value_delimiter
+                     elsif v.is_a? Icalendar::Value
+                       v
                      else
                        klass.new v, params
                      end
