@@ -8,7 +8,13 @@ module Icalendar
 
       def initialize(value, params = {})
         if value.is_a? String
-          super ::Date.strptime(value, FORMAT), params
+          begin
+            parsed_date = ::Date.strptime(value, FORMAT)
+          rescue ArgumentError => e
+            raise FormatError.new("Failed to parse \"#{value}\" - #{e.message}")
+          end
+
+          super parsed_date, params
         elsif value.respond_to? :to_date
           super value.to_date, params
         else
@@ -28,6 +34,8 @@ module Icalendar
         end
       end
 
+      class FormatError < ArgumentError
+      end
     end
 
   end
