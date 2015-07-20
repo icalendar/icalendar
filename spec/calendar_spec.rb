@@ -71,7 +71,7 @@ describe Icalendar::Calendar do
 
     describe '#add_event' do
       it 'delegates to non add_ version' do
-        subject.should_receive(:event).with ical_component
+        expect(subject).to receive(:event).with(ical_component)
         subject.add_event ical_component
       end
     end
