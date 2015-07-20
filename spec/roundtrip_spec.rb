@@ -102,7 +102,7 @@ describe Icalendar do
 
     context 'strict parser' do
       let(:strict) { true }
-      specify { expect { subject.parse }.to raise_error }
+      specify { expect { subject.parse }.to raise_error(NoMethodError) }
     end
 
     context 'lenient parser' do
