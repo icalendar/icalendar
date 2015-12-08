@@ -94,6 +94,14 @@ Sometimes we don't care if an event's start or end are `Date` or `DateTime` obje
       e.summary = 'This is an all-day event, because DateOrDateTime will return Dates'
     end
 
+#### Support for URLs
+
+For clients that can parse and display a URL associated with an event, it's possible to assign one.
+
+    event = cal.event do |e|
+      e.url = 'https://example.com'
+    end
+
 #### We can output the calendar as a string ####
 
     cal_string = cal.to_ical
