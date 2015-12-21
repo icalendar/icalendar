@@ -27,6 +27,7 @@ module Icalendar
     optional_single_property :recurrence_id, Icalendar::Values::DateTime
 
     optional_property :rrule, Icalendar::Values::Recur, true
+    optional_property :exrule, Icalendar::Values::Recur, true
     optional_property :attach, Icalendar::Values::Uri
     optional_property :attendee, Icalendar::Values::CalAddress
     optional_property :categories
