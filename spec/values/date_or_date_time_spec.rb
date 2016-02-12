@@ -29,5 +29,13 @@ describe Icalendar::Values::DateOrDateTime do
         expect(subject.call.value).to eq Date.new(2014, 2, 9)
       end
     end
+
+    context 'unparseable date' do
+      let(:value) { '99999999' }
+
+      it 'raises an error including the unparseable time' do
+        expect { subject.call }.to raise_error(ArgumentError, %r{Failed to parse \"#{value}\"})
+      end
+    end
   end
 end
