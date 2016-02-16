@@ -21,13 +21,15 @@ module Icalendar
     def parse
       source.rewind
       read_in_data
-      calendars = []
+      calendars_or_events = []
       while (fields = next_fields)
         if fields[:name] == 'begin' && fields[:value].downcase == 'vcalendar'
-          calendars << parse_component(Calendar.new)
+          calendars_or_events << parse_component(Calendar.new)
+        elsif fields[:name] == 'begin' && fields[:value].downcase == 'vevent'
+          calendars_or_events << parse_component(Event.new)
         end
       end
-      calendars
+      calendars_or_events
     end
 
     def parse_property(component, fields = nil)

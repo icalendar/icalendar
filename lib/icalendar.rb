@@ -13,8 +13,8 @@ module Icalendar
   end
 
   def self.parse(source, single = false)
-    calendars = Parser.new(source).parse
-    single ? calendars.first : calendars
+    calendars_or_events = Parser.new(source).parse
+    single ? calendars_or_events.first : calendars_or_events
   end
 
 end
