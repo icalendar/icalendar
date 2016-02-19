@@ -34,10 +34,25 @@ describe Icalendar::Parser do
     end
     context 'event.ics' do
       let(:fn) { 'event.ics' }
+
+      before { subject.component = "Icalendar::Event" }
+
       it 'returns an array of events' do
         expect(subject.parse).to be_instance_of Array
         expect(subject.parse.count).to be 1
         expect(subject.parse[0]).to be_instance_of Icalendar::Event
+      end
+    end
+
+    context 'not yet supported component' do
+      let(:fn) { 'event.ics' }
+
+      before { subject.component = "Icalendar::Alarm" }
+
+      it 'returns an array of events' do
+        expect {
+          subject.parse
+        }.to raise_error(Icalendar::ComponentNotParseableError)
       end
     end
   end

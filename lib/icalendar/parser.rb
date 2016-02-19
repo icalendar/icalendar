@@ -1,7 +1,13 @@
 module Icalendar
 
+  class ComponentNotParseableError < StandardError; end
   class Parser
+    COMPONENT_INDICATOR = {
+      'Icalendar::Calendar' => 'vcalendar',
+      'Icalendar::Event' => 'vevent'
+    }
 
+    attr_accessor :component
     attr_reader :source, :strict
 
     def initialize(source, strict = false)
@@ -15,21 +21,22 @@ module Icalendar
         fail ArgumentError, msg
       end
       read_in_data
+      @component = 'Icalendar::Calendar'
       @strict = strict
     end
 
     def parse
+      raise ComponentNotParseableError, "Cannot parse #{component}. Supported components: #{COMPONENT_INDICATOR.keys}" unless supported_componet?
+
       source.rewind
       read_in_data
-      calendars_or_events = []
+      components = []
       while (fields = next_fields)
-        if fields[:name] == 'begin' && fields[:value].downcase == 'vcalendar'
-          calendars_or_events << parse_component(Calendar.new)
-        elsif fields[:name] == 'begin' && fields[:value].downcase == 'vevent'
-          calendars_or_events << parse_component(Event.new)
+        if fields[:name] == 'begin' && fields[:value].downcase == COMPONENT_INDICATOR[component]
+          components << parse_component(component.constantize.new)
         end
       end
-      calendars_or_events
+      components
     end
 
     def parse_property(component, fields = nil)
@@ -94,6 +101,10 @@ module Icalendar
     end
 
     private
+
+    def supported_componet?
+      COMPONENT_INDICATOR.keys.include?(component)
+    end
 
     def parse_component(component)
       while (fields = next_fields)
