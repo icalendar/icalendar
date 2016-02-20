@@ -46,6 +46,10 @@ module Icalendar
       self.uid = new_uid
     end
 
+    def parseable?
+      true
+    end
+
   end
 
 end

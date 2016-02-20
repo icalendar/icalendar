@@ -35,7 +35,7 @@ describe Icalendar::Parser do
     context 'event.ics' do
       let(:fn) { 'event.ics' }
 
-      before { subject.component = "Icalendar::Event" }
+      before { subject.component = Icalendar::Event.new }
 
       it 'returns an array of events' do
         expect(subject.parse).to be_instance_of Array
@@ -47,12 +47,12 @@ describe Icalendar::Parser do
     context 'not yet supported component' do
       let(:fn) { 'event.ics' }
 
-      before { subject.component = "Icalendar::Alarm" }
+      before { subject.component = Icalendar::Alarm.new }
 
       it 'returns an array of events' do
         expect {
           subject.parse
-        }.to raise_error(Icalendar::ComponentNotParseableError)
+        }.to raise_error(Icalendar::Component::NotParseableError)
       end
     end
   end
