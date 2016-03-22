@@ -43,18 +43,6 @@ describe Icalendar::Parser do
         expect(subject.parse[0]).to be_instance_of Icalendar::Event
       end
     end
-
-    context 'not yet supported component' do
-      let(:fn) { 'event.ics' }
-
-      before { subject.component = Icalendar::Alarm.new }
-
-      it 'returns an array of events' do
-        expect {
-          subject.parse
-        }.to raise_error(Icalendar::Component::NotParseableError)
-      end
-    end
   end
 
   describe '#parse with bad line' do

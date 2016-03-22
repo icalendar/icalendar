@@ -19,8 +19,6 @@ module Icalendar
     end
 
     def parse
-      raise ::Icalendar::Component::NotParseableError, "Parsing of #{self} not supported." unless component.parseable?
-
       source.rewind
       read_in_data
       components = []

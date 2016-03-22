@@ -3,8 +3,6 @@ require 'securerandom'
 module Icalendar
 
   class Component
-    class NotParseableError < StandardError; end
-
     include HasProperties
     include HasComponents
 
@@ -35,10 +33,6 @@ module Icalendar
         ical_components,
         "END:#{ical_name}\r\n"
       ].compact.join "\r\n"
-    end
-
-    def parseable?
-      false
     end
 
     private

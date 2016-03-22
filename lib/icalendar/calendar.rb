@@ -23,10 +23,6 @@ module Icalendar
       self.ip_method = 'PUBLISH'
     end
 
-    def parseable?
-      true
-    end
-
   end
 
 end

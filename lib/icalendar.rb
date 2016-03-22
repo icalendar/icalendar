@@ -13,6 +13,7 @@ module Icalendar
   end
 
   def self.parse(source, single = false)
+    logger.info("DEPRECATION WARNING: Icalender.parse will be removed in the future.\nPlease use Icalendar::Calendar.parse.")
     calendars = Parser.new(source).parse
     single ? calendars.first : calendars
   end
