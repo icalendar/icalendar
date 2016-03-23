@@ -279,7 +279,7 @@ Parsing Components (e.g. Events)
     event_file = File.open("event.ics")
 
     # Parser returns an array of events because a single file
-    # can have multiple calendars.
+    # can have multiple events.
     events = Icalendar::Event.parse(event_file)
     event = events.first
 
