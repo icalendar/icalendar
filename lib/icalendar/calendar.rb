@@ -22,6 +22,7 @@ module Icalendar
     def publish
       self.ip_method = 'PUBLISH'
     end
+
   end
 
 end

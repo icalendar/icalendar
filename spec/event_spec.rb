@@ -96,6 +96,18 @@ describe Icalendar::Event do
     end
   end
 
+  describe '.parse' do
+    let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', fn) }
+    let(:fn) { 'event.ics' }
+
+    it 'should return an events array' do
+      events = Icalendar::Event.parse(source)
+      expect(events).to be_instance_of Array
+      expect(events.count).to be 1
+      expect(events.first).to be_instance_of Icalendar::Event
+    end
+  end
+
   describe '#find_alarm' do
     it 'should not respond_to find_alarm' do
       expect(subject.respond_to?(:find_alarm)).to be false

@@ -10,6 +10,12 @@ module Icalendar
     attr_reader :ical_name
     attr_accessor :parent
 
+    def self.parse(source)
+      parser = Parser.new(source)
+      parser.component = self.new
+      parser.parse
+    end
+
     def initialize(name, ical_name = nil)
       @name = name
       @ical_name = ical_name || "V#{name.upcase}"

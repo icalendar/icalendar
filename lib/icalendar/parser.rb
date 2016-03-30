@@ -1,7 +1,7 @@
 module Icalendar
 
   class Parser
-
+    attr_writer :component
     attr_reader :source, :strict
 
     def initialize(source, strict = false)
@@ -21,13 +21,13 @@ module Icalendar
     def parse
       source.rewind
       read_in_data
-      calendars = []
+      components = []
       while (fields = next_fields)
-        if fields[:name] == 'begin' && fields[:value].downcase == 'vcalendar'
-          calendars << parse_component(Calendar.new)
+        if fields[:name] == 'begin' && fields[:value].downcase == component.ical_name.downcase
+          components << parse_component(component)
         end
       end
-      calendars
+      components
     end
 
     def parse_property(component, fields = nil)
@@ -92,6 +92,10 @@ module Icalendar
     end
 
     private
+
+    def component
+      @component ||= Icalendar::Calendar.new
+    end
 
     def parse_component(component)
       while (fields = next_fields)

@@ -32,6 +32,17 @@ describe Icalendar::Parser do
         expect(ics).to match 'EXDATE;VALUE=DATE:20120323,20130323'
       end
     end
+    context 'event.ics' do
+      let(:fn) { 'event.ics' }
+
+      before { subject.component = Icalendar::Event.new }
+
+      it 'returns an array of events' do
+        expect(subject.parse).to be_instance_of Array
+        expect(subject.parse.count).to be 1
+        expect(subject.parse[0]).to be_instance_of Icalendar::Event
+      end
+    end
   end
 
   describe '#parse with bad line' do

@@ -255,7 +255,7 @@ Parsing iCalendars
 
     # Parser returns an array of calendars because a single file
     # can have multiple calendars.
-    cals = Icalendar.parse(cal_file)
+    cals = Icalendar::Calendar.parse(cal_file)
     cal = cals.first
 
     # Now you can access the cal object in just the same way I created it
@@ -272,6 +272,20 @@ strict parsing:
     # used
     strict_parser = Icalendar::Parser.new(cal_file, true)
     cal = strict_parser.parse
+
+Parsing Components (e.g. Events)
+---
+    # Open a file or pass a string to the parser
+    event_file = File.open("event.ics")
+
+    # Parser returns an array of events because a single file
+    # can have multiple events.
+    events = Icalendar::Event.parse(event_file)
+    event = events.first
+
+    puts "start date-time: #{event.dtstart}"
+    puts "start date-time timezone: #{event.dtstart.ical_params['tzid']}"
+    puts "summary: #{event.summary}"
 
 Finders
 ---
