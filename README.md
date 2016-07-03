@@ -135,6 +135,12 @@ ALARMS
         a.trigger       = "-PT15M"
         a.append_attach "Basso"
       end
+
+      e.alarm do |a|
+        a.summary = "Alarm notification, icloud style"
+        a.trigger = "-PT15M" # 15 minutes before
+        a.x_wr_alarmuid = UUID.new.generate
+      end
     end
 
 #### Output ####
