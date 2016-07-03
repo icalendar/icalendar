@@ -19,6 +19,7 @@ module Icalendar
     # not part of base spec - need better abstraction for extensions
     optional_single_property :uid
     optional_single_property :acknowledged, Icalendar::Values::DateTime
+    optional_single_property :x_wr_alarmuid # uid for icloud alarms
 
     def initialize
       super 'alarm'

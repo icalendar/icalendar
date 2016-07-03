@@ -36,6 +36,11 @@ describe Icalendar::Alarm do
         subject.description = 'Display Text'
         expect(subject).to be_valid
       end
+      it 'accepts x_wr_alarmuid' do
+        subject.description = 'Display Text'
+        subject.x_wr_alarmuid = 'fea170d0-1e52-0134-1e24-486000b2404b'
+        expect(subject).to be_valid
+      end
     end
 
     context 'email action' do
