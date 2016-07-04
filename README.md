@@ -38,69 +38,79 @@ EXAMPLES
 
 ### Creating calendars and events ###
 
-    require 'icalendar'
+```ruby
+require 'icalendar'
 
-    # Create a calendar with an event (standard method)
-    cal = Icalendar::Calendar.new
-    cal.event do |e|
-      e.dtstart     = Icalendar::Values::Date.new('20050428')
-      e.dtend       = Icalendar::Values::Date.new('20050429')
-      e.summary     = "Meeting with the man."
-      e.description = "Have a long lunch meeting and decide nothing..."
-      e.ip_class    = "PRIVATE"
-    end
+# Create a calendar with an event (standard method)
+cal = Icalendar::Calendar.new
+cal.event do |e|
+  e.dtstart     = Icalendar::Values::Date.new('20050428')
+  e.dtend       = Icalendar::Values::Date.new('20050429')
+  e.summary     = "Meeting with the man."
+  e.description = "Have a long lunch meeting and decide nothing..."
+  e.ip_class    = "PRIVATE"
+end
 
-    cal.publish
+cal.publish
+```
 
 #### Or you can make events like this ####
 
-    event = Icalendar::Event.new
-    event.dtstart = DateTime.civil(2006, 6, 23, 8, 30)
-    event.summary = "A great event!"
-    cal.add_event(event)
+```ruby
+event = Icalendar::Event.new
+event.dtstart = DateTime.civil(2006, 6, 23, 8, 30)
+event.summary = "A great event!"
+cal.add_event(event)
 
-    event2 = cal.event  # This automatically adds the event to the calendar
-    event2.dtstart = DateTime.civil(2006, 6, 24, 8, 30)
-    event2.summary = "Another great event!"
+event2 = cal.event  # This automatically adds the event to the calendar
+event2.dtstart = DateTime.civil(2006, 6, 24, 8, 30)
+event2.summary = "Another great event!"
+```
 
 #### Support for property parameters ####
 
-    params = {"altrep" => "http://my.language.net", "language" => "SPANISH"}
+```ruby
+params = {"altrep" => "http://my.language.net", "language" => "SPANISH"}
 
-    event = cal.event do |e|
-      e.dtstart = Icalendar::Values::Date.new('20050428')
-      e.dtend   = Icalendar::Values::Date.new('20050429')
-      e.summary = Icalendar::Values::Text.new "This is a summary with params.", params
-    end
-    event.summary.ical_params #=> {'altrep' => 'http://my.language.net', 'language' => 'SPANISH'}
+event = cal.event do |e|
+  e.dtstart = Icalendar::Values::Date.new('20050428')
+  e.dtend   = Icalendar::Values::Date.new('20050429')
+  e.summary = Icalendar::Values::Text.new "This is a summary with params.", params
+end
+event.summary.ical_params #=> {'altrep' => 'http://my.language.net', 'language' => 'SPANISH'}
 
-    # or
+# or
 
-    event = cal.event do |e|
-      e.dtstart = Icalendar::Values::Date.new('20050428')
-      e.dtend   = Icalendar::Values::Date.new('20050429')
-      e.summary = "This is a summary with params."
-      e.summary.ical_params = params
-    end
-    event.summary.ical_params #=> {'altrep' => 'http://my.language.net', 'language' => 'SPANISH'}
+event = cal.event do |e|
+  e.dtstart = Icalendar::Values::Date.new('20050428')
+  e.dtend   = Icalendar::Values::Date.new('20050429')
+  e.summary = "This is a summary with params."
+  e.summary.ical_params = params
+end
+event.summary.ical_params #=> {'altrep' => 'http://my.language.net', 'language' => 'SPANISH'}
+```
 
 #### Support for Dates or DateTimes
 
 Sometimes we don't care if an event's start or end are `Date` or `DateTime` objects. For this, we can use `DateOrDateTime.new(value).call`
 
-    event = cal.event do |e|
-      e.dtstart = Icalendar::Values::DateOrDateTime.new('20140924').call
-      e.dtend   = Icalendar::Values::DateOrDateTime.new('20140924').call
-      e.summary = 'This is an all-day event, because DateOrDateTime will return Dates'
-    end
+```ruby
+event = cal.event do |e|
+  e.dtstart = Icalendar::Values::DateOrDateTime.new('20140924').call
+  e.dtend   = Icalendar::Values::DateOrDateTime.new('20140924').call
+  e.summary = 'This is an all-day event, because DateOrDateTime will return Dates'
+end
+```
 
 #### Support for URLs
 
 For clients that can parse and display a URL associated with an event, it's possible to assign one.
 
-    event = cal.event do |e|
-      e.url = 'https://example.com'
-    end
+```ruby
+event = cal.event do |e|
+  e.url = 'https://example.com'
+end
+```
 
 #### We can output the calendar as a string ####
 
@@ -112,30 +122,32 @@ ALARMS
 
 ### Within an event ###
 
-    cal.event do |e|
-      # ...other event properties
-      e.alarm do |a|
-        a.action          = "EMAIL"
-        a.description     = "This is an event reminder" # email body (required)
-        a.summary         = "Alarm notification"        # email subject (required)
-        a.attendee        = %w(mailto:me@my-domain.com mailto:me-too@my-domain.com) # one or more email recipients (required)
-        a.append_attendee "mailto:me-three@my-domain.com"
-        a.trigger         = "-PT15M" # 15 minutes before
-        a.append_attach   Icalendar::Values::Uri.new "ftp://host.com/novo-procs/felizano.exe", "fmttype" => "application/binary" # email attachments (optional)
-      end
+```ruby
+cal.event do |e|
+  # ...other event properties
+  e.alarm do |a|
+    a.action          = "EMAIL"
+    a.description     = "This is an event reminder" # email body (required)
+    a.summary         = "Alarm notification"        # email subject (required)
+    a.attendee        = %w(mailto:me@my-domain.com mailto:me-too@my-domain.com) # one or more email recipients (required)
+    a.append_attendee "mailto:me-three@my-domain.com"
+    a.trigger         = "-PT15M" # 15 minutes before
+    a.append_attach   Icalendar::Values::Uri.new "ftp://host.com/novo-procs/felizano.exe", "fmttype" => "application/binary" # email attachments (optional)
+  end
 
-      e.alarm do |a|
-        a.action  = "DISPLAY" # This line isn't necessary, it's the default
-        a.summary = "Alarm notification"
-        a.trigger = "-P1DT0H0M0S" # 1 day before
-      end
+  e.alarm do |a|
+    a.action  = "DISPLAY" # This line isn't necessary, it's the default
+    a.summary = "Alarm notification"
+    a.trigger = "-P1DT0H0M0S" # 1 day before
+  end
 
-      e.alarm do |a|
-        a.action        = "AUDIO"
-        a.trigger       = "-PT15M"
-        a.append_attach "Basso"
-      end
-    end
+  e.alarm do |a|
+    a.action        = "AUDIO"
+    a.trigger       = "-PT15M"
+    a.append_attach "Basso"
+  end
+end
+```
 
 #### Output ####
 
@@ -165,38 +177,42 @@ ALARMS
 
 Calling the `event.alarm` method will create an alarm if one doesn't exist. To check if an event has an alarm use the `has_alarm?` method.
 
-    event.has_alarm?
-    # => false
+```ruby
+event.has_alarm?
+# => false
 
-    event.alarm
-    # => #<Icalendar::Alarm ... >
+event.alarm
+# => #<Icalendar::Alarm ... >
 
-    event.has_alarm?
-    #=> true
+event.has_alarm?
+#=> true
+```
 
 TIMEZONES
 ---
 
-    cal = Icalendar::Calendar.new
-    cal.timezone do |t|
-      t.tzid = "America/Chicago"
+```ruby
+cal = Icalendar::Calendar.new
+cal.timezone do |t|
+  t.tzid = "America/Chicago"
 
-      t.daylight do |d|
-        d.tzoffsetfrom = "-0600"
-        d.tzoffsetto   = "-0500"
-        d.tzname       = "CDT"
-        d.dtstart      = "19700308T020000"
-        d.rrule        = "FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
-      end
+  t.daylight do |d|
+    d.tzoffsetfrom = "-0600"
+    d.tzoffsetto   = "-0500"
+    d.tzname       = "CDT"
+    d.dtstart      = "19700308T020000"
+    d.rrule        = "FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"
+  end
 
-      t.standard do |s|
-        s.tzoffsetfrom = "-0500"
-        s.tzoffsetto   = "-0600"
-        s.tzname       = "CST"
-        s.dtstart      = "19701101T020000"
-        s.rrule        = "FREQ=YEARLY;BYMONTH=11;BYDAY=1SU"
-      end
-    end
+  t.standard do |s|
+    s.tzoffsetfrom = "-0500"
+    s.tzoffsetto   = "-0600"
+    s.tzname       = "CST"
+    s.dtstart      = "19701101T020000"
+    s.rrule        = "FREQ=YEARLY;BYMONTH=11;BYDAY=1SU"
+  end
+end
+```
 
 #### Output ####
 
@@ -225,67 +241,76 @@ iCalendar has been tested and works with `tzinfo` versions 0.3 and 1.1
 
 #### Example ####
 
-    require 'icalendar/tzinfo'
+```ruby
+require 'icalendar/tzinfo'
 
-    cal = Icalendar::Calendar.new
+cal = Icalendar::Calendar.new
 
-    event_start = DateTime.new 2008, 12, 29, 8, 0, 0
-    event_end = DateTime.new 2008, 12, 29, 11, 0, 0
+event_start = DateTime.new 2008, 12, 29, 8, 0, 0
+event_end = DateTime.new 2008, 12, 29, 11, 0, 0
 
-    tzid = "America/Chicago"
-    tz = TZInfo::Timezone.get tzid
-    timezone = tz.ical_timezone event_start
-    cal.add_timezone timezone
+tzid = "America/Chicago"
+tz = TZInfo::Timezone.get tzid
+timezone = tz.ical_timezone event_start
+cal.add_timezone timezone
 
-    cal.event do |e|
-      e.dtstart = Icalendar::Values::DateTime.new event_start, 'tzid' => tzid
-      e.dtend   = Icalendar::Values::DateTime.new event_end, 'tzid' => tzid
-      e.summary = "Meeting with the man."
-      e.description = "Have a long lunch meeting and decide nothing..."
-      e.organizer = "mailto:jsmith@example.com"
-      e.organizer = Icalendar::Values::CalAddress.new("mailto:jsmith@example.com", cn: 'John Smith')
-    end
+cal.event do |e|
+  e.dtstart = Icalendar::Values::DateTime.new event_start, 'tzid' => tzid
+  e.dtend   = Icalendar::Values::DateTime.new event_end, 'tzid' => tzid
+  e.summary = "Meeting with the man."
+  e.description = "Have a long lunch meeting and decide nothing..."
+  e.organizer = "mailto:jsmith@example.com"
+  e.organizer = Icalendar::Values::CalAddress.new("mailto:jsmith@example.com", cn: 'John Smith')
+end
+```
 
 
 Parsing iCalendars
 ---
 
-    # Open a file or pass a string to the parser
-    cal_file = File.open("single_event.ics")
+```ruby
+# Open a file or pass a string to the parser
+cal_file = File.open("single_event.ics")
 
-    # Parser returns an array of calendars because a single file
-    # can have multiple calendars.
-    cals = Icalendar::Calendar.parse(cal_file)
-    cal = cals.first
+# Parser returns an array of calendars because a single file
+# can have multiple calendars.
+cals = Icalendar::Calendar.parse(cal_file)
+cal = cals.first
 
-    # Now you can access the cal object in just the same way I created it
-    event = cal.events.first
+# Now you can access the cal object in just the same way I created it
+event = cal.events.first
 
-    puts "start date-time: #{event.dtstart}"
-    puts "start date-time timezone: #{event.dtstart.ical_params['tzid']}"
-    puts "summary: #{event.summary}"
+puts "start date-time: #{event.dtstart}"
+puts "start date-time timezone: #{event.dtstart.ical_params['tzid']}"
+puts "summary: #{event.summary}"
+```
 
 You can also create a `Parser` instance directly, this can be used to enable
 strict parsing:
 
-    # Sometimes you want to strongly verify only rfc-approved properties are
-    # used
-    strict_parser = Icalendar::Parser.new(cal_file, true)
-    cal = strict_parser.parse
+```ruby
+# Sometimes you want to strongly verify only rfc-approved properties are
+# used
+strict_parser = Icalendar::Parser.new(cal_file, true)
+cal = strict_parser.parse
+```
 
 Parsing Components (e.g. Events)
 ---
-    # Open a file or pass a string to the parser
-    event_file = File.open("event.ics")
 
-    # Parser returns an array of events because a single file
-    # can have multiple events.
-    events = Icalendar::Event.parse(event_file)
-    event = events.first
+```ruby
+# Open a file or pass a string to the parser
+event_file = File.open("event.ics")
 
-    puts "start date-time: #{event.dtstart}"
-    puts "start date-time timezone: #{event.dtstart.ical_params['tzid']}"
-    puts "summary: #{event.summary}"
+# Parser returns an array of events because a single file
+# can have multiple events.
+events = Icalendar::Event.parse(event_file)
+event = events.first
+
+puts "start date-time: #{event.dtstart}"
+puts "start date-time timezone: #{event.dtstart.ical_params['tzid']}"
+puts "summary: #{event.summary}"
+```
 
 Finders
 ---
@@ -294,15 +319,17 @@ Often times in web apps and other interactive applications you'll need to
 lookup items in a calendar to make changes or get details.  Now you can find
 everything by the unique id automatically associated with all components.
 
-    cal = Calendar.new
-    10.times { cal.event } # Create 10 events with only default data.
-    some_event = cal.events[5] # Grab it from the array of events
+```ruby
+cal = Calendar.new
+10.times { cal.event } # Create 10 events with only default data.
+some_event = cal.events[5] # Grab it from the array of events
 
-    # Use the uid as the key in your app
-    key = some_event.uid
+# Use the uid as the key in your app
+key = some_event.uid
 
-    # so later you can find it.
-    same_event = cal.find_event(key)
+# so later you can find it.
+same_event = cal.find_event(key)
+```
 
 Examples
 ---
