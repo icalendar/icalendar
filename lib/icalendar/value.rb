@@ -55,7 +55,7 @@ module Icalendar
     end
 
     def escape_param_value(value)
-      v = value.gsub '"', "'"
+      v = value.to_s.gsub('"', "'")
       v =~ /[;:,]/ ? %("#{v}") : v
     end
 

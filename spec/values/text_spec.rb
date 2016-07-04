@@ -68,5 +68,11 @@ describe Icalendar::Values::Text do
         expect(subject.params_ical).to eq %(;PARAM="Hello, 'World'",GoodbyeMoon)
       end
     end
+    context 'nil value' do
+      let(:param_value) { nil }
+      it 'trats nil as blank' do
+        expect(subject.params_ical).to eq %(;PARAM=)
+      end
+    end
   end
 end
