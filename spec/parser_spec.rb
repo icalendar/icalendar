@@ -35,12 +35,24 @@ describe Icalendar::Parser do
     context 'event.ics' do
       let(:fn) { 'event.ics' }
 
-      before { subject.component = Icalendar::Event.new }
+      before { subject.component_class = Icalendar::Event }
 
       it 'returns an array of events' do
         expect(subject.parse).to be_instance_of Array
         expect(subject.parse.count).to be 1
         expect(subject.parse[0]).to be_instance_of Icalendar::Event
+      end
+    end
+    context 'events.ics' do
+      let(:fn) { 'two_events.ics' }
+
+      before { subject.component_class = Icalendar::Event }
+
+      it 'returns an array of events' do
+        events = subject.parse
+        expect(events.count).to be 2
+        expect(events.first.uid).to eq("bsuidfortestabc123")
+        expect(events.last.uid).to eq("uid-1234-uid-4321")
       end
     end
   end
