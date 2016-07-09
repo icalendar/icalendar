@@ -1,4 +1,4 @@
-=== 2.4.0 2015-07-04
+=== 2.4.0 2016-07-04
  * Enable parsing individual ICalendar components - Patrick Schnetger
  * many bug fixes. Thanks to Quan Sun, Garry Shutler, Ryan Bigg, Patrick Schnetger and others
  * README/documentation updates. Thanks to JonMidhir and Hendrik Sollich
