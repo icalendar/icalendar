@@ -97,7 +97,7 @@ Sometimes we don't care if an event's start or end are `Date` or `DateTime` obje
 ```ruby
 event = cal.event do |e|
   e.dtstart = Icalendar::Values::DateOrDateTime.new('20140924').call
-  e.dtend   = Icalendar::Values::DateOrDateTime.new('20140924').call
+  e.dtend   = Icalendar::Values::DateOrDateTime.new('20140925').call
   e.summary = 'This is an all-day event, because DateOrDateTime will return Dates'
 end
 ```
