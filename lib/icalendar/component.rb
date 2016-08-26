@@ -12,7 +12,7 @@ module Icalendar
 
     def self.parse(source)
       parser = Parser.new(source)
-      parser.component = self.new
+      parser.component_class = self
       parser.parse
     end
 
