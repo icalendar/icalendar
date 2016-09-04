@@ -1,3 +1,8 @@
+=== 2.4.1 2016-09-03
+ * Fix parsing multiple calendars or components in same file - Patrick Schnetger
+ * Fix multi-byte folding bug - Niels Laukens
+ * Fix typos across the code - Martin Edenhofer & yuuji.yaginuma
+
 === 2.4.0 2016-07-04
  * Enable parsing individual ICalendar components - Patrick Schnetger
  * many bug fixes. Thanks to Quan Sun, Garry Shutler, Ryan Bigg, Patrick Schnetger and others
