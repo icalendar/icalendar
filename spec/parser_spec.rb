@@ -9,9 +9,10 @@ describe Icalendar::Parser do
       let(:fn) { 'single_event.ics' }
 
       it 'returns an array of calendars' do
-        expect(subject.parse).to be_instance_of Array
-        expect(subject.parse.count).to eq 1
-        expect(subject.parse[0]).to be_instance_of Icalendar::Calendar
+        parsed = subject.parse
+        expect(parsed).to be_instance_of Array
+        expect(parsed.count).to eq 1
+        expect(parsed[0]).to be_instance_of Icalendar::Calendar
       end
 
       it 'properly splits multi-valued lines' do
@@ -38,9 +39,10 @@ describe Icalendar::Parser do
       before { subject.component_class = Icalendar::Event }
 
       it 'returns an array of events' do
-        expect(subject.parse).to be_instance_of Array
-        expect(subject.parse.count).to be 1
-        expect(subject.parse[0]).to be_instance_of Icalendar::Event
+        parsed = subject.parse
+        expect(parsed).to be_instance_of Array
+        expect(parsed.count).to be 1
+        expect(parsed[0]).to be_instance_of Icalendar::Event
       end
     end
     context 'events.ics' do
@@ -61,9 +63,10 @@ describe Icalendar::Parser do
     let(:fn) { 'single_event_bad_line.ics' }
 
     it 'returns an array of calendars' do
-      expect(subject.parse).to be_instance_of Array
-      expect(subject.parse.count).to eq 1
-      expect(subject.parse[0]).to be_instance_of Icalendar::Calendar
+      parsed = subject.parse
+      expect(parsed).to be_instance_of Array
+      expect(parsed.count).to eq 1
+      expect(parsed[0]).to be_instance_of Icalendar::Calendar
     end
 
     it 'properly splits multi-valued lines' do
