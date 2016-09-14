@@ -19,8 +19,6 @@ module Icalendar
     end
 
     def parse
-      source.rewind
-      read_in_data
       components = []
       while (fields = next_fields)
         component = component_class.new
