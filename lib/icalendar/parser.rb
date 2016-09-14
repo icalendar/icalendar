@@ -14,11 +14,11 @@ module Icalendar
         Icalendar.fatal msg
         fail ArgumentError, msg
       end
+      read_in_data
       @strict = strict
     end
 
     def parse
-      read_in_data
       components = []
       while (fields = next_fields)
         component = component_class.new
