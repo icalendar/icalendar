@@ -44,7 +44,11 @@ module Icalendar
 
     def append_custom_property(property_name, value)
       property_name = property_name.downcase
-      if value.is_a? Icalendar::Value
+      if self.class.single_properties.include? property_name
+        send "#{property_name}=", value
+      elsif self.class.multiple_properties.include? property_name
+        send "append_#{property_name}", value
+      elsif value.is_a? Icalendar::Value
         custom_properties[property_name] << value
       else
         custom_properties[property_name] << Icalendar::Values::Text.new(value)

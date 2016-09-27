@@ -96,6 +96,23 @@ describe Icalendar::Event do
     end
   end
 
+  describe "#append_custom_property" do
+    context "with custom property" do
+      it "appends to the custom properties hash" do
+        subject.append_custom_property "x_my_property", "test value"
+        expect(subject.custom_properties).to eq({"x_my_property" => ["test value"]})
+      end
+    end
+
+    context "with a defined property" do
+      it "sets the proper setter" do
+        subject.append_custom_property "summary", "event"
+        expect(subject.summary).to eq "event"
+        expect(subject.custom_properties).to eq({})
+      end
+    end
+  end
+
   describe '.parse' do
     let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', fn) }
     let(:fn) { 'event.ics' }
