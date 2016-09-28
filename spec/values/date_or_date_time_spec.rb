@@ -38,4 +38,14 @@ describe Icalendar::Values::DateOrDateTime do
       end
     end
   end
+
+  describe "#to_ical" do
+    let(:event) { Icalendar::Event.new }
+    let(:time_stamp) { Time.now.strftime Icalendar::Values::DateTime::FORMAT }
+
+    it "should call parse behind the scenes" do
+      event.dtstart = described_class.new time_stamp, "tzid" => "UTC"
+      expect(event.to_ical).to include "DTSTART:#{time_stamp}Z"
+    end
+  end
 end

@@ -92,11 +92,11 @@ event.summary.ical_params #=> {'altrep' => 'http://my.language.net', 'language' 
 
 #### Support for Dates or DateTimes
 
-Sometimes we don't care if an event's start or end are `Date` or `DateTime` objects. For this, we can use `DateOrDateTime.new(value).call`
+Sometimes we don't care if an event's start or end are `Date` or `DateTime` objects. For this, we can use `DateOrDateTime.new(value)`. Calling `.call` on the returned `DateOrDateTime` will immediately return the underlying `Date` or `DateTime` object.
 
 ```ruby
 event = cal.event do |e|
-  e.dtstart = Icalendar::Values::DateOrDateTime.new('20140924').call
+  e.dtstart = Icalendar::Values::DateOrDateTime.new('20140924')
   e.dtend   = Icalendar::Values::DateOrDateTime.new('20140925').call
   e.summary = 'This is an all-day event, because DateOrDateTime will return Dates'
 end

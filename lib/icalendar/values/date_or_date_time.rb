@@ -3,24 +3,36 @@ module Icalendar
 
     # DateOrDateTime can be used to set an attribute to either a Date or a DateTime value.
     # It should not be used wihtout also invoking the `call` method.
-    class DateOrDateTime
-
-      attr_reader :value, :params, :parsed
-      def initialize(value, params = {})
-        @value = value
-        @params = params
-      end
+    class DateOrDateTime < Value
 
       def call
+        parsed
+      end
+
+      def value_ical
+        parsed.value_ical
+      end
+
+      def params_ical
+        parsed.params_ical
+      end
+
+      private
+
+      def parsed
         @parsed ||= begin
-                      Icalendar::Values::DateTime.new value, params
+                      Icalendar::Values::DateTime.new value, ical_params
                     rescue Icalendar::Values::DateTime::FormatError
-                      Icalendar::Values::Date.new value, params
+                      Icalendar::Values::Date.new value, ical_params
                     end
       end
 
-      def to_ical
-        fail NoMethodError, 'You cannot use DateOrDateTime directly. Invoke `call` before `to_ical`'
+      def needs_value_type?(default_type)
+        parsed.class != default_type
+      end
+
+      def value_type
+        parsed.class.value_type
       end
 
     end
