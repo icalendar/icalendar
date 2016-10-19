@@ -19,6 +19,14 @@ describe Icalendar do
     end
   end
 
+  describe 'cleanly handle facebook organizers' do
+    let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'single_event_bad_organizer.ics') }
+    it 'will generate the same file as it parsed' do
+      ical = Icalendar::Calendar.parse(source).first.to_ical
+      expect(ical).to eq source
+    end
+  end
+
   describe 'timezone round trip' do
     let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'timezone.ics') }
     it 'will generate the same file as it parsed' do
