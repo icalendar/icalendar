@@ -117,6 +117,9 @@ describe Icalendar::Calendar do
   describe '#to_ical' do
     before(:each) do
       Timecop.freeze DateTime.new(2013, 12, 26, 5, 0, 0, '+0000')
+      subject.x_wr_calname = "My calendar name"
+      subject.x_wr_caldesc = "A description"
+
       subject.event do |e|
         e.summary = 'An event'
         e.dtstart = "20140101T000000Z"
@@ -139,6 +142,8 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:icalendar-ruby
 CALSCALE:GREGORIAN
+X-WR-CALNAME:My calendar name
+X-WR-CALDESC:A description
 BEGIN:VEVENT
 DTSTAMP:20131226T050000Z
 DTSTART:20140101T000000Z
