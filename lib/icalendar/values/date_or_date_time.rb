@@ -2,7 +2,7 @@ module Icalendar
   module Values
 
     # DateOrDateTime can be used to set an attribute to either a Date or a DateTime value.
-    # It should not be used wihtout also invoking the `call` method.
+    # It should not be used without also invoking the `call` method.
     class DateOrDateTime < Value
 
       def call
