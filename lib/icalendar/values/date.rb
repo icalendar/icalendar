@@ -1,20 +1,19 @@
 require 'date'
+require_relative 'comparable_dates'
+require_relative 'parsable_dates'
 
 module Icalendar
   module Values
 
     class Date < Value
+      include ComparableDates
+      include ParsableDates
+
       FORMAT = '%Y%m%d'
 
       def initialize(value, params = {})
         if value.is_a? String
-          begin
-            parsed_date = ::Date.strptime(value, FORMAT)
-          rescue ArgumentError => e
-            raise FormatError.new("Failed to parse \"#{value}\" - #{e.message}")
-          end
-
-          super parsed_date, params
+          parsing(value, FORMAT) { |parsed_date| super(parsed_date, params) }
         elsif value.respond_to? :to_date
           super value.to_date, params
         else
@@ -33,10 +32,6 @@ module Icalendar
           nil
         end
       end
-
-      class FormatError < ArgumentError
-      end
     end
-
   end
 end
