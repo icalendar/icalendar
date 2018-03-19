@@ -37,7 +37,7 @@ EXAMPLES
 ---
 
 ### Creating calendars and events ###
-
+This creates a calendar event from 28th April 2005 to 28th April 2005.
 ```ruby
 require 'icalendar'
 
