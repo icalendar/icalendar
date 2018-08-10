@@ -3,16 +3,17 @@ before_install:
   - gem install bundler
 language: ruby
 rvm:
+  - 2.5
   - 2.4
   - 2.3
   - 2.2
   - jruby-19mode
-  - rbx-2
+  - rbx-3
   - ruby-head
   - jruby-head
 matrix:
   allow_failures:
+    - rvm: 2.2
     - rvm: ruby-head
     - rvm: jruby-head
-    - rvm: rbx-2
 script: bundle exec rake spec

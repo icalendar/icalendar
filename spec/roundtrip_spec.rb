@@ -21,9 +21,15 @@ describe Icalendar do
 
   describe 'cleanly handle facebook organizers' do
     let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'single_event_bad_organizer.ics') }
+    let(:source_lowered_uri) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'single_event_organizer_parsed.ics') }
     it 'will generate the same file as it parsed' do
       ical = Icalendar::Calendar.parse(source).first.to_ical
-      expect(ical).to eq source
+      source_equal = ical == source
+      # rbx-3 parses the organizer as a URI, which strips the space and lowercases everything after the first :
+      # this is correct behavior, according to the icalendar spec, so we're not fudging the parser to accomodate
+      # facebook not properly wrapping the CN param in dquotes
+      source_lowered_equal = ical == source_lowered_uri
+      expect(source_equal || source_lowered_equal).to be true
     end
   end
 
