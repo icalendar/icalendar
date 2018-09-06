@@ -57,6 +57,15 @@ describe Icalendar::Parser do
         expect(events.last.uid).to eq("uid-1234-uid-4321")
       end
     end
+    context 'tzid_search.ics' do
+      let(:fn) { 'tzid_search.ics' }
+
+      it 'correctly sets the weird tzid' do
+        parsed = subject.parse
+        event = parsed.first.events.first
+        expect(event.dtstart.utc).to eq Time.parse("20120104T150000Z")
+      end
+    end
   end
 
   describe '#parse with bad line' do
