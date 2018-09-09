@@ -63,7 +63,7 @@ describe Icalendar::Parser do
       it 'correctly sets the weird tzid' do
         parsed = subject.parse
         event = parsed.first.events.first
-        expect(event.dtstart.utc).to eq Time.parse("20120104T150000Z")
+        expect(event.dtstart.utc).to eq Time.parse("20180104T150000Z")
       end
     end
   end

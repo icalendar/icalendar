@@ -220,7 +220,7 @@ end
 iCalendar has some basic support for creating VTIMEZONE blocks from timezone information pulled from `tzinfo`.
 You must require `tzinfo` support manually to take advantage.
 
-iCalendar has been tested and works with `tzinfo` versions 0.3 and 1.1
+iCalendar has been tested and works with `tzinfo` versions 0.3 and 1.x
 
 #### Example ####
 
