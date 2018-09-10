@@ -1,3 +1,8 @@
+=== 2.5.0 2018-09-10
+ * Set timezone information from VTIMEZONE components in cases that ActiveSupport can't figure it out (or isn't installed)
+ * Prevent rewinding the Parser IO input during parsing - Niels Laukens
+ * Update tested/supported ruby versions & documentation updates.
+
 === 2.4.1 2016-09-03
  * Fix parsing multiple calendars or components in same file - Patrick Schnetger
  * Fix multi-byte folding bug - Niels Laukens

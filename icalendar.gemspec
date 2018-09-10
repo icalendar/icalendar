@@ -16,11 +16,6 @@ for the generation and parsing of .ics files, which are used by a
 variety of calendaring applications.
   EOD
   s.post_install_message = <<-EOM
-HEADS UP! iCalendar 2.0 is not backwards-compatible with 1.x. Please see the README for the new syntax
-
-HEADS UP! icalendar 2.2.0 switches to non-strict parsing as default. Please see the README if you
-rely on strict parsing for information on how to enable it.
-
 ActiveSupport is required for TimeWithZone support, but not required for general use.
   EOM
 
