@@ -21,6 +21,15 @@ module Icalendar
         "#{behind? ? '-' : '+'}#{'%02d' % hours}#{'%02d' % minutes}#{'%02d' % seconds if seconds > 0}"
       end
 
+      def to_s
+        str = "#{behind? ? '-' : '+'}#{'%02d' % hours}:#{'%02d' % minutes}"
+        if seconds > 0
+          "#{str}:#{'%02d' % seconds}"
+        else
+          str
+        end
+      end
+
       private
 
       def zero_offset?

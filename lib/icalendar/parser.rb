@@ -1,3 +1,5 @@
+require 'icalendar/timezone_store'
+
 module Icalendar
 
   class Parser
@@ -99,6 +101,8 @@ module Icalendar
     def parse_component(component)
       while (fields = next_fields)
         if fields[:name] == 'end'
+          klass_name = fields[:value].gsub(/\AV/, '').downcase.capitalize
+          TimezoneStore.store(component) if klass_name == 'Timezone'
           break
         elsif fields[:name] == 'begin'
           klass_name = fields[:value].gsub(/\AV/, '').downcase.capitalize

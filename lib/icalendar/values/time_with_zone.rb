@@ -1,3 +1,5 @@
+require 'icalendar/timezone_store'
+
 begin
   require 'active_support/time'
 
@@ -17,14 +19,17 @@ module Icalendar
         params = Icalendar::DowncasedHash(params)
         @tz_utc = params['tzid'] == 'UTC'
 
-        if defined?(ActiveSupport::TimeZone) && defined?(ActiveSupportTimeWithZoneAdapter) && !params['tzid'].nil?
+        offset_value = if params['tzid'].present?
           tzid = params['tzid'].is_a?(::Array) ? params['tzid'].first : params['tzid']
-          zone = ActiveSupport::TimeZone[tzid]
-          value = ActiveSupportTimeWithZoneAdapter.new nil, zone, value unless zone.nil?
-          super value, params
-        else
-          super value, params
+          if defined?(ActiveSupport::TimeZone) &&
+              defined?(ActiveSupportTimeWithZoneAdapter) &&
+              (tz = ActiveSupport::TimeZone[tzid])
+            ActiveSupportTimeWithZoneAdapter.new(nil, tz, value)
+          elsif (tz = TimezoneStore.retrieve(tzid))
+            value.change offset: tz.offset_for_local(value).to_s
+          end
         end
+        super((offset_value || value), params)
       end
 
       def params_ical

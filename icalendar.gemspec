@@ -29,24 +29,26 @@ ActiveSupport is required for TimeWithZone support, but not required for general
   s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename f }
   s.require_paths = ['lib']
 
-  s.required_ruby_version = '>= 1.9.2'
+  s.required_ruby_version = '>= 2.2.0'
 
-  s.add_development_dependency 'rake', '~> 10.0'
-  s.add_development_dependency 'bundler', '~> 1.3'
+  s.add_dependency 'ice_cube', '~> 0.16'
+
+  s.add_development_dependency 'rake', '~> 12.0'
+  s.add_development_dependency 'bundler', '~> 1.16'
 
   # test with both groups of tzinfo dependencies
   # tzinfo 1.x
-  s.add_development_dependency 'tzinfo', '~> 1.1'
-  s.add_development_dependency 'tzinfo-data', '~> 1.2014'
+  s.add_development_dependency 'activesupport', '~> 5.2'
+  s.add_development_dependency 'i18n', '~> 1.1'
+  s.add_development_dependency 'tzinfo', '~> 1.2'
+  s.add_development_dependency 'tzinfo-data', '~> 1.2018'
   # tzinfo 0.x
+  # s.add_development_dependency 'activesupport', '~> 4.0'
+  # s.add_development_dependency 'i18n', '~> 0.7'
   # s.add_development_dependency 'tzinfo', '~> 0.3'
   # end tzinfo
 
-  s.add_development_dependency 'activesupport', '~> 3.2'
-  # lock i18n to < 0.7 to maintain ruby 1.9.2 compatibility
-  s.add_development_dependency 'i18n', '< 0.7.0'
-
-  s.add_development_dependency 'timecop', '~> 0.7.0'
-  s.add_development_dependency 'rspec', '~> 3.0'
-  s.add_development_dependency 'simplecov', '~> 0.8'
+  s.add_development_dependency 'timecop', '~> 0.9'
+  s.add_development_dependency 'rspec', '~> 3.8'
+  s.add_development_dependency 'simplecov', '~> 0.16'
 end
