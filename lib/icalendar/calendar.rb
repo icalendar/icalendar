@@ -5,6 +5,17 @@ module Icalendar
     required_property :prodid
     optional_single_property :calscale
     optional_single_property :ip_method
+    optional_single_property :ip_name
+    optional_single_property :description
+    optional_single_property :uid
+    optional_single_property :last_modified, Icalendar::Values::DateTime
+    optional_single_property :url, Icalendar::Values::Uri
+    optional_single_property :categories
+    optional_single_property :refresh_interval, Icalendar::Values::Duration
+    optional_single_property :source, Icalendar::Values::Uri
+    optional_single_property :color
+    optional_single_property :image, Icalendar::Values::Uri
+    optional_single_property :conference, Icalendar::Values::Uri
 
     component :timezone, :tzid
     component :event
