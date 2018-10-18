@@ -81,18 +81,18 @@ describe Icalendar do
     it 'sorts time events by start time' do
       events = subject.sort_by(&:dtstart)
 
-      expect(events.first.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
+      expect(events.first.dtstart.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
 
-      expect(events.last.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 1, 0, '-4')
-      expect(events.last.dtend).to eq ::DateTime.new(2014, 7, 14, 9, 59, 0, '-4')
+      expect(events.last.dtstart.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 1, 0, '-4')
+      expect(events.last.dtend.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 59, 0, '-4')
     end
 
     it 'sorts time events by end time' do
       events = subject.sort_by(&:dtend)
 
-      expect(events.first.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 1, 0, '-4')
-      expect(events.first.dtend).to eq ::DateTime.new(2014, 7, 14, 9, 59, 0, '-4')
-      expect(events.last.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
+      expect(events.first.dtstart.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 1, 0, '-4')
+      expect(events.first.dtend.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 59, 0, '-4')
+      expect(events.last.dtstart.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
     end
   end
 
@@ -103,8 +103,8 @@ describe Icalendar do
     it 'sorts time events' do
       events = subject.sort_by(&:dtstart)
 
-      expect(events.first.dtstart).to eq ::Date.new(2014, 7, 14)
-      expect(events.last.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
+      expect(events.first.dtstart.to_date).to eq ::Date.new(2014, 7, 14)
+      expect(events.last.dtstart.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
     end
   end
 

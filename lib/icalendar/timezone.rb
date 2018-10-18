@@ -75,7 +75,7 @@ module Icalendar
 
     def standard_for(local)
       possible = standards.map do |std|
-        schedule = IceCube::Schedule.new(std.dtstart) do |s|
+        schedule = IceCube::Schedule.new(std.dtstart.to_time) do |s|
           std.rrule.each do |rule|
             s.add_recurrence_rule IceCube::Rule.from_ical(rule.value_ical)
           end
@@ -90,7 +90,7 @@ module Icalendar
 
     def daylight_for(local)
       possible = daylights.map do |day|
-        schedule = IceCube::Schedule.new(day.dtstart) do |s|
+        schedule = IceCube::Schedule.new(day.dtstart.to_time) do |s|
           day.rrule.each do |rule|
             s.add_recurrence_rule IceCube::Rule.from_ical(rule.value_ical)
           end

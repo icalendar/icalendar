@@ -19,14 +19,19 @@ module Icalendar
         params = Icalendar::DowncasedHash(params)
         @tz_utc = params['tzid'] == 'UTC'
 
-        offset_value = if params['tzid'].present?
+        offset_value = unless params['tzid'].nil?
           tzid = params['tzid'].is_a?(::Array) ? params['tzid'].first : params['tzid']
           if defined?(ActiveSupport::TimeZone) &&
               defined?(ActiveSupportTimeWithZoneAdapter) &&
               (tz = ActiveSupport::TimeZone[tzid])
             ActiveSupportTimeWithZoneAdapter.new(nil, tz, value)
           elsif (tz = TimezoneStore.retrieve(tzid))
-            value.change offset: tz.offset_for_local(value).to_s
+            offset = tz.offset_for_local(value).to_s
+            if value.respond_to?(:change)
+              value.change offset: offset
+            else
+              ::Time.new(value.year, value.month, value.day, value.hour, value.min, value.sec, offset)
+            end
           end
         end
         super((offset_value || value), params)

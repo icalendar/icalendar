@@ -29,12 +29,13 @@ describe 'TZInfo::Timezone' do
     let(:tz) { TZInfo::Timezone.get 'Asia/Shanghai' }
     let(:date) { DateTime.now }
 
+    # TODO only run this test with tzinfo ≥ 1.0
     it 'only creates a standard component' do
       expect(subject.to_ical).to eq <<-EXPECTED.gsub "\n", "\r\n"
 BEGIN:VTIMEZONE
 TZID:Asia/Shanghai
 BEGIN:STANDARD
-DTSTART:19910914T230000
+DTSTART:19910915T010000
 TZOFFSETFROM:+0900
 TZOFFSETTO:+0800
 TZNAME:CST

@@ -43,6 +43,10 @@ module Icalendar
         end
       end
 
+      def utc?
+        value.to_time.utc?
+      end
+
       class FormatError < ArgumentError
       end
     end
