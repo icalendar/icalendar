@@ -44,7 +44,7 @@ module Icalendar
       end
 
       def utc?
-        value.to_time.utc?
+        value.respond_to?(:utc?) ? value.utc? : value.to_time.utc?
       end
 
       class FormatError < ArgumentError
