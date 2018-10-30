@@ -1,3 +1,6 @@
+=== 2.5.1 2018-10-30
+ * Fix usage without ActiveSupport installed.
+
 === 2.5.0 2018-09-10
  * Set timezone information from VTIMEZONE components in cases that ActiveSupport can't figure it out (or isn't installed)
  * Prevent rewinding the Parser IO input during parsing - Niels Laukens
