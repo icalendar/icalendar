@@ -22,7 +22,7 @@ module Icalendar
                  else
                    [klass.new(value, params)]
                  end
-        super mapped, params
+        super mapped
       end
 
       def params_ical
