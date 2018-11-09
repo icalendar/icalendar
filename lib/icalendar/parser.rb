@@ -21,6 +21,7 @@ module Icalendar
     end
 
     def parse
+      TimezoneStore.reset
       components = []
       while (fields = next_fields)
         component = component_class.new

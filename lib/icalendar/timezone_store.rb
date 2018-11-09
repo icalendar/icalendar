@@ -9,7 +9,13 @@ module Icalendar
     end
 
     def self.instance
-      @instance ||= new
+      Thread.current[:timezone_store] ||= new
+    end
+    def self.instance=(store)
+      Thread.current[:timezone_store] = store
+    end
+    def self.reset
+      instance = nil
     end
 
     def self.store(timezone)
