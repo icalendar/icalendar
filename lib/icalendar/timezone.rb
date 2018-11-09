@@ -80,7 +80,7 @@ module Icalendar
             s.add_recurrence_rule IceCube::Rule.from_ical(rule.value_ical)
           end
           std.rdate.each do |date|
-            s.add_recurrence_date date
+            s.add_recurrence_time date.to_time
           end
         end
         [schedule.previous_occurrence(local.to_time), std]
@@ -95,7 +95,7 @@ module Icalendar
             s.add_recurrence_rule IceCube::Rule.from_ical(rule.value_ical)
           end
           day.rdate.each do |date|
-            s.add_recurrence_date date
+            s.add_recurrence_time date.to_time
           end
         end
         [schedule.previous_occurrence(local.to_time), day]
