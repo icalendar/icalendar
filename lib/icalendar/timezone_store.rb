@@ -9,6 +9,7 @@ module Icalendar
     end
 
     def self.instance
+      warn "**** DEPRECATION WARNING ****\nTimezoneStore.instance will be removed in 3.0. Please instantiate a TimezoneStore object."
       @instance ||= new
     end
 
