@@ -18,6 +18,7 @@ module Icalendar
       def initialize(value, params = {})
         params = Icalendar::DowncasedHash(params)
         @tz_utc = params['tzid'] == 'UTC'
+        x_tz_info = params.delete 'x-tz-info'
 
         offset_value = unless params['tzid'].nil?
           tzid = params['tzid'].is_a?(::Array) ? params['tzid'].first : params['tzid']
@@ -25,12 +26,12 @@ module Icalendar
               defined?(ActiveSupportTimeWithZoneAdapter) &&
               (tz = ActiveSupport::TimeZone[tzid])
             ActiveSupportTimeWithZoneAdapter.new(nil, tz, value)
-          elsif (tz = TimezoneStore.retrieve(tzid))
-            offset = tz.offset_for_local(value).to_s
+          elsif !x_tz_info.nil?
+            offset = x_tz_info.offset_for_local(value).to_s
             if value.respond_to?(:change)
               value.change offset: offset
             else
-              ::Time.new(value.year, value.month, value.day, value.hour, value.min, value.sec, offset)
+              ::Time.new value.year, value.month, value.day, value.hour, value.min, value.sec, offset
             end
           end
         end

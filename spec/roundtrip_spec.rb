@@ -15,7 +15,7 @@ describe Icalendar do
       parsed = Icalendar::Calendar.parse(source).first
       event.rdate = parsed.events.first.rdate
       expect(event.rdate.first).to be_kind_of Icalendar::Values::Array
-      expect(event.rdate.first.ical_params).to eq 'tzid' => ['US-Mountain']
+      expect(event.rdate.first.params_ical).to eq ";TZID=US-Mountain"
     end
   end
 

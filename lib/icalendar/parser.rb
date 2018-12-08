@@ -4,7 +4,7 @@ module Icalendar
 
   class Parser
     attr_writer :component_class
-    attr_reader :source, :strict
+    attr_reader :source, :strict, :timezone_store
 
     def initialize(source, strict = false)
       if source.respond_to? :gets
@@ -18,6 +18,7 @@ module Icalendar
       end
       read_in_data
       @strict = strict
+      @timezone_store = TimezoneStore.new
     end
 
     def parse
@@ -102,7 +103,7 @@ module Icalendar
       while (fields = next_fields)
         if fields[:name] == 'end'
           klass_name = fields[:value].gsub(/\AV/, '').downcase.capitalize
-          TimezoneStore.store(component) if klass_name == 'Timezone'
+          timezone_store.store(component) if klass_name == 'Timezone'
           break
         elsif fields[:name] == 'begin'
           klass_name = fields[:value].gsub(/\AV/, '').downcase.capitalize
@@ -162,7 +163,13 @@ module Icalendar
         param_name = match[0].downcase
         params[param_name] ||= []
         match[1].scan %r{#{PVALUE}} do |param_value|
-          params[param_name] << param_value.gsub(/\A"|"\z/, '') if param_value.size > 0
+          if param_value.size > 0
+            param_value = param_value.gsub(/\A"|"\z/, '')
+            params[param_name] << param_value
+            if param_name == 'tzid'
+              params['x-tz-info'] = timezone_store.retrieve param_value
+            end
+          end
         end
       end
       Icalendar.logger.debug "Found fields: #{parts.inspect} with params: #{params.inspect}"

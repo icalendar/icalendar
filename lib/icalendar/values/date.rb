@@ -7,6 +7,8 @@ module Icalendar
       FORMAT = '%Y%m%d'
 
       def initialize(value, params = {})
+        params.delete 'tzid'
+        params.delete 'x-tz-info'
         if value.is_a? String
           begin
             parsed_date = ::Date.strptime(value, FORMAT)
