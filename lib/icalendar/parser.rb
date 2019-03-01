@@ -172,7 +172,8 @@ module Icalendar
           end
         end
       end
-      Icalendar.logger.debug "Found fields: #{parts.inspect} with params: #{params.inspect}"
+      # `inspect` calls are expensive, skip them when logger not in debug mode.
+      Icalendar.logger.debug "Found fields: #{parts.inspect} with params: #{params.inspect}" if Icalendar.logger.level == ::Logger::DEBUG
       {
         name: parts[:name].downcase.gsub('-', '_'),
         params: params,
