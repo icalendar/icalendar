@@ -1,3 +1,7 @@
+=== 2.5.3 2019-03-04
+ * Improve parsing performance - nehresma
+ * Support tzinfo 2.0 - Misty De Meo
+
 === 2.5.2 2018-12-08
  * Remove usage of the global TimezoneStore instance, in favor of a local variable in the parser
  * Deprecate TimezoneStore class methods
