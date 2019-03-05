@@ -31,14 +31,16 @@ ActiveSupport is required for TimeWithZone support, but not required for general
   s.add_development_dependency 'rake', '~> 12.0'
   s.add_development_dependency 'bundler', '~> 2.0'
 
-  # test with both groups of tzinfo dependencies
+  # test with all groups of tzinfo dependencies
+  # tzinfo 2.x
+  # s.add_development_dependency 'tzinfo', '~> 2.0'
+  # s.add_development_dependency 'tzinfo-data', '~> 1.2018'
   # tzinfo 1.x
   s.add_development_dependency 'activesupport', '~> 5.2'
   s.add_development_dependency 'i18n', '~> 1.1'
   s.add_development_dependency 'tzinfo', '~> 1.2'
   s.add_development_dependency 'tzinfo-data', '~> 1.2018'
   # tzinfo 0.x
-  # s.add_development_dependency 'activesupport', '~> 4.0'
   # s.add_development_dependency 'i18n', '~> 0.7'
   # s.add_development_dependency 'tzinfo', '~> 0.3'
   # end tzinfo
