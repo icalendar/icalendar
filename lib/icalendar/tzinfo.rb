@@ -61,7 +61,7 @@ module Icalendar
     end
 
     def rrule
-      start = local_start.to_datetime
+      start = local_start_at.to_datetime
       # this is somewhat of a hack, but seems to work ok
       # assumes that no timezone transition is in law as "4th X of the month"
       # but only as 1st X, 2nd X, 3rd X, or Last X
@@ -76,7 +76,7 @@ module Icalendar
     end
 
     def dtstart
-      local_start.to_datetime.strftime '%Y%m%dT%H%M%S'
+      local_start_at.to_datetime.strftime '%Y%m%dT%H%M%S'
     end
   end
 
