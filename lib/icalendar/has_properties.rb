@@ -10,7 +10,7 @@ module Icalendar
     end
 
     def initialize(*args)
-      @custom_properties = Hash.new
+      @custom_properties = Hash.new { |h, k| h[k] = [] }
       super
     end
 
@@ -49,9 +49,9 @@ module Icalendar
       elsif self.class.multiple_properties.include? property_name
         send "append_#{property_name}", value
       elsif value.is_a? Icalendar::Value
-        (custom_properties[property_name] ||= []) << value
+        custom_properties[property_name] << value
       else
-        (custom_properties[property_name] ||= []) << Icalendar::Values::Text.new(value)
+        custom_properties[property_name] << Icalendar::Values::Text.new(value)
       end
     end
 
