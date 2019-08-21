@@ -10,7 +10,7 @@ module Icalendar
     end
 
     def initialize(*args)
-      @custom_components = Hash.new
+      @custom_components = Hash.new { |h, k| h[k] = [] }
       super
     end
 
@@ -26,7 +26,7 @@ module Icalendar
       if method_name =~ /^add_(x_\w+)$/
         component_name = $1
         custom = args.first || Component.new(component_name, component_name.upcase)
-        (custom_components[component_name] ||= []) << custom
+        custom_components[component_name] << custom
         yield custom if block_given?
         custom
       else
