@@ -23,6 +23,34 @@ module Icalendar
       self.ip_method = 'PUBLISH'
     end
 
+    def request
+      self.ip_method = 'REQUEST'
+    end
+
+    def reply
+      self.ip_method = 'REPLY'
+    end
+
+    def add
+      self.ip_method = 'ADD'
+    end
+
+    def cancel
+      self.ip_method = 'CANCEL'
+    end
+
+    def refresh
+      self.ip_method = 'REFRESH'
+    end
+
+    def counter
+      self.ip_method = 'COUNTER'
+    end
+
+    def decline_counter
+      self.ip_method = 'DECLINECOUNTER'
+    end
+
   end
 
 end
