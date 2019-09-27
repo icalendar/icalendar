@@ -16,6 +16,32 @@ module Icalendar
           optional_property :tzname
         end
       end
+
+      def occurrences
+        @occurrences ||= IceCube::Schedule.new(dtstart.to_time) do |s|
+          rrule.each do |rule|
+            s.add_recurrence_rule IceCube::Rule.from_ical(rule.value_ical)
+          end
+          rdate.each do |date|
+            s.add_recurrence_time date.to_time
+          end
+        end.all_occurrences_enumerator
+      end
+
+      def previous_occurrence(from)
+        from = IceCube::TimeUtil.match_zone(from, dtstart.to_time)
+
+        @cached_occurrences ||= []
+        while @cached_occurrences.empty? || @cached_occurrences.last <= from
+          begin
+            @cached_occurrences << occurrences.next
+          rescue StopIteration
+            break
+          end
+        end
+
+        @cached_occurrences.reverse_each.find { |occurrence| occurrence < from }
+      end
     end
     class Daylight < Component
       include TzProperties
@@ -75,30 +101,14 @@ module Icalendar
 
     def standard_for(local)
       possible = standards.map do |std|
-        schedule = IceCube::Schedule.new(std.dtstart.to_time) do |s|
-          std.rrule.each do |rule|
-            s.add_recurrence_rule IceCube::Rule.from_ical(rule.value_ical)
-          end
-          std.rdate.each do |date|
-            s.add_recurrence_time date.to_time
-          end
-        end
-        [schedule.previous_occurrence(local.to_time), std]
+        [std.previous_occurrence(local.to_time), std]
       end
       possible.sort_by(&:first).last
     end
 
     def daylight_for(local)
       possible = daylights.map do |day|
-        schedule = IceCube::Schedule.new(day.dtstart.to_time) do |s|
-          day.rrule.each do |rule|
-            s.add_recurrence_rule IceCube::Rule.from_ical(rule.value_ical)
-          end
-          day.rdate.each do |date|
-            s.add_recurrence_time date.to_time
-          end
-        end
-        [schedule.previous_occurrence(local.to_time), day]
+        [day.previous_occurrence(local.to_time), day]
       end
       possible.sort_by(&:first).last
     end
