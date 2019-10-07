@@ -14,6 +14,9 @@ module Icalendar
           optional_property :comment
           optional_property :rdate, Icalendar::Values::DateTime
           optional_property :tzname
+
+          transient_variable :@cached_occurrences
+          transient_variable :@occurrences
         end
       end
 
@@ -44,6 +47,7 @@ module Icalendar
       end
     end
     class Daylight < Component
+      include Marshable
       include TzProperties
 
       def initialize
@@ -51,6 +55,7 @@ module Icalendar
       end
     end
     class Standard < Component
+      include Marshable
       include TzProperties
 
       def initialize
