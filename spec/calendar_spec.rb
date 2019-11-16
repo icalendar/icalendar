@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe Icalendar::Calendar do
 
+  context 'marshalling' do
+    it 'can be de/serialized' do
+      Marshal.load(Marshal.dump(subject))
+    end
+  end
+
   context 'values' do
     let(:property) { 'my-value' }
 

@@ -113,6 +113,13 @@ describe Icalendar::Event do
     end
   end
 
+  describe "#custom_property" do
+    it "returns a default for missing properties" do
+      expect(subject.x_doesnt_exist).to eq([])
+      expect(subject.custom_property "x_doesnt_exist").to eq([])
+    end
+  end
+
   describe '.parse' do
     let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', fn) }
     let(:fn) { 'event.ics' }

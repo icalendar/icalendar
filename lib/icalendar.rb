@@ -22,6 +22,7 @@ end
 
 require 'icalendar/has_properties'
 require 'icalendar/has_components'
+require 'icalendar/marshable'
 require 'icalendar/component'
 require 'icalendar/value'
 require 'icalendar/alarm'
