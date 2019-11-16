@@ -24,7 +24,7 @@ ActiveSupport is required for TimeWithZone support, but not required for general
   s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename f }
   s.require_paths = ['lib']
 
-  s.required_ruby_version = '>= 2.2.0'
+  s.required_ruby_version = '>= 2.4.0'
 
   s.add_dependency 'ice_cube', '~> 0.16'
 
