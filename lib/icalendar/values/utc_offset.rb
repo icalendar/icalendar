@@ -37,8 +37,7 @@ module Icalendar
       end
 
       def parse_fields(value)
-        value.gsub!(/\s+/, '')
-        md = /\A(?<behind>[+-])(?<hours>\d{2})(?<minutes>\d{2})(?<seconds>\d{2})?\z/.match value
+        md = /\A(?<behind>[+-])(?<hours>\d{2})(?<minutes>\d{2})(?<seconds>\d{2})?\z/.match value.gsub(/\s+/, '')
         {
           behind: (md[:behind] == '-'),
           hours: md[:hours].to_i,
