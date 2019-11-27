@@ -1,3 +1,9 @@
+=== 2.6.0 2019-11-26
+ * Improve performance for calculating timezone offsets - Justin Howard
+ * Make it possible to de/serialize with Marshal - Pawel Niewiadomski
+ * Avoid FrozenError when running with frozen_string_literal
+ * Update minimum Ruby version to supported versions
+
 === 2.5.3 2019-03-04
  * Improve parsing performance - nehresma
  * Support tzinfo 2.0 - Misty De Meo
