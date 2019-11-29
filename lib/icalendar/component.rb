@@ -71,6 +71,8 @@ module Icalendar
       # than 75 octets, but you need to split between characters, not bytes.
       # This is challanging with Unicode composing accents, for example.
 
+      return long_line if long_line.bytesize <= Icalendar::MAX_LINE_LENGTH
+
       chars = long_line.scan(/\P{M}\p{M}*/u) # split in graphenes
       folded = ['']
       bytes = 0
