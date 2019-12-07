@@ -1,3 +1,6 @@
+=== 2.6.1 2019-12-07
+ * Improve performance when generating large ICS files - Alex Balhatchet
+
 === 2.6.0 2019-11-26
  * Improve performance for calculating timezone offsets - Justin Howard
  * Make it possible to de/serialize with Marshal - Pawel Niewiadomski
