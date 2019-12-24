@@ -115,7 +115,7 @@ cal.event do |e|
     a.attendee        = %w(mailto:me@my-domain.com mailto:me-too@my-domain.com) # one or more email recipients (required)
     a.append_attendee "mailto:me-three@my-domain.com"
     a.trigger         = "-PT15M" # 15 minutes before
-    a.append_attach   Icalendar::Values::Uri.new "ftp://host.com/novo-procs/felizano.exe", "fmttype" => "application/binary" # email attachments (optional)
+    a.append_attach   Icalendar::Values::Uri.new("ftp://host.com/novo-procs/felizano.exe", "fmttype" => "application/binary") # email attachments (optional)
   end
 
   e.alarm do |a|
