@@ -1,0 +1,135 @@
+grammar Ics
+  rule root
+    (calobject / eventobject / todoobject / journalobject / freebusyobject / timezoneobject / ianaobject / xobject / contentline)+
+  end
+
+  rule crlf
+    "\r\n"
+  end
+
+  rule calobject
+    'BEGIN:VCALENDAR' crlf calbody 'END:VCALENDAR' crlf? <CalendarComponent>
+  end
+  rule calbody
+    (eventobject / todoobject / journalobject / freebusyobject / timezoneobject / ianaobject / xobject / contentline)+ <ComponentBody>
+  end
+
+  rule eventobject
+    'BEGIN:VEVENT' crlf eventbody 'END:VEVENT' crlf? <EventComponent>
+  end
+  rule eventbody
+    (alarmobject / contentline)+ <ComponentBody>
+  end
+
+  rule todoobject
+    'BEGIN:VTODO' crlf todobody 'END:VTODO' crlf? <TodoComponent>
+  end
+  rule todobody
+    (alarmobject / contentline)+ <ComponentBody>
+  end
+
+  rule componentbody
+    contentline+ <ComponentBody>
+  end
+
+  rule journalobject
+    'BEGIN:VJOURNAL' crlf componentbody 'END:VJOURNAL' crlf? <JournalComponent>
+  end
+
+  rule freebusyobject
+    'BEGIN:VFREEBUSY' crlf componentbody 'END:VFREEBUSY' crlf? <FreeBusyComponent>
+  end
+
+  rule timezoneobject
+    'BEGIN:VTIMEZONE' crlf timezonebody 'END:VTIMEZONE' crlf? <TimezoneComponent>
+  end
+  rule timezonebody
+    (standardobject / daylightobject / contentline)+ <ComponentBody>
+  end
+  rule standardobject
+    'BEGIN:STANDARD' crlf componentbody 'END:STANDARD' crlf? <StandardComponent>
+  end
+  rule daylightobject
+    'BEGIN:DAYLIGHT' crlf componentbody 'END:DAYLIGHT' crlf? <DaylightComponent>
+  end
+
+  rule ianaobject
+    'BEGIN:' ianatoken crlf componentbody 'END:' ianatoken &{ |seq| seq[1].text_value == seq[5].text_value } crlf? <IanaComponent>
+  end
+
+  rule xobject
+    'BEGIN:' xname crlf componentbody 'END:' xname &{ |seq| seq[1].text_value == seq[5].text_value } crlf? <CustomComponent>
+  end
+
+  rule alarmobject
+    'BEGIN:VALARM' crlf componentbody 'END:VALARM' crlf? <AlarmComponent>
+  end
+
+  rule contentline
+    name (';' param )* !{ |seq| %w[BEGIN END].include? seq[0].text_value } (':' value)? crlf? <PropertyLine>
+  end
+
+  rule name
+    ianatoken / xname
+  end
+
+  rule ianatoken
+    (alpha / digit / '-')+
+  end
+
+  rule alpha
+    [a-zA-Z]
+  end
+
+  rule digit
+    [0-9]
+  end
+
+  rule xname
+    'X-' (vendorid '-')? (alpha / digit / '-')+
+  end
+
+  rule vendorid
+    (alpha / digit) 3..
+  end
+
+  rule param
+    paramname '=' paramvalue (',' paramvalue)* <PropertyParam>
+  end
+
+  rule paramname
+    ianatoken / xname
+  end
+
+  rule paramvalue
+    quotedstring / paramtext
+  end
+
+  rule paramtext
+    safechar* <ParamText>
+  end
+
+  rule value
+    valuechar*
+  end
+
+  rule valuechar
+    [ \t\S]
+  end
+
+  rule quotedstring
+    dquote qsafechar* dquote <QuotedString>
+  end
+
+  rule dquote
+    '"'
+  end
+
+  rule qsafechar
+    [^"]
+  end
+
+  rule safechar
+    [^";:,]
+  end
+end
