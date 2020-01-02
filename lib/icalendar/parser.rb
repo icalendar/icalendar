@@ -43,21 +43,36 @@ module Icalendar
       @ics_data ||= source.read.gsub(/\r\n[ \t]/, "")
     end
 
+    def parse_partial_tree(component)
+      parsed_elements.each do |tree|
+        if tree.is_a? Ics::PropertyLine
+          assign_property component, tree
+        else
+          assign_component component, tree
+        end
+      end
+      component
+    end
+
     private
 
     def parse_component(tree)
       tree.properties.each do |property|
-        parse_property tree.component, property
+        assign_property tree.component, property
       end
       tree.components.each do |component|
-        ical_component = parse_component(component)
-        timezone_store.store(ical_component) if ical_component.name == "timezone"
-        tree.component.add_component ical_component
+        assign_component tree.component, component
       end
       tree.component
     end
 
-    def parse_property(component, line)
+    def assign_component(parent_component, ics_component)
+      ical_component = parse_component ics_component
+      timezone_store.store(ical_component) if ical_component.name == "timezone"
+      parent_component.add_component ical_component
+    end
+
+    def assign_property(component, line)
       prop_name = %w(class method).include?(line.property_name) ? "ip_#{line.property_name}" : line.property_name
       multi_property = component.class.multiple_properties.include? prop_name
       prop_value = wrap_property_value component, line, multi_property
