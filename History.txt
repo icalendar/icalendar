@@ -1,3 +1,6 @@
+=== 3.0.0
+ * Remove singleton methods for TimezoneStore
+
 === 2.6.1 2019-12-07
  * Improve performance when generating large ICS files - Alex Balhatchet
 

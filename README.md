@@ -6,9 +6,17 @@ iCalendar -- Internet calendaring, Ruby style
 
 <http://github.com/icalendar/icalendar>
 
-### Upgrade from 1.x ###
+### Upgrade from 2.x to 3.x ###
 
-Better documentation is still to come, but in the meantime the changes needed to move from 1.x to 2.0 are summarized by the [diff needed to update the README](https://github.com/icalendar/icalendar/commit/bc3701e004c915a250054030a9375d1e7618857f)
+WIP
+
+Breaking changes:
+
+* Removed singleton methods from TimezoneStore
+
+### Upgrade from 1.x to 2.x ###
+
+The changes needed to move from 1.x to 2.0 are summarized by the [diff needed to update the README](https://github.com/icalendar/icalendar/commit/bc3701e004c915a250054030a9375d1e7618857f)
 
 DESCRIPTION
 ---
