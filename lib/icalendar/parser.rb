@@ -138,13 +138,12 @@ module Icalendar
       result = parser.parse(ics_data)
       if result.nil?
         Icalendar.logger.error "Failed to parse: #{parser.failure_reason}"
-        if strict?
-          fail parser.failure_reason
-        end
-        []
+        fail ParseError, parser.failure_reason
       else
         result.elements
       end
     end
+
+    class ParseError < StandardError; end
   end
 end
