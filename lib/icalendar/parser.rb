@@ -5,6 +5,8 @@ require 'icalendar/parser/ics_parser.treetop'
 module Icalendar
 
   class Parser
+    class ParseError < StandardError; end
+
     attr_writer :component_class
     attr_reader :source, :strict, :timezone_store, :parser
 
@@ -40,7 +42,7 @@ module Icalendar
     end
 
     def ics_data
-      @ics_data ||= source.read.gsub(/\r\n[ \t]/, "")
+      source.read.gsub(/\r\n[ \t]/, "")
     end
 
     def parse_partial_tree(component)
@@ -143,7 +145,5 @@ module Icalendar
         result.elements
       end
     end
-
-    class ParseError < StandardError; end
   end
 end
