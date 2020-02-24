@@ -51,8 +51,8 @@ describe Icalendar::Event do
   context 'suggested single values' do
     before(:each) do
       subject.dtstart = DateTime.now
-      subject.append_rrule double('RRule').as_null_object
-      subject.append_rrule double('RRule').as_null_object
+      subject.append_rrule Icalendar::Values::Recur.new("FREQ=MONTHLY")
+      subject.append_rrule Icalendar::Values::Recur.new("FREQ=YEARLY")
     end
 
     it 'is valid by default' do

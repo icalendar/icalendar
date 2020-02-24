@@ -14,4 +14,3 @@ ATTACH:http://corporations-dominate.existence.net/why.rhtml
 RDATE;TZID=US-Mountain:20050121T170000,20050122T170000
 X-TEST-COMPONENT;QTEST="Hello, World":Shouldn't double double quotes
 END:VEVENT
-

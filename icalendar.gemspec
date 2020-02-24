@@ -27,6 +27,7 @@ ActiveSupport is required for TimeWithZone support, but not required for general
   s.required_ruby_version = '>= 2.4.0'
 
   s.add_dependency 'ice_cube', '~> 0.16'
+  s.add_dependency 'treetop', '~> 1.6'
 
   s.add_development_dependency 'rake', '~> 12.0'
   s.add_development_dependency 'bundler', '~> 2.0'

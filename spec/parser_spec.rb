@@ -97,4 +97,13 @@ describe Icalendar::Parser do
       expect(event.dtstart).to be_kind_of Icalendar::Values::Date
     end
   end
+
+  describe "#parse_partial_tree" do
+    let(:source) { "DTSTART:20200101T120000Z" }
+    let(:component) { Icalendar::Event.new }
+
+    it "assigns the property passed in" do
+      expect { subject.parse_partial_tree component }.to change(component, :dtstart).to Icalendar::Values::DateTime.new("20200101T120000Z")
+    end
+  end
 end

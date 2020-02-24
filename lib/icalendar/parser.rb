@@ -1,13 +1,17 @@
 require 'icalendar/timezone_store'
+require 'icalendar/parser/node_extensions'
+require 'icalendar/parser/ics_parser.treetop'
 
 module Icalendar
 
   class Parser
+    class ParseError < StandardError; end
+
     attr_writer :component_class
-    attr_reader :source, :strict, :timezone_store
+    attr_reader :source, :strict, :timezone_store, :parser
 
     def initialize(source, strict = false)
-      if source.respond_to? :gets
+      if source.respond_to? :read
         @source = source
       elsif source.respond_to? :to_s
         @source = StringIO.new source.to_s, 'r'
@@ -16,60 +20,99 @@ module Icalendar
         Icalendar.fatal msg
         fail ArgumentError, msg
       end
-      read_in_data
       @strict = strict
       @timezone_store = TimezoneStore.new
+      @parser = IcsParser.new
     end
 
     def parse
       components = []
-      while (fields = next_fields)
-        component = component_class.new
-        if fields[:name] == 'begin' && fields[:value].downcase == component.ical_name.downcase
-          components << parse_component(component)
+      parsed_elements.each do |tree|
+        if !strict? || tree.component.class == component_class
+          components << parse_component(tree)
+        else
+          fail "Expected to parse a #{component_class.name}, instead found a #{tree.component.class.name}"
         end
       end
       components
     end
 
-    def parse_property(component, fields = nil)
-      fields = next_fields if fields.nil?
-      prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
-      multi_property = component.class.multiple_properties.include? prop_name
-      prop_value = wrap_property_value component, fields, multi_property
-      begin
-        method_name = if multi_property
-          "append_#{prop_name}"
+    def strict?
+      !!@strict
+    end
+
+    def ics_data
+      source.read.gsub(/\r\n[ \t]/, "")
+    end
+
+    def parse_partial_tree(component)
+      parsed_elements.each do |tree|
+        if tree.is_a? Ics::PropertyLine
+          assign_property component, tree
         else
-          "#{prop_name}="
+          assign_component component, tree
         end
+      end
+      component
+    end
+
+    private
+
+    def parse_component(tree)
+      tree.properties.each do |property|
+        assign_property tree.component, property
+      end
+      tree.components.each do |component|
+        assign_component tree.component, component
+      end
+      tree.component
+    end
+
+    def assign_component(parent_component, ics_component)
+      ical_component = parse_component ics_component
+      timezone_store.store(ical_component) if ical_component.name == "timezone"
+      parent_component.add_component ical_component
+    end
+
+    def assign_property(component, line)
+      prop_name = %w(class method).include?(line.property_name) ? "ip_#{line.property_name}" : line.property_name
+      multi_property = component.class.multiple_properties.include? prop_name
+      prop_value = wrap_property_value component, line, multi_property
+      begin
+        method_name = multi_property ? "append_#{prop_name}" : "#{prop_name}="
         component.send method_name, prop_value
       rescue NoMethodError => nme
         if strict?
           Icalendar.logger.error "No method \"#{method_name}\" for component #{component}"
           raise nme
         else
-          Icalendar.logger.warn "No method \"#{method_name}\" for component #{component}. Appending to custom."
+          Icalendar.logger.debug "No method \"#{method_name}\" for component #{component}. Appending to custom"
           component.append_custom_property prop_name, prop_value
         end
       end
     end
 
-    def wrap_property_value(component, fields, multi_property)
-      klass = get_wrapper_class component, fields
-      if wrap_in_array? klass, fields[:value], multi_property
-        delimiter = fields[:value].match(/(?<!\\)([,;])/)[1]
-        Icalendar::Values::Array.new fields[:value].split(/(?<!\\)[;,]/),
+    def wrap_property_value(component, line, multi_property)
+      klass = get_wrapper_class component, line
+      set_tzid_info line
+      if wrap_in_array? klass, line.property_value, multi_property
+        delimiter = line.property_value.match(/(?<!\\)([,;])/)[1]
+        Icalendar::Values::Array.new line.property_value.split(/(?<!\\)[;,]/),
                                      klass,
-                                     fields[:params],
+                                     line.property_params,
                                      delimiter: delimiter
       else
-        klass.new fields[:value], fields[:params]
+        klass.new line.property_value, line.property_params
       end
     rescue Icalendar::Values::DateTime::FormatError => fe
       raise fe if strict?
-      fields[:params]['value'] = ['DATE']
+      line.property_params['value'] = ['DATE']
       retry
+    end
+
+    def set_tzid_info(line)
+      tzid = line.property_params['tzid'] or return
+      line.property_params['x-tz-info'] = timezone_store.retrieve tzid.first
     end
 
     def wrap_in_array?(klass, value, multi_property)
@@ -77,10 +120,10 @@ module Icalendar
         ((multi_property && value =~ /(?<!\\)[,;]/) || value =~ /(?<!\\);/)
     end
 
-    def get_wrapper_class(component, fields)
-      klass = component.class.default_property_types[fields[:name]]
-      if !fields[:params]['value'].nil?
-        klass_name = fields[:params].delete('value').first
+    def get_wrapper_class(component, line)
+      klass = component.class.default_property_types[line.property_name]
+      if !line.property_params['value'].nil?
+        klass_name = line.property_params.delete('value').first
         unless klass_name.upcase == klass.value_type
           klass_name = klass_name.downcase.gsub(/(?:\A|-)(.)/) { |m| m[-1].upcase }
           klass = Icalendar::Values.const_get klass_name if Icalendar::Values.const_defined?(klass_name)
@@ -89,99 +132,18 @@ module Icalendar
       klass
     end
 
-    def strict?
-      !!@strict
-    end
-
-    private
-
     def component_class
       @component_class ||= Icalendar::Calendar
     end
 
-    def parse_component(component)
-      while (fields = next_fields)
-        if fields[:name] == 'end'
-          klass_name = fields[:value].gsub(/\AV/, '').downcase.capitalize
-          timezone_store.store(component) if klass_name == 'Timezone'
-          break
-        elsif fields[:name] == 'begin'
-          klass_name = fields[:value].gsub(/\AV/, '').downcase.capitalize
-          Icalendar.logger.debug "Adding component #{klass_name}"
-          if Icalendar.const_defined? klass_name
-            component.add_component parse_component(Icalendar.const_get(klass_name).new)
-          elsif Icalendar::Timezone.const_defined? klass_name
-            component.add_component parse_component(Icalendar::Timezone.const_get(klass_name).new)
-          else
-            component.add_component parse_component(Component.new klass_name.downcase, fields[:value])
-          end
-        else
-          parse_property component, fields
-        end
-      end
-      component
-    end
-
-    def read_in_data
-      @data = source.gets and @data.chomp!
-    end
-
-    def next_fields
-      line = @data or return nil
-      loop do
-        read_in_data
-        if @data =~ /\A[ \t].+\z/
-          line << @data[1, @data.size]
-        elsif @data !~ /\A\s*\z/
-          break
-        end
-      end
-      parse_fields line
-    end
-
-    NAME = '[-a-zA-Z0-9]+'
-    QSTR = '"[^"]*"'
-    PTEXT = '[^";:,]*'
-    PVALUE = "(?:#{QSTR}|#{PTEXT})"
-    PARAM = "(#{NAME})=(#{PVALUE}(?:,#{PVALUE})*)"
-    VALUE = '.*'
-    LINE = "(?<name>#{NAME})(?<params>(?:;#{PARAM})*):(?<value>#{VALUE})"
-    BAD_LINE = "(?<name>#{NAME})(?<params>(?:;#{PARAM})*)"
-
-    def parse_fields(input)
-      if parts = %r{#{LINE}}.match(input)
-        value = parts[:value]
+    def parsed_elements
+      result = parser.parse(ics_data)
+      if result.nil?
+        Icalendar.logger.error "Failed to parse: #{parser.failure_reason}"
+        fail ParseError, parser.failure_reason
       else
-        parts = %r{#{BAD_LINE}}.match(input) unless strict?
-        parts or fail "Invalid iCalendar input line: #{input}"
-        # Non-strict and bad line so use a value of empty string
-        value = ''
+        result.elements
       end
-
-      params = {}
-      parts[:params].scan %r{#{PARAM}} do |match|
-        param_name = match[0].downcase
-        params[param_name] ||= []
-        match[1].scan %r{#{PVALUE}} do |param_value|
-          if param_value.size > 0
-            param_value = param_value.gsub(/\A"|"\z/, '')
-            params[param_name] << param_value
-            if param_name == 'tzid'
-              params['x-tz-info'] = timezone_store.retrieve param_value
-            end
-          end
-        end
-      end
-      # Building the string to send to the logger is expensive.
-      # Only do it if the logger is at the right log level.
-      if ::Logger::DEBUG >= Icalendar.logger.level
-        Icalendar.logger.debug "Found fields: #{parts.inspect} with params: #{params.inspect}"
-      end
-      {
-        name: parts[:name].downcase.gsub('-', '_'),
-        params: params,
-        value: value
-      }
     end
   end
 end
