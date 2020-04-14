@@ -6,7 +6,6 @@ rvm:
   - 2.7
   - 2.6
   - 2.5
-  - 2.4
   - jruby-19mode
   - ruby-head
   - jruby-head
