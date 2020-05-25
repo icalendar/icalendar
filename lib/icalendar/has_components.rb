@@ -21,6 +21,10 @@ module Icalendar
       c
     end
 
+    def custom_component(component_name)
+      custom_components[component_name.downcase.gsub("-", "_")] || []
+    end
+
     def method_missing(method, *args, &block)
       method_name = method.to_s
       if method_name =~ /^add_(x_\w+)$/
@@ -29,13 +33,16 @@ module Icalendar
         (custom_components[component_name] ||= []) << custom
         yield custom if block_given?
         custom
+      elsif method_name =~ /^x_/ && custom_component(method_name).size > 0
+        custom_component method_name
       else
         super
       end
     end
 
     def respond_to_missing?(method_name, include_private = false)
-      method_name.to_s.start_with?('add_x_') || super
+      string_method = method_name.to_s
+      string_method.start_with?('add_x_') || custom_component(string_method).size > 0 || super
     end
 
     module ClassMethods

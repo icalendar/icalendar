@@ -66,6 +66,16 @@ describe Icalendar::Parser do
         expect(event.dtstart.utc).to eq Time.parse("20180104T150000Z")
       end
     end
+    context 'custom_component.ics' do
+      let(:fn) { 'custom_component.ics' }
+
+      it 'correctly handles custom named components' do
+        parsed = subject.parse
+        calendar = parsed.first
+        expect(calendar.custom_component('x_event_series')).to be
+        expect(calendar.custom_component('X-EVENT-SERIES')).to be
+      end
+    end
   end
 
   describe '#parse with bad line' do

@@ -108,7 +108,10 @@ module Icalendar
         elsif fields[:name] == 'begin'
           klass_name = fields[:value].gsub(/\AV/, '').downcase.capitalize
           Icalendar.logger.debug "Adding component #{klass_name}"
-          if Icalendar.const_defined? klass_name
+          if klass_name.start_with?("X-")
+            component_name = klass_name.downcase.gsub("-", "_")
+            component.send("add_#{component_name}", parse_component(Component.new component_name, fields[:value]))
+          elsif Icalendar.const_defined? klass_name
             component.add_component parse_component(Icalendar.const_get(klass_name).new)
           elsif Icalendar::Timezone.const_defined? klass_name
             component.add_component parse_component(Icalendar::Timezone.const_get(klass_name).new)
