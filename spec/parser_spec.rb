@@ -72,8 +72,8 @@ describe Icalendar::Parser do
       it 'correctly handles custom named components' do
         parsed = subject.parse
         calendar = parsed.first
-        expect(calendar.custom_component('x_event_series')).to be
-        expect(calendar.custom_component('X-EVENT-SERIES')).to be
+        expect(calendar.custom_component('x_event_series').size).to eq 1
+        expect(calendar.custom_component('X-EVENT-SERIES').size).to eq 1
       end
     end
   end
