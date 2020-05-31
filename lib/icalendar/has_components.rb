@@ -21,21 +21,33 @@ module Icalendar
       c
     end
 
+    def add_custom_component(component_name, c)
+      c.parent = self
+      yield c if block_given?
+      (custom_components[component_name.downcase.gsub("-", "_")] ||= []) << c
+      c
+    end
+
+    def custom_component(component_name)
+      custom_components[component_name.downcase.gsub("-", "_")] || []
+    end
+
     def method_missing(method, *args, &block)
       method_name = method.to_s
       if method_name =~ /^add_(x_\w+)$/
         component_name = $1
         custom = args.first || Component.new(component_name, component_name.upcase)
-        (custom_components[component_name] ||= []) << custom
-        yield custom if block_given?
-        custom
+        add_custom_component(component_name, custom, &block)
+      elsif method_name =~ /^x_/ && custom_component(method_name).size > 0
+        custom_component method_name
       else
         super
       end
     end
 
     def respond_to_missing?(method_name, include_private = false)
-      method_name.to_s.start_with?('add_x_') || super
+      string_method = method_name.to_s
+      string_method.start_with?('add_x_') || custom_component(string_method).size > 0 || super
     end
 
     module ClassMethods
