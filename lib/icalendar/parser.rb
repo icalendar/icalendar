@@ -82,8 +82,8 @@ module Icalendar
       if !fields[:params]['value'].nil?
         klass_name = fields[:params].delete('value').first
         unless klass_name.upcase == klass.value_type
-          klass_name = klass_name.downcase.gsub(/(?:\A|-)(.)/) { |m| m[-1].upcase }
-          klass = Icalendar::Values.const_get klass_name if Icalendar::Values.const_defined?(klass_name)
+          klass_name = "Icalendar::Values::#{klass_name.downcase.gsub(/(?:\A|-)(.)/) { |m| m[-1].upcase }}"
+          klass = Object.const_get klass_name if Object.const_defined?(klass_name)
         end
       end
       klass
@@ -108,10 +108,10 @@ module Icalendar
         elsif fields[:name] == 'begin'
           klass_name = fields[:value].gsub(/\AV/, '').gsub("-", "_").downcase.capitalize
           Icalendar.logger.debug "Adding component #{klass_name}"
-          if Icalendar.const_defined? klass_name
-            component.add_component parse_component(Icalendar.const_get(klass_name).new)
-          elsif Icalendar::Timezone.const_defined? klass_name
-            component.add_component parse_component(Icalendar::Timezone.const_get(klass_name).new)
+          if Object.const_defined? "Icalendar::#{klass_name}"
+            component.add_component parse_component(Object.const_get("Icalendar::#{klass_name}").new)
+          elsif Object.const_defined? "Icalendar::Timezone::#{klass_name}"
+            component.add_component parse_component(Object.const_get("Icalendar::Timezone::#{klass_name}").new)
           else
             component.add_custom_component klass_name, parse_component(Component.new klass_name.downcase, fields[:value])
           end
