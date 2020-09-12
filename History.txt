@@ -1,3 +1,7 @@
+=== 2.7.0 2020-09-12
+ * Handle custom component names, with and without X- prefix
+ * Fix Component lookup to avoid namespace collisions
+
 === 2.6.1 2019-12-07
  * Improve performance when generating large ICS files - Alex Balhatchet
 
