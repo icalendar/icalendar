@@ -4,9 +4,9 @@ module Icalendar
 
   class Parser
     attr_writer :component_class
-    attr_reader :source, :strict, :timezone_store
+    attr_reader :source, :strict, :timezone_store, :verbose
 
-    def initialize(source, strict = false)
+    def initialize(source, strict = false, verbose = false)
       if source.respond_to? :gets
         @source = source
       elsif source.respond_to? :to_s
@@ -18,6 +18,7 @@ module Icalendar
       end
       read_in_data
       @strict = strict
+      @verbose = verbose
       @timezone_store = TimezoneStore.new
     end
 
@@ -49,7 +50,7 @@ module Icalendar
           Icalendar.logger.error "No method \"#{method_name}\" for component #{component}"
           raise nme
         else
-          Icalendar.logger.warn "No method \"#{method_name}\" for component #{component}. Appending to custom."
+          Icalendar.logger.warn "No method \"#{method_name}\" for component #{component}. Appending to custom." if verbose?
           component.append_custom_property prop_name, prop_value
         end
       end
@@ -91,6 +92,10 @@ module Icalendar
 
     def strict?
       !!@strict
+    end
+
+    def verbose?
+      @verbose
     end
 
     private
