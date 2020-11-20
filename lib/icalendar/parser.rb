@@ -6,6 +6,21 @@ module Icalendar
     attr_writer :component_class
     attr_reader :source, :strict, :timezone_store, :verbose
 
+    def self.clean_bad_wrapping(source)
+      content = if source.respond_to? :read
+        source.read
+      elsif source.respond_to? :to_s
+        source.to_s
+      else
+        msg = 'Icalendar::Parser.clean_bad_wrapping must be called with a String or IO object'
+        Icalendar.fatal msg
+        fail ArgumentError, msg
+      end
+      encoding = content.encoding
+      content.force_encoding(Encoding::ASCII_8BIT)
+      content.gsub(/\r?\n[ \t]/, "").force_encoding(encoding)
+    end
+
     def initialize(source, strict = false, verbose = false)
       if source.respond_to? :gets
         @source = source

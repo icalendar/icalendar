@@ -170,4 +170,13 @@ END:VCALENDAR
       expect(subject.ip_method).to eq 'PUBLISH'
     end
   end
+
+  describe '.parse' do
+    let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'bad_wrapping.ics') }
+
+    it 'correctly parses a bad file' do
+      actual = described_class.parse(source)
+      expect(actual[0]).to be_a(described_class)
+    end
+  end
 end
