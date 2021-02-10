@@ -31,7 +31,7 @@ module Icalendar
         end.all_occurrences_enumerator
       end
 
-      def previous_occurrence(from)
+      def previous_or_next_occurrence(from)
         from = IceCube::TimeUtil.match_zone(from, dtstart.to_time)
 
         @cached_occurrences ||= []
@@ -43,7 +43,12 @@ module Icalendar
           end
         end
 
-        @cached_occurrences.reverse_each.find { |occurrence| occurrence < from }
+        # if there is never any @cached_occurences that are less than from, 
+        # the result will end up being null and the event will
+        # raise an exception. This will look at the next event even if 
+        # it is after from. Through testing, it appears the time zone is still
+        # correct doing this and prevents the exception from being thrown.
+        @cached_occurrences.reverse_each.find { |occurrence| occurrence < from } || @cached_occurrences.reverse_each.find { |occurrence| occurrence > from }
       end
     end
     class Daylight < Component
@@ -106,14 +111,14 @@ module Icalendar
 
     def standard_for(local)
       possible = standards.map do |std|
-        [std.previous_occurrence(local.to_time), std]
+        [std.previous_or_next_occurrence(local.to_time), std]
       end
       possible.sort_by(&:first).last
     end
 
     def daylight_for(local)
       possible = daylights.map do |day|
-        [day.previous_occurrence(local.to_time), day]
+        [day.previous_or_next_occurrence(local.to_time), day]
       end
       possible.sort_by(&:first).last
     end
