@@ -54,21 +54,21 @@ describe Icalendar::Timezone do
         expect(first_standard.valid?).to be_truthy
         expect(first_daylight.valid?).to be_truthy
 
-        # calling previous_occurrence intializes @cached_occurrences with a time that's not handled by ruby marshaller
+        # calling previous_or_next_occurrence intializes @cached_occurrences with a time that's not handled by ruby marshaller
         first_occurence_for = Time.new(1601, 10, 31)
 
-        standard_previous_occurrence = first_standard.previous_occurrence(first_occurence_for)
-        expect(standard_previous_occurrence).not_to be_nil
+        standard_previous_or_next_occurrence = first_standard.previous_or_next_occurrence(first_occurence_for)
+        expect(standard_previous_or_next_occurrence).not_to be_nil
 
-        daylight_previous_occurrence = first_daylight.previous_occurrence(first_occurence_for)
-        expect(daylight_previous_occurrence).not_to be_nil
+        daylight_previous_or_next_occurrence = first_daylight.previous_or_next_occurrence(first_occurence_for)
+        expect(daylight_previous_or_next_occurrence).not_to be_nil
 
         deserialized = nil
 
         expect { deserialized = Marshal.load(Marshal.dump(subject)) }.not_to raise_exception
 
-        expect(deserialized.standards.first.previous_occurrence(first_occurence_for)).to eq(standard_previous_occurrence)
-        expect(deserialized.daylights.first.previous_occurrence(first_occurence_for)).to eq(daylight_previous_occurrence)
+        expect(deserialized.standards.first.previous_or_next_occurrence(first_occurence_for)).to eq(standard_previous_or_next_occurrence)
+        expect(deserialized.daylights.first.previous_or_next_occurrence(first_occurence_for)).to eq(daylight_previous_or_next_occurrence)
       end
     end
 
