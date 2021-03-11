@@ -6,6 +6,7 @@ Gem::Specification.new do |s|
 
   s.name = "icalendar"
   s.version = Icalendar::VERSION
+  s.licenses = ['BSD-2-Clause', 'GPL-3.0-only', 'icalendar']
 
   s.homepage = "https://github.com/icalendar/icalendar"
   s.platform = Gem::Platform::RUBY
