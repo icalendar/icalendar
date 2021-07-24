@@ -181,6 +181,14 @@ describe Icalendar::Event do
       it { expect(subject.to_ical).to include 'ORGANIZER;CN=John Smith:mailto:jsmith@example.com' }
     end
 
+    context 'all day event' do
+      it 'produces date values' do
+        subject.dtstart.ical_param "VALUE", "DATE"
+        expect(subject.to_ical).not_to include'DTSTART;VALUE=DATE:20131227T013000'
+        expect(subject.to_ical).to include 'DTSTART;VALUE=DATE:20131227'
+      end
+    end
+
   end
 
 end

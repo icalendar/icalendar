@@ -8,6 +8,7 @@ module Icalendar
       include TimeWithZone
 
       FORMAT = '%Y%m%dT%H%M%S'
+      DATEFORMAT = '%Y%m%d'
 
       def initialize(value, params = {})
         if value.is_a? String
@@ -28,7 +29,9 @@ module Icalendar
       end
 
       def value_ical
-        if tz_utc
+        if @ical_params[:value] == "DATE"
+          strftime DATEFORMAT
+        elsif tz_utc
           "#{strftime FORMAT}Z"
         else
           strftime FORMAT
