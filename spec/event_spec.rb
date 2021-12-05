@@ -130,6 +130,13 @@ describe Icalendar::Event do
       expect(events.count).to be 1
       expect(events.first).to be_instance_of Icalendar::Event
     end
+
+    it 'correctly parses a badly backslash file' do
+      input = File.read File.join(File.dirname(__FILE__), 'fixtures', 'backslash2.isc')
+
+      actual = described_class.parse(input)
+      expect(actual[0]).to be_a(described_class)
+    end
   end
 
   describe '#find_alarm' do

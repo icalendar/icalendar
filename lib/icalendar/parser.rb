@@ -150,12 +150,22 @@ module Icalendar
       line = @data or return nil
       loop do
         read_in_data
+        if @data =~ /\\$/
+          #$stderr.puts "Input is #{@data.inspect}, line: #{line.inspect}"
+          # \ escaped newline?
+          # get next line amended
+          line << "\n"
+          read_in_data
+          @data = " " + @data
+        end
         if @data =~ /\A[ \t].+\z/
           line << @data[1, @data.size]
         elsif @data !~ /\A\s*\z/
           break
         end
       end
+      line.gsub!("\\n","\n")
+      #$stderr.puts "parse line1: #{line.inspect}"
       parse_fields line
     end
 
