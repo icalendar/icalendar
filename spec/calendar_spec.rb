@@ -178,5 +178,13 @@ END:VCALENDAR
       actual = described_class.parse(source)
       expect(actual[0]).to be_a(described_class)
     end
+
+
+    it 'correctly parses a badly backslash file' do
+      input = File.read File.join(File.dirname(__FILE__), 'fixtures', 'backslash2.isc')
+
+      actual = described_class.parse(input)
+      expect(actual[0]).to be_a(described_class)
+    end
   end
 end

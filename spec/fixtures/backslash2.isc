@@ -1,0 +1,20 @@
+BEGIN:VEVENT
+UID:ietf-interim-2021-idr-09-14136
+SUMMARY:idr - Inter-Domain Routing
+STATUS:CANCELLED
+CLASS:PUBLIC
+DTSTART;TZID=America/New_York:20211213T100000
+DTEND;TZID=America/New_York:20211213T123000
+DTSTAMP:20211108T100153Z
+URL:https://datatracker.ietf.org/meeting/interim-2021-idr-09/materials/agenda-interim-2021-idr-09-idr-01-00
+DESCRIPTION:\n
+ Note: Authors were unavailable for this meeting.
+\
+
+\
+Interims have been scheduled on 1/10/2022 and 1/24/2022.
+\
+Exact content of interims will be determined by availability of authors to present topics. \n
+ \nAgenda:
+  https://datatracker.ietf.org/meeting/interim-2021-idr-09/materials/agenda-interim-2021-idr-09-idr-01-00\n
+END:VEVENT
