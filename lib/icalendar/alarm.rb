@@ -22,6 +22,7 @@ module Icalendar
 
     def initialize
       super 'alarm'
+      self.action = 'DISPLAY'
     end
 
     def valid?(strict = false)

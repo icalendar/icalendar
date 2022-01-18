@@ -6,14 +6,15 @@ describe Icalendar::Alarm do
   describe '#valid?' do
     subject do
       described_class.new.tap do |a|
-        a.action = 'AUDIO'
         a.trigger = Icalendar::Values::DateTime.new(Time.now.utc)
       end
     end
     context 'neither duration or repeat is set' do
+      before(:each) { subject.action = 'AUDIO' }
       it { should be_valid }
     end
     context 'both duration and repeat are set' do
+      before(:each) { subject.action = 'AUDIO' }
       before(:each) do
         subject.duration = 'PT15M'
         subject.repeat = 4
@@ -29,8 +30,12 @@ describe Icalendar::Alarm do
       it { should_not be_valid }
     end
 
+    context 'DISPLAY is set as default action' do
+      it 'must be DISPLAY' do
+        expect(subject.action).to eq 'DISPLAY'
+      end
+    end
     context 'display action' do
-      before(:each) { subject.action = 'DISPLAY' }
       it 'requires description' do
         expect(subject).to_not be_valid
         subject.description = 'Display Text'
