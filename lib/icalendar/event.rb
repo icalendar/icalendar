@@ -37,6 +37,7 @@ module Icalendar
     optional_property :related_to
     optional_property :resources
     optional_property :rdate, Icalendar::Values::DateTime
+    optional_property :conference, Icalendar::Values::Uri, false, true
 
     component :alarm, false
 
