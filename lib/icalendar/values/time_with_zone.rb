@@ -6,6 +6,12 @@ begin
   if defined?(ActiveSupport::TimeWithZone)
     require 'icalendar/values/active_support_time_with_zone_adapter'
   end
+rescue NameError
+  # ActiveSupport v7+ needs the base require to be run first before loading
+  # specific parts of it.
+  # https://guides.rubyonrails.org/active_support_core_extensions.html#stand-alone-active-support
+  require 'active_support'
+  retry
 rescue LoadError
   # tis ok, just a bit less fancy
 end
