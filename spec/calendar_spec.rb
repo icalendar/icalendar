@@ -123,6 +123,16 @@ describe Icalendar::Calendar do
   describe '#to_ical' do
     before(:each) do
       Timecop.freeze DateTime.new(2013, 12, 26, 5, 0, 0, '+0000')
+      subject.ip_name = 'Company Vacation Days'
+      subject.description = 'The description'
+      subject.last_modified = "20140101T000000Z"
+      subject.url = 'https://example.com'
+      subject.color = 'red'
+      subject.image = 'https://example.com/image.png'
+      subject.uid = '5FC53010-1267-4F8E-BC28-1D7AE55A7C99'
+      subject.categories = 'MEETING'
+      subject.refresh_interval = 'P1W'
+      subject.source = 'https://example.com/holidays.ics'
       subject.event do |e|
         e.summary = 'An event'
         e.dtstart = "20140101T000000Z"
@@ -145,6 +155,15 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:icalendar-ruby
 CALSCALE:GREGORIAN
+LAST-MODIFIED;VALUE=DATE-TIME:20140101T000000Z
+URL;VALUE=URI:https://example.com
+REFRESH-INTERVAL;VALUE=DURATION:P1W
+SOURCE;VALUE=URI:https://example.com/holidays.ics
+COLOR:red
+NAME:Company Vacation Days
+DESCRIPTION:The description
+CATEGORIES:MEETING
+IMAGE;VALUE=URI:https://example.com/image.png
 BEGIN:VEVENT
 DTSTAMP:20131226T050000Z
 DTSTART:20140101T000000Z

@@ -6,6 +6,7 @@ module Icalendar
     required_property :uid
 
     optional_single_property :ip_class
+    optional_single_property :color
     optional_single_property :created, Icalendar::Values::DateTime
     optional_single_property :dtstart, Icalendar::Values::DateTime
     optional_single_property :last_modified, Icalendar::Values::DateTime
@@ -27,6 +28,7 @@ module Icalendar
     optional_property :request_status
     optional_property :related_to
     optional_property :rdate, Icalendar::Values::DateTime
+    optional_property :image, Icalendar::Values::Uri, false, true
 
     def initialize
       super 'journal'

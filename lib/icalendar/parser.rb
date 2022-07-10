@@ -50,7 +50,7 @@ module Icalendar
 
     def parse_property(component, fields = nil)
       fields = next_fields if fields.nil?
-      prop_name = %w(class method).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
+      prop_name = %w(class method name).include?(fields[:name]) ? "ip_#{fields[:name]}" : fields[:name]
       multi_property = component.class.multiple_properties.include? prop_name
       prop_value = wrap_property_value component, fields, multi_property
       begin
