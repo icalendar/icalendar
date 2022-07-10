@@ -123,7 +123,7 @@ describe Icalendar::Calendar do
   describe '#to_ical' do
     before(:each) do
       Timecop.freeze DateTime.new(2013, 12, 26, 5, 0, 0, '+0000')
-      subject.name = 'Company Vacation Days'
+      subject.ip_name = 'Company Vacation Days'
       subject.description = 'The description'
       subject.last_modified = "20140101T000000Z"
       subject.url = 'https://example.com'

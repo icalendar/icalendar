@@ -5,7 +5,7 @@ module Icalendar
     required_property :prodid
     optional_single_property :calscale
     optional_single_property :ip_method
-    optional_property :name
+    optional_property :ip_name
     optional_property :description
     optional_single_property :uid
     optional_single_property :last_modified, Icalendar::Values::DateTime, true
