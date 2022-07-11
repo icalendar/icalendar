@@ -1,3 +1,9 @@
+=== 2.8.0 2022-07-10
+ * Fix compatibility with ActiveSupport 7 - Pat Allan
+ * Set default action of "DISPLAY" on alarms - Rikson
+ * Add license information to gemspec - Robert Reiz
+ * Support RFC7986 properties - Daniele Frisanco
+
 === 2.7.1 2021-03-14
  * Recover from bad line-wrapping code that splits in the middle of Unicode code points
  * Add a verbose option to the Parser to quiet some of the chattier log entries
