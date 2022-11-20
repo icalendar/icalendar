@@ -24,7 +24,7 @@ module Icalendar
     optional_single_property :status
     optional_single_property :summary
     optional_single_property :transp
-    optional_single_property :url, Icalendar::Values::Uri
+    optional_single_property :url, Icalendar::Values::Uri, true
     optional_single_property :recurrence_id, Icalendar::Values::DateTime
 
     optional_property :rrule, Icalendar::Values::Recur, true

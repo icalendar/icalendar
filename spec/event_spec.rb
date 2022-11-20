@@ -156,6 +156,7 @@ describe Icalendar::Event do
       subject.dtend = "20131227T033000Z"
       subject.summary = 'My event, my ical, my test'
       subject.geo = [41.230896,-74.411774]
+      subject.url = 'https://example.com'
       subject.x_custom_property = 'customize'
     end
 
@@ -163,6 +164,7 @@ describe Icalendar::Event do
     it { expect(subject.to_ical).to include 'DTEND:20131227T033000Z' }
     it { expect(subject.to_ical).to include 'SUMMARY:My event\, my ical\, my test' }
     it { expect(subject.to_ical).to include 'X-CUSTOM-PROPERTY:customize' }
+    it { expect(subject.to_ical).to include 'URL;VALUE=URI:https://example.com' }
     it { expect(subject.to_ical).to include 'GEO:41.230896;-74.411774' }
 
     context 'simple organizer' do
