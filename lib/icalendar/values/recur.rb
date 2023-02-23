@@ -44,22 +44,37 @@ module Icalendar
 
       private
 
+      PARSE_FIELDS_FREQUENCY_REGEX = /FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY)/i.freeze
+      PARSE_FIELDS_UNTIL_REGEX = /UNTIL=([^;]*)/i.freeze
+      PARSE_FIELDS_COUNT_REGEX = /COUNT=(\d+)/i.freeze
+      PARSE_FIELDS_INTERVAL_REGEX = /INTERVAL=(\d+)/i.freeze
+      PARSE_FIELDS_BY_SECOND_REGEX = /BYSECOND=(#{NUM_LIST})(?:;|\z)/i.freeze
+      PARSE_FIELDS_BY_MINUTE_REGEX = /BYMINUTE=(#{NUM_LIST})(?:;|\z)/i.freeze
+      PARSE_FIELDS_BY_HOUR_REGEX = /BYHOUR=(#{NUM_LIST})(?:;|\z)/i.freeze
+      PARSE_FIELDS_BY_DAY_REGEX = /BYDAY=(#{WEEKDAY}(?:,#{WEEKDAY})*)(?:;|\z)/i.freeze
+      PARSE_FIELDS_BY_MONTH_DAY_REGEX = /BYMONTHDAY=(#{MONTHDAY}(?:,#{MONTHDAY})*)(?:;|\z)/i.freeze
+      PARSE_FIELDS_BY_YEAR_DAY_REGEX = /BYYEARDAY=(#{YEARDAY}(?:,#{YEARDAY})*)(?:;|\z)/i.freeze
+      PARSE_FIELDS_BY_WEEK_NUMBER_REGEX = /BYWEEKNO=(#{MONTHDAY}(?:,#{MONTHDAY})*)(?:;|\z)/i.freeze
+      PARSE_FIELDS_BY_MONTH_REGEX = /BYMONTH=(#{NUM_LIST})(?:;|\z)/i.freeze
+      PARSE_FIELDS_BY_SET_POSITON_REGEX = /BYSETPOS=(#{YEARDAY}(?:,#{YEARDAY})*)(?:;|\z)/i.freeze
+      PARSE_FIELDS_BY_WEEK_START_REGEX = /WKST=(#{DAYNAME})/i.freeze
+
       def parse_fields(value)
         {
-          frequency: (value =~ /FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY)/i ? $1.upcase : nil),
-          until: (value =~ /UNTIL=([^;]*)/i ? $1 : nil),
-          count: (value =~ /COUNT=(\d+)/i ? $1.to_i : nil),
-          interval: (value =~ /INTERVAL=(\d+)/i ? $1.to_i : nil),
-          by_second: (value =~ /BYSECOND=(#{NUM_LIST})(?:;|\z)/i ? $1.split(',').map { |i| i.to_i } : nil),
-          by_minute: (value =~ /BYMINUTE=(#{NUM_LIST})(?:;|\z)/i ? $1.split(',').map { |i| i.to_i } : nil),
-          by_hour: (value =~ /BYHOUR=(#{NUM_LIST})(?:;|\z)/i ? $1.split(',').map { |i| i.to_i } : nil),
-          by_day: (value =~ /BYDAY=(#{WEEKDAY}(?:,#{WEEKDAY})*)(?:;|\z)/i ? $1.split(',') : nil),
-          by_month_day: (value =~ /BYMONTHDAY=(#{MONTHDAY}(?:,#{MONTHDAY})*)(?:;|\z)/i ? $1.split(',') : nil),
-          by_year_day: (value =~ /BYYEARDAY=(#{YEARDAY}(?:,#{YEARDAY})*)(?:;|\z)/i ? $1.split(',') : nil),
-          by_week_number: (value =~ /BYWEEKNO=(#{MONTHDAY}(?:,#{MONTHDAY})*)(?:;|\z)/i ? $1.split(',') : nil),
-          by_month: (value =~ /BYMONTH=(#{NUM_LIST})(?:;|\z)/i ? $1.split(',').map { |i| i.to_i } : nil),
-          by_set_position: (value =~ /BYSETPOS=(#{YEARDAY}(?:,#{YEARDAY})*)(?:;|\z)/i ? $1.split(',') : nil),
-          week_start: (value =~ /WKST=(#{DAYNAME})/i ? $1.upcase : nil)
+          frequency: (value =~ PARSE_FIELDS_FREQUENCY_REGEX ? $1.upcase : nil),
+          until: (value =~ PARSE_FIELDS_UNTIL_REGEX ? $1 : nil),
+          count: (value =~ PARSE_FIELDS_COUNT_REGEX ? $1.to_i : nil),
+          interval: (value =~ PARSE_FIELDS_INTERVAL_REGEX ? $1.to_i : nil),
+          by_second: (value =~ PARSE_FIELDS_BY_SECOND_REGEX ? $1.split(',').map { |i| i.to_i } : nil),
+          by_minute: (value =~ PARSE_FIELDS_BY_MINUTE_REGEX ? $1.split(',').map { |i| i.to_i } : nil),
+          by_hour: (value =~ PARSE_FIELDS_BY_HOUR_REGEX ? $1.split(',').map { |i| i.to_i } : nil),
+          by_day: (value =~ PARSE_FIELDS_BY_DAY_REGEX ? $1.split(',') : nil),
+          by_month_day: (value =~ PARSE_FIELDS_BY_MONTH_DAY_REGEX ? $1.split(',') : nil),
+          by_year_day: (value =~ PARSE_FIELDS_BY_YEAR_DAY_REGEX ? $1.split(',') : nil),
+          by_week_number: (value =~ PARSE_FIELDS_BY_WEEK_NUMBER_REGEX ? $1.split(',') : nil),
+          by_month: (value =~ PARSE_FIELDS_BY_MONTH_REGEX ? $1.split(',').map { |i| i.to_i } : nil),
+          by_set_position: (value =~ PARSE_FIELDS_BY_SET_POSITON_REGEX ? $1.split(',') : nil),
+          week_start: (value =~ PARSE_FIELDS_BY_WEEK_START_REGEX ? $1.upcase : nil)
         }
       end
     end

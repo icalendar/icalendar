@@ -6,6 +6,8 @@ module Icalendar
     attr_writer :component_class
     attr_reader :source, :strict, :timezone_store, :verbose
 
+    CLEAN_BAD_WRAPPING_GSUB_REGEX = /\r?\n[ \t]/.freeze
+
     def self.clean_bad_wrapping(source)
       content = if source.respond_to? :read
         source.read
@@ -18,7 +20,7 @@ module Icalendar
       end
       encoding = content.encoding
       content.force_encoding(Encoding::ASCII_8BIT)
-      content.gsub(/\r?\n[ \t]/, "").force_encoding(encoding)
+      content.gsub(CLEAN_BAD_WRAPPING_GSUB_REGEX, "").force_encoding(encoding)
     end
 
     def initialize(source, strict = false, verbose = false)
@@ -71,11 +73,15 @@ module Icalendar
       end
     end
 
+    WRAP_PROPERTY_VALUE_DELIMETER_REGEX = /(?<!\\)([,;])/.freeze
+    WRAP_PROPERTY_VALUE_SPLIT_REGEX = /(?<!\\)[;,]/.freeze
+
+
     def wrap_property_value(component, fields, multi_property)
       klass = get_wrapper_class component, fields
       if wrap_in_array? klass, fields[:value], multi_property
-        delimiter = fields[:value].match(/(?<!\\)([,;])/)[1]
-        Icalendar::Values::Array.new fields[:value].split(/(?<!\\)[;,]/),
+        delimiter = fields[:value].match(WRAP_PROPERTY_VALUE_DELIMETER_REGEX)[1]
+        Icalendar::Values::Array.new fields[:value].split(WRAP_PROPERTY_VALUE_SPLIT_REGEX),
                                      klass,
                                      fields[:params],
                                      delimiter: delimiter
@@ -88,17 +94,22 @@ module Icalendar
       retry
     end
 
+    WRAP_IN_ARRAY_REGEX_1 = /(?<!\\)[,;]/.freeze
+    WRAP_IN_ARRAY_REGEX_2 = /(?<!\\);/.freeze
+
     def wrap_in_array?(klass, value, multi_property)
       klass.value_type != 'RECUR' &&
-        ((multi_property && value =~ /(?<!\\)[,;]/) || value =~ /(?<!\\);/)
+        ((multi_property && value =~ WRAP_IN_ARRAY_REGEX_1) || value =~ WRAP_IN_ARRAY_REGEX_2)
     end
+
+    GET_WRAPPER_CLASS_GSUB_REGEX = /(?:\A|-)(.)/.freeze
 
     def get_wrapper_class(component, fields)
       klass = component.class.default_property_types[fields[:name]]
       if !fields[:params]['value'].nil?
         klass_name = fields[:params].delete('value').first
         unless klass_name.upcase == klass.value_type
-          klass_name = "Icalendar::Values::#{klass_name.downcase.gsub(/(?:\A|-)(.)/) { |m| m[-1].upcase }}"
+          klass_name = "Icalendar::Values::#{klass_name.downcase.gsub(GET_WRAPPER_CLASS_GSUB_REGEX) { |m| m[-1].upcase }}"
           klass = Object.const_get klass_name if Object.const_defined?(klass_name)
         end
       end
@@ -119,14 +130,16 @@ module Icalendar
       @component_class ||= Icalendar::Calendar
     end
 
+    PARSE_COMPONENT_KLASS_NAME_GSUB_REGEX = /\AV/
+
     def parse_component(component)
       while (fields = next_fields)
         if fields[:name] == 'end'
-          klass_name = fields[:value].gsub(/\AV/, '').downcase.capitalize
+          klass_name = fields[:value].gsub(PARSE_COMPONENT_KLASS_NAME_GSUB_REGEX.freeze, '').downcase.capitalize
           timezone_store.store(component) if klass_name == 'Timezone'
           break
         elsif fields[:name] == 'begin'
-          klass_name = fields[:value].gsub(/\AV/, '').gsub("-", "_").downcase.capitalize
+          klass_name = fields[:value].gsub(PARSE_COMPONENT_KLASS_NAME_GSUB_REGEX, '').gsub("-", "_").downcase.capitalize
           Icalendar.logger.debug "Adding component #{klass_name}"
           if Object.const_defined? "Icalendar::#{klass_name}"
             component.add_component parse_component(Object.const_get("Icalendar::#{klass_name}").new)
@@ -146,13 +159,16 @@ module Icalendar
       @data = source.gets and @data.chomp!
     end
 
+    NEXT_FIELDS_TAB_REGEX = /\A[ \t].+\z/.freeze
+    NEXT_FIELDS_WHITESPACE_REGEX = /\A\s*\z/.freeze
+
     def next_fields
       line = @data or return nil
       loop do
         read_in_data
-        if @data =~ /\A[ \t].+\z/
+        if @data =~ NEXT_FIELDS_TAB_REGEX
           line << @data[1, @data.size]
-        elsif @data !~ /\A\s*\z/
+        elsif @data !~ NEXT_FIELDS_WHITESPACE_REGEX
           break
         end
       end
@@ -167,24 +183,29 @@ module Icalendar
     VALUE = '.*'
     LINE = "(?<name>#{NAME})(?<params>(?:;#{PARAM})*):(?<value>#{VALUE})"
     BAD_LINE = "(?<name>#{NAME})(?<params>(?:;#{PARAM})*)"
+    LINE_REGEX = %r{#{LINE}}.freeze
+    BAD_LINE_REGEX = %r{#{BAD_LINE}}.freeze
+    PARAM_REGEX = %r{#{PARAM}}.freeze
+    PVALUE_REGEX = %r{#{PVALUE}}.freeze
+    PVALUE_GSUB_REGEX = /\A"|"\z/.freeze
 
     def parse_fields(input)
-      if parts = %r{#{LINE}}.match(input)
+      if parts = LINE_REGEX.match(input)
         value = parts[:value]
       else
-        parts = %r{#{BAD_LINE}}.match(input) unless strict?
+        parts = BAD_LINE_REGEX.match(input) unless strict?
         parts or fail "Invalid iCalendar input line: #{input}"
         # Non-strict and bad line so use a value of empty string
         value = ''
       end
 
       params = {}
-      parts[:params].scan %r{#{PARAM}} do |match|
+      parts[:params].scan PARAM_REGEX do |match|
         param_name = match[0].downcase
         params[param_name] ||= []
-        match[1].scan %r{#{PVALUE}} do |param_value|
+        match[1].scan PVALUE_REGEX do |param_value|
           if param_value.size > 0
-            param_value = param_value.gsub(/\A"|"\z/, '')
+            param_value = param_value.gsub(PVALUE_GSUB_REGEX, '')
             params[param_name] << param_value
             if param_name == 'tzid'
               params['x-tz-info'] = timezone_store.retrieve param_value
