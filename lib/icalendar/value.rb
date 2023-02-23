@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+
 require 'delegate'
 require 'icalendar/downcased_hash'
 

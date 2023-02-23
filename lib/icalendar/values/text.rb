@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Icalendar
   module Values
     class Text < Value
