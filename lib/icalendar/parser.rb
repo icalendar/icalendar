@@ -1,4 +1,5 @@
 require 'icalendar/timezone_store'
+require 'stringio'
 
 module Icalendar
 
