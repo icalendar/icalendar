@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ostruct'
 
 module Icalendar
@@ -36,14 +38,21 @@ module Icalendar
         hours > 0 || minutes > 0 || seconds > 0
       end
 
+      DURATION_PAST_REGEX = /\A([+-])P/.freeze
+      DURATION_WEEKS_REGEX = /(\d+)W/.freeze
+      DURATION_DAYS_REGEX = /(\d+)D/.freeze
+      DURATION_HOURS_REGEX = /(\d+)H/.freeze
+      DURATION_MINUTES_REGEX = /(\d+)M/.freeze
+      DURATION_SECONDS_REGEX = /(\d+)S/.freeze
+
       def parse_fields(value)
         {
-          past: (value =~ /\A([+-])P/ ? $1 == '-' : false),
-          weeks: (value =~ /(\d+)W/ ? $1.to_i : 0),
-          days: (value =~ /(\d+)D/ ? $1.to_i : 0),
-          hours: (value =~ /(\d+)H/ ? $1.to_i : 0),
-          minutes: (value =~ /(\d+)M/ ? $1.to_i : 0),
-          seconds: (value =~ /(\d+)S/ ? $1.to_i : 0)
+          past: (value =~ DURATION_PAST_REGEX ? $1 == '-' : false),
+          weeks: (value =~ DURATION_WEEKS_REGEX ? $1.to_i : 0),
+          days: (value =~ DURATION_DAYS_REGEX ? $1.to_i : 0),
+          hours: (value =~ DURATION_HOURS_REGEX ? $1.to_i : 0),
+          minutes: (value =~ DURATION_MINUTES_REGEX ? $1.to_i : 0),
+          seconds: (value =~ DURATION_SECONDS_REGEX ? $1.to_i : 0)
         }
       end
     end

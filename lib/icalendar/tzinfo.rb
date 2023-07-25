@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 =begin
   Copyright (C) 2008 Sean Dague
 

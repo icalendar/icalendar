@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 
 module Icalendar
@@ -53,9 +55,13 @@ module Icalendar
       end.compact.join "\r\n"
     end
 
+    ICAL_PROP_NAME_GSUB_REGEX = /\Aip_/.freeze
+
     def ical_prop_name(prop_name)
-      prop_name.gsub(/\Aip_/, '').gsub('_', '-').upcase
+      prop_name.gsub(ICAL_PROP_NAME_GSUB_REGEX, '').gsub('_', '-').upcase
     end
+
+    ICAL_FOLD_LONG_LINE_SCAN_REGEX = /\P{M}\p{M}*/u.freeze
 
     def ical_fold(long_line, indent = "\x20")
       # rfc2445 says:
@@ -74,7 +80,7 @@ module Icalendar
 
       return long_line if long_line.bytesize <= Icalendar::MAX_LINE_LENGTH
 
-      chars = long_line.scan(/\P{M}\p{M}*/u) # split in graphenes
+      chars = long_line.scan(ICAL_FOLD_LONG_LINE_SCAN_REGEX) # split in graphenes
       folded = ['']
       bytes = 0
       while chars.count > 0

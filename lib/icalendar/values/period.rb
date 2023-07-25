@@ -1,12 +1,16 @@
+# frozen_string_literal: true
+
 module Icalendar
   module Values
 
     class Period < Value
 
+      PERIOD_LAST_PART_REGEX = /\A[+-]?P.+\z/.freeze
+
       def initialize(value, params = {})
         parts = value.split '/'
         period_start = Icalendar::Values::DateTime.new parts.first
-        if parts.last =~ /\A[+-]?P.+\z/
+        if parts.last =~ PERIOD_LAST_PART_REGEX
           period_end = Icalendar::Values::Duration.new parts.last
         else
           period_end = Icalendar::Values::DateTime.new parts.last

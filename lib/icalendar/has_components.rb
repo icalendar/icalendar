@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Icalendar
 
   module HasComponents
@@ -32,13 +34,16 @@ module Icalendar
       custom_components[component_name.downcase.gsub("-", "_")] || []
     end
 
+    METHOD_MISSING_ADD_REGEX = /^add_(x_\w+)$/.freeze
+    METHOD_MISSING_X_FLAG_REGEX = /^x_/.freeze
+
     def method_missing(method, *args, &block)
       method_name = method.to_s
-      if method_name =~ /^add_(x_\w+)$/
+      if method_name =~ METHOD_MISSING_ADD_REGEX
         component_name = $1
         custom = args.first || Component.new(component_name, component_name.upcase)
         add_custom_component(component_name, custom, &block)
-      elsif method_name =~ /^x_/ && custom_component(method_name).size > 0
+      elsif method_name =~ METHOD_MISSING_X_FLAG_REGEX && custom_component(method_name).size > 0
         custom_component method_name
       else
         super
