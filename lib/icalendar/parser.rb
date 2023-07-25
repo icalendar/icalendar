@@ -132,12 +132,12 @@ module Icalendar
       @component_class ||= Icalendar::Calendar
     end
 
-    PARSE_COMPONENT_KLASS_NAME_GSUB_REGEX = /\AV/
+    PARSE_COMPONENT_KLASS_NAME_GSUB_REGEX = /\AV/.freeze
 
     def parse_component(component)
       while (fields = next_fields)
         if fields[:name] == 'end'
-          klass_name = fields[:value].gsub(PARSE_COMPONENT_KLASS_NAME_GSUB_REGEX.freeze, '').downcase.capitalize
+          klass_name = fields[:value].gsub(PARSE_COMPONENT_KLASS_NAME_GSUB_REGEX, '').downcase.capitalize
           timezone_store.store(component) if klass_name == 'Timezone'
           break
         elsif fields[:name] == 'begin'
