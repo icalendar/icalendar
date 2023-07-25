@@ -190,6 +190,55 @@ END:VCALENDAR
     end
   end
 
+  describe '#request' do
+    it 'sets ip_method to "REQUEST"' do
+      subject.request
+      expect(subject.ip_method).to eq 'REQUEST'
+    end
+  end
+
+  describe '#reply' do
+    it 'sets ip_method to "REPLY"' do
+      subject.reply
+      expect(subject.ip_method).to eq 'REPLY'
+    end
+  end
+
+  describe '#add' do
+    it 'sets ip_method to "ADD"' do
+      subject.add
+      expect(subject.ip_method).to eq 'ADD'
+    end
+  end
+
+  describe '#cancel' do
+    it 'sets ip_method to "CANCEL"' do
+      subject.cancel
+      expect(subject.ip_method).to eq 'CANCEL'
+    end
+  end
+
+  describe '#refresh' do
+    it 'sets ip_method to "REFRESH"' do
+      subject.refresh
+      expect(subject.ip_method).to eq 'REFRESH'
+    end
+  end
+
+  describe '#counter' do
+    it 'sets ip_method to "COUNTER"' do
+      subject.counter
+      expect(subject.ip_method).to eq 'COUNTER'
+    end
+  end
+
+  describe '#decline_counter' do
+    it 'sets ip_method to "DECLINECOUNTER"' do
+      subject.decline_counter
+      expect(subject.ip_method).to eq 'DECLINECOUNTER'
+    end
+  end
+
   describe '.parse' do
     let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'bad_wrapping.ics') }
 
