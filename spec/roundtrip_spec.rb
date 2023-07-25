@@ -135,6 +135,15 @@ describe Icalendar do
         ical = subject.parse.first.to_ical
         expect(ical).to include 'CUSTOMFIELD:Not properly noted as custom with X- prefix.'
       end
+
+      context 'custom components' do
+        let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'custom_component.ics') }
+
+        it 'can output the custom component' do
+          ical = subject.parse.first.to_ical
+          expect(ical).to include 'BEGIN:X-EVENT-SERIES'
+        end
+      end
     end
   end
 end

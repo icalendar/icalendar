@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 
 module Icalendar
@@ -11,9 +13,10 @@ module Icalendar
     attr_accessor :parent
 
     def self.parse(source)
-      parser = Parser.new(source)
-      parser.component_class = self
-      parser.parse
+      _parse source
+    rescue ArgumentError
+      source.rewind if source.respond_to?(:rewind)
+      _parse Parser.clean_bad_wrapping(source)
     end
 
     def initialize(name, ical_name = nil)
@@ -52,9 +55,13 @@ module Icalendar
       end.compact.join "\r\n"
     end
 
+    ICAL_PROP_NAME_GSUB_REGEX = /\Aip_/.freeze
+
     def ical_prop_name(prop_name)
-      prop_name.gsub(/\Aip_/, '').gsub('_', '-').upcase
+      prop_name.gsub(ICAL_PROP_NAME_GSUB_REGEX, '').gsub('_', '-').upcase
     end
+
+    ICAL_FOLD_LONG_LINE_SCAN_REGEX = /\P{M}\p{M}*/u.freeze
 
     def ical_fold(long_line, indent = "\x20")
       # rfc2445 says:
@@ -71,7 +78,9 @@ module Icalendar
       # than 75 octets, but you need to split between characters, not bytes.
       # This is challanging with Unicode composing accents, for example.
 
-      chars = long_line.scan(/\P{M}\p{M}*/u) # split in graphenes
+      return long_line if long_line.bytesize <= Icalendar::MAX_LINE_LENGTH
+
+      chars = long_line.scan(ICAL_FOLD_LONG_LINE_SCAN_REGEX) # split in graphenes
       folded = ['']
       bytes = 0
       while chars.count > 0
@@ -98,6 +107,14 @@ module Icalendar
         end
       end
       collection.empty? ? nil : collection.join.chomp("\r\n")
+    end
+
+    class << self
+      private def _parse(source)
+        parser = Parser.new(source)
+        parser.component_class = self
+        parser.parse
+      end
     end
   end
 

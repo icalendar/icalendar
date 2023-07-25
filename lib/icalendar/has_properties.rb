@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Icalendar
 
   module HasProperties
@@ -10,7 +12,7 @@ module Icalendar
     end
 
     def initialize(*args)
-      @custom_properties = Hash.new { |h, k| h[k] = [] }
+      @custom_properties = Hash.new
       super
     end
 
@@ -39,7 +41,7 @@ module Icalendar
     end
 
     def custom_property(property_name)
-      custom_properties[property_name.downcase]
+      custom_properties[property_name.downcase] || []
     end
 
     def append_custom_property(property_name, value)
@@ -49,9 +51,9 @@ module Icalendar
       elsif self.class.multiple_properties.include? property_name
         send "append_#{property_name}", value
       elsif value.is_a? Icalendar::Value
-        custom_properties[property_name] << value
+        (custom_properties[property_name] ||= []) << value
       else
-        custom_properties[property_name] << Icalendar::Values::Text.new(value)
+        (custom_properties[property_name] ||= []) << Icalendar::Values::Text.new(value)
       end
     end
 
@@ -104,29 +106,29 @@ module Icalendar
       def required_property(prop, klass = Icalendar::Values::Text, validator = nil)
         validator ||= ->(component, value) { !value.nil? }
         self.required_properties[prop] = validator
-        single_property prop, klass
+        single_property prop, klass, false
       end
 
       def required_multi_property(prop, klass = Icalendar::Values::Text, validator = nil)
         validator ||= ->(component, value) { !value.compact.empty? }
         self.required_properties[prop] = validator
-        multi_property prop, klass
+        multi_property prop, klass, false
       end
 
-      def optional_single_property(prop, klass = Icalendar::Values::Text)
-        single_property prop, klass
+      def optional_single_property(prop, klass = Icalendar::Values::Text, new_property = false)
+        single_property prop, klass, new_property
       end
 
       def mutually_exclusive_properties(*properties)
         self.mutex_properties << properties
       end
 
-      def optional_property(prop, klass = Icalendar::Values::Text, suggested_single = false)
+      def optional_property(prop, klass = Icalendar::Values::Text, suggested_single = false, new_property = false)
         self.suggested_single_properties << prop if suggested_single
-        multi_property prop, klass
+        multi_property prop, klass, new_property
       end
 
-      def single_property(prop, klass)
+      def single_property(prop, klass, new_property)
         self.single_properties << prop.to_s
         self.default_property_types[prop.to_s] = klass
 
@@ -135,17 +137,17 @@ module Icalendar
         end
 
         define_method "#{prop}=" do |value|
-          instance_variable_set "@#{prop}", map_property_value(value, klass, false)
+          instance_variable_set "@#{prop}", map_property_value(value, klass, false, new_property)
         end
       end
 
-      def multi_property(prop, klass)
+      def multi_property(prop, klass, new_property)
         self.multiple_properties << prop.to_s
         self.default_property_types[prop.to_s] = klass
         property_var = "@#{prop}"
 
         define_method "#{prop}=" do |value|
-          mapped = map_property_value value, klass, true
+          mapped = map_property_value value, klass, true, new_property
           if mapped.is_a? Icalendar::Values::Array
             instance_variable_set property_var, mapped.to_a.compact
           else
@@ -162,20 +164,24 @@ module Icalendar
         end
 
         define_method "append_#{prop}" do |value|
-          send(prop) << map_property_value(value, klass, true)
+          send(prop) << map_property_value(value, klass, true, new_property)
         end
       end
     end
 
     private
 
-    def map_property_value(value, klass, multi_valued)
+    def map_property_value(value, klass, multi_valued, new_property)
+      params = {}
+      if new_property
+        params.merge!('VALUE': klass.value_type)
+      end
       if value.nil? || value.is_a?(Icalendar::Value)
         value
       elsif value.is_a? ::Array
-        Icalendar::Values::Array.new value, klass, {}, {delimiter: (multi_valued ? ',' : ';')}
+        Icalendar::Values::Array.new value, klass, params, {delimiter: (multi_valued ? ',' : ';')}
       else
-        klass.new value
+        klass.new value, params
       end
     end
 

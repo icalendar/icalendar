@@ -1,3 +1,26 @@
+=== 2.8.0 2022-07-10
+ * Fix compatibility with ActiveSupport 7 - Pat Allan
+ * Set default action of "DISPLAY" on alarms - Rikson
+ * Add license information to gemspec - Robert Reiz
+ * Support RFC7986 properties - Daniele Frisanco
+
+=== 2.7.1 2021-03-14
+ * Recover from bad line-wrapping code that splits in the middle of Unicode code points
+ * Add a verbose option to the Parser to quiet some of the chattier log entries
+
+=== 2.7.0 2020-09-12
+ * Handle custom component names, with and without X- prefix
+ * Fix Component lookup to avoid namespace collisions
+
+=== 2.6.1 2019-12-07
+ * Improve performance when generating large ICS files - Alex Balhatchet
+
+=== 2.6.0 2019-11-26
+ * Improve performance for calculating timezone offsets - Justin Howard
+ * Make it possible to de/serialize with Marshal - Pawel Niewiadomski
+ * Avoid FrozenError when running with frozen_string_literal
+ * Update minimum Ruby version to supported versions
+
 === 2.5.3 2019-03-04
  * Improve parsing performance - nehresma
  * Support tzinfo 2.0 - Misty De Meo

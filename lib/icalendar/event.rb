@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Icalendar
 
   class Event < Component
@@ -12,6 +14,7 @@ module Icalendar
     mutually_exclusive_properties :dtend, :duration
 
     optional_single_property :ip_class
+    optional_single_property :color
     optional_single_property :created, Icalendar::Values::DateTime
     optional_single_property :description
     optional_single_property :geo, Icalendar::Values::Float
@@ -23,7 +26,7 @@ module Icalendar
     optional_single_property :status
     optional_single_property :summary
     optional_single_property :transp
-    optional_single_property :url, Icalendar::Values::Uri
+    optional_single_property :url, Icalendar::Values::Uri, true
     optional_single_property :recurrence_id, Icalendar::Values::DateTime
 
     optional_property :rrule, Icalendar::Values::Recur, true
@@ -37,6 +40,8 @@ module Icalendar
     optional_property :related_to
     optional_property :resources
     optional_property :rdate, Icalendar::Values::DateTime
+    optional_property :conference, Icalendar::Values::Uri, false, true
+    optional_property :image, Icalendar::Values::Uri, false, true
 
     component :alarm, false
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Icalendar
   module Values
 
@@ -52,7 +54,6 @@ module Icalendar
       def needs_value_type?(default_type)
         value.first.class != default_type
       end
-
     end
 
   end
