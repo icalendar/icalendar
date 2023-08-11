@@ -1,7 +1,10 @@
 === Unreleased
+
+=== 2.9.0 2023-08-11
  * Always include the VALUE of Event URLs for improved compatibility - Sean Kelley
  * Improved parse performance - Thomas Cannon
  * Add helper methods for other Calendar method verbs
+ * bugfix: Require stringio before use in Parser - vwyu
  
 === 2.8.0 2022-07-10
  * Fix compatibility with ActiveSupport 7 - Pat Allan
