@@ -20,6 +20,10 @@ variety of calendaring applications.
 ActiveSupport is required for TimeWithZone support, but not required for general use.
   EOM
 
+  s.metadata = {
+    'changelog_uri' => 'https://github.com/icalendar/icalendar/blob/main/History.txt'
+  }
+
   s.files = `git ls-files`.split "\n"
   s.test_files = `git ls-files -- {test,spec,features}/*`.split "\n"
   s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename f }
