@@ -42,7 +42,7 @@ module Icalendar
           elsif defined?(ActiveSupport::TimeZone) &&
               defined?(ActiveSupportTimeWithZoneAdapter) &&
               (tz = ActiveSupport::TimeZone[tzid.split.first])
-            params['tzid'] = tz.tzinfo.name
+            params['tzid'] = [tz.tzinfo.name]
             ActiveSupportTimeWithZoneAdapter.new(nil, tz, value)
           end
         end

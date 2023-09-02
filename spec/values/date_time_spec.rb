@@ -39,7 +39,8 @@ describe Icalendar::Values::DateTime do
         end
 
         it 'updates the tzid' do
-          expect(subject.ical_params['tzid']).to eq 'Asia/Singapore'
+          # use an array because that's how output from the parser will end up
+          expect(subject.ical_params['tzid']).to eq ['Asia/Singapore']
         end
       end
     end
