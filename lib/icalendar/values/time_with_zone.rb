@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'icalendar/timezone_store'
-
 begin
   require 'active_support/time'
 
