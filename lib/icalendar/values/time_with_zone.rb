@@ -28,23 +28,24 @@ module Icalendar
 
         offset_value = unless params['tzid'].nil?
           tzid = params['tzid'].is_a?(::Array) ? params['tzid'].first : params['tzid']
-          if defined?(ActiveSupport::TimeZone) &&
-              defined?(ActiveSupportTimeWithZoneAdapter) &&
-              (tz = ActiveSupport::TimeZone[tzid])
+          support_classes_defined = defined?(ActiveSupport::TimeZone) && defined?(ActiveSupportTimeWithZoneAdapter)
+          if support_classes_defined && (tz = ActiveSupport::TimeZone[tzid])
+            # plan a - use ActiveSupport::TimeWithZone 
             ActiveSupportTimeWithZoneAdapter.new(nil, tz, value)
           elsif !x_tz_info.nil?
+            # plan b - use definition from provided `VTIMEZONE`
             offset = x_tz_info.offset_for_local(value).to_s
             if value.respond_to?(:change)
               value.change offset: offset
             else
               ::Time.new value.year, value.month, value.day, value.hour, value.min, value.sec, offset
             end
-          elsif defined?(ActiveSupport::TimeZone) &&
-              defined?(ActiveSupportTimeWithZoneAdapter) &&
-              (tz = ActiveSupport::TimeZone[tzid.split.first])
+          elsif support_classes_defined && (tz = ActiveSupport::TimeZone[tzid.split.first])
+            # plan c - try to find an ActiveSupport::TimeWithZone based on the first word of the tzid
             params['tzid'] = [tz.tzinfo.name]
             ActiveSupportTimeWithZoneAdapter.new(nil, tz, value)
           end
+          # plan d - just ignore the tzid
         end
         super((offset_value || value), params)
       end
