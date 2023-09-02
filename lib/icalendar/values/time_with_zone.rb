@@ -41,6 +41,11 @@ module Icalendar
             else
               ::Time.new value.year, value.month, value.day, value.hour, value.min, value.sec, offset
             end
+          elsif defined?(ActiveSupport::TimeZone) &&
+              defined?(ActiveSupportTimeWithZoneAdapter) &&
+              (tz = ActiveSupport::TimeZone[tzid.split.first])
+            params['tzid'] = tz.tzinfo.name
+            ActiveSupportTimeWithZoneAdapter.new(nil, tz, value)
           end
         end
         super((offset_value || value), params)

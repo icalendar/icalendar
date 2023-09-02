@@ -27,6 +27,21 @@ describe Icalendar::Values::DateTime do
           expect(subject.value.utc.hour).to eq 23
         end
       end
+
+      context 'nonstandard format tzid local time' do
+        let(:value) { '20230901T230404' }
+        let(:params) { {'tzid' => 'Singapore Standard Time'} }
+
+        it 'parses the value as local time' do
+          expect(subject.value.hour).to eq 23
+          expect(subject.value.utc_offset).to eq 28800
+          expect(subject.value.utc.hour).to eq 15
+        end
+
+        it 'updates the tzid' do
+          expect(subject.ical_params['tzid']).to eq 'Asia/Singapore'
+        end
+      end
     end
 
   else
