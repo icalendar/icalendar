@@ -1,4 +1,6 @@
 === Unreleased
+ * Add changelog metadata to gemspec - Juri Hahn
+ * Attempt to rescue timezone info when given a nonstandard tzid with no VTIMEZONE
 
 === 2.9.0 2023-08-11
  * Always include the VALUE of Event URLs for improved compatibility - Sean Kelley
