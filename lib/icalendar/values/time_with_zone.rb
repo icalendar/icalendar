@@ -18,7 +18,7 @@ end
 
 module Icalendar
   module Values
-    module TimeWithZone
+    class TimeWithZone
       attr_reader :tz_utc
 
       def initialize(value, params = {})
