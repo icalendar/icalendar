@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require 'date'
-require_relative 'time_with_zone'
+require_relative 'helpers/time_with_zone'
 
 module Icalendar
   module Values
 
     class Time < Value
-      include TimeWithZone
+      include Helpers::TimeWithZone
 
       FORMAT = '%H%M%S'
 
