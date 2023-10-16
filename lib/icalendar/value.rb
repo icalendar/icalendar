@@ -72,7 +72,7 @@ module Icalendar
 end
 
 # helpers; not actual iCalendar value type
-require_relative 'values/array'
+require_relative 'values/helpers/array'
 require_relative 'values/date_or_date_time'
 
 # iCalendar value types

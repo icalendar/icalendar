@@ -84,7 +84,7 @@ module Icalendar
       klass = get_wrapper_class component, fields
       if wrap_in_array? klass, fields[:value], multi_property
         delimiter = fields[:value].match(WRAP_PROPERTY_VALUE_DELIMETER_REGEX)[1]
-        Icalendar::Values::Array.new fields[:value].split(WRAP_PROPERTY_VALUE_SPLIT_REGEX),
+        Icalendar::Values::Helpers::Array.new fields[:value].split(WRAP_PROPERTY_VALUE_SPLIT_REGEX),
                                      klass,
                                      fields[:params],
                                      delimiter: delimiter
