@@ -1,4 +1,6 @@
 === Unreleased
+
+=== 2.10.0 2023-11-01
  * Add changelog metadata to gemspec - Juri Hahn
  * Attempt to rescue timezone info when given a nonstandard tzid with no VTIMEZONE
  * Move Values classes that shouldn't be directly used into Helpers module
