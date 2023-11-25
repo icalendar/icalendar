@@ -211,7 +211,7 @@ module Icalendar
             param_value = param_value.gsub(PVALUE_GSUB_REGEX, '')
             params[param_name] << param_value
             if param_name == 'tzid'
-              params['x-tz-info'] = timezone_store.retrieve param_value
+              params['x-tz-store'] = timezone_store
             end
           end
         end
