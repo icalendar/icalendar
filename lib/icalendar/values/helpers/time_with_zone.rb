@@ -71,7 +71,7 @@ module Icalendar
               ActiveSupportTimeWithZoneAdapter.new(nil, tz, value)
             else
               # plan d - just ignore the tzid
-              Icalendar.logger.warn("Ignoring timezone #{tzid} for time #{value}")
+              Icalendar.logger.info("Ignoring timezone #{tzid} for time #{value}")
               nil
             end
           end
