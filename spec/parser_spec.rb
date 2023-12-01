@@ -5,6 +5,15 @@ describe Icalendar::Parser do
   let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', fn) }
 
   describe '#parse' do
+    context 'reversed_timezone.ics' do
+      let(:fn) { 'reversed_timezone.ics' }
+
+      it 'correctly parses the event timezone' do
+        event = subject.parse.first.events.first
+        expect(event.dtstart.utc_offset).to eq -25200
+      end
+    end
+
     context 'single_event.ics' do
       let(:fn) { 'single_event.ics' }
 

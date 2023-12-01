@@ -108,15 +108,17 @@ module Icalendar
 
     def standard_for(local)
       possible = standards.map do |std|
-        [std.previous_occurrence(local.to_time), std]
-      end
+        prev = std.previous_occurrence(local.to_time)
+        [prev, std] unless prev.nil?
+      end.compact
       possible.sort_by(&:first).last
     end
 
     def daylight_for(local)
       possible = daylights.map do |day|
-        [day.previous_occurrence(local.to_time), day]
-      end
+        prev = day.previous_occurrence(local.to_time)
+        [prev, day] unless prev.nil?
+      end.compact
       possible.sort_by(&:first).last
     end
   end
