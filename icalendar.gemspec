@@ -21,7 +21,7 @@ ActiveSupport is required for TimeWithZone support, but not required for general
   EOM
 
   s.metadata = {
-    'changelog_uri' => 'https://github.com/icalendar/icalendar/blob/main/History.txt'
+    'changelog_uri' => 'https://github.com/icalendar/icalendar/blob/main/CHANGELOG.md'
   }
 
   s.files = `git ls-files`.split "\n"
