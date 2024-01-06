@@ -1,4 +1,6 @@
 ## Unreleased
+ - Add Ruby 3.3 to the test matrix
+ - Move from old History.txt file to modern CHANGELOG.md - Guillaume Briday
 
 ## 2.10.1 - 2023-12-01
  - Parsing now handles VTIMEZONE blocks defined after their TZID is used in events and other components
