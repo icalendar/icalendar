@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Icalendar
 
   class Todo < Component
@@ -12,6 +14,7 @@ module Icalendar
     mutually_exclusive_properties :due, :duration
 
     optional_single_property :ip_class
+    optional_single_property :color
     optional_single_property :completed, Icalendar::Values::DateTime
     optional_single_property :created, Icalendar::Values::DateTime
     optional_single_property :description
@@ -38,6 +41,8 @@ module Icalendar
     optional_property :related_to
     optional_property :resources
     optional_property :rdate, Icalendar::Values::DateTime
+    optional_property :conference, Icalendar::Values::Uri, false, true
+    optional_property :image, Icalendar::Values::Uri, false, true
 
     component :alarm, false
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'icalendar/logger'
 
 module Icalendar
@@ -13,7 +15,7 @@ module Icalendar
   end
 
   def self.parse(source, single = false)
-    warn "**** DEPRECATION WARNING ****\nIcalendar.parse will be removed. Please switch to Icalendar::Calendar.parse."
+    warn "**** DEPRECATION WARNING ****\nIcalendar.parse will be removed in 3.0. Please switch to Icalendar::Calendar.parse."
     calendars = Parser.new(source).parse
     single ? calendars.first : calendars
   end
@@ -22,6 +24,7 @@ end
 
 require 'icalendar/has_properties'
 require 'icalendar/has_components'
+require 'icalendar/marshable'
 require 'icalendar/component'
 require 'icalendar/value'
 require 'icalendar/alarm'
@@ -33,3 +36,4 @@ require 'icalendar/freebusy'
 require 'icalendar/timezone'
 require 'icalendar/calendar'
 require 'icalendar/parser'
+require 'icalendar/version'

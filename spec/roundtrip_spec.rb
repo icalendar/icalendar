@@ -14,16 +14,22 @@ describe Icalendar do
       event = Icalendar::Event.new
       parsed = Icalendar::Calendar.parse(source).first
       event.rdate = parsed.events.first.rdate
-      expect(event.rdate.first).to be_kind_of Icalendar::Values::Array
-      expect(event.rdate.first.ical_params).to eq 'tzid' => ['US-Mountain']
+      expect(event.rdate.first).to be_kind_of Icalendar::Values::Helpers::Array
+      expect(event.rdate.first.params_ical).to eq ";TZID=US-Mountain"
     end
   end
 
   describe 'cleanly handle facebook organizers' do
     let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'single_event_bad_organizer.ics') }
+    let(:source_lowered_uri) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'single_event_organizer_parsed.ics') }
     it 'will generate the same file as it parsed' do
       ical = Icalendar::Calendar.parse(source).first.to_ical
-      expect(ical).to eq source
+      source_equal = ical == source
+      # rbx-3 parses the organizer as a URI, which strips the space and lowercases everything after the first :
+      # this is correct behavior, according to the icalendar spec, so we're not fudging the parser to accomodate
+      # facebook not properly wrapping the CN param in dquotes
+      source_lowered_equal = ical == source_lowered_uri
+      expect(source_equal || source_lowered_equal).to be true
     end
   end
 
@@ -75,18 +81,18 @@ describe Icalendar do
     it 'sorts time events by start time' do
       events = subject.sort_by(&:dtstart)
 
-      expect(events.first.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
+      expect(events.first.dtstart.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
 
-      expect(events.last.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 1, 0, '-4')
-      expect(events.last.dtend).to eq ::DateTime.new(2014, 7, 14, 9, 59, 0, '-4')
+      expect(events.last.dtstart.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 1, 0, '-4')
+      expect(events.last.dtend.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 59, 0, '-4')
     end
 
     it 'sorts time events by end time' do
       events = subject.sort_by(&:dtend)
 
-      expect(events.first.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 1, 0, '-4')
-      expect(events.first.dtend).to eq ::DateTime.new(2014, 7, 14, 9, 59, 0, '-4')
-      expect(events.last.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
+      expect(events.first.dtstart.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 1, 0, '-4')
+      expect(events.first.dtend.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 59, 0, '-4')
+      expect(events.last.dtstart.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
     end
   end
 
@@ -97,8 +103,8 @@ describe Icalendar do
     it 'sorts time events' do
       events = subject.sort_by(&:dtstart)
 
-      expect(events.first.dtstart).to eq ::Date.new(2014, 7, 14)
-      expect(events.last.dtstart).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
+      expect(events.first.dtstart.to_date).to eq ::Date.new(2014, 7, 14)
+      expect(events.last.dtstart.to_datetime).to eq ::DateTime.new(2014, 7, 14, 9, 0, 0, '-4')
     end
   end
 
@@ -128,6 +134,15 @@ describe Icalendar do
       it 'can output custom fields' do
         ical = subject.parse.first.to_ical
         expect(ical).to include 'CUSTOMFIELD:Not properly noted as custom with X- prefix.'
+      end
+
+      context 'custom components' do
+        let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', 'custom_component.ics') }
+
+        it 'can output the custom component' do
+          ical = subject.parse.first.to_ical
+          expect(ical).to include 'BEGIN:X-EVENT-SERIES'
+        end
       end
     end
   end

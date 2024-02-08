@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 require 'date'
-require_relative 'time_with_zone'
+require_relative 'helpers/time_with_zone'
 
 module Icalendar
   module Values
 
     class DateTime < Value
-      include TimeWithZone
+      include Helpers::TimeWithZone
 
       FORMAT = '%Y%m%dT%H%M%S'
 
@@ -41,6 +43,10 @@ module Icalendar
         else
           nil
         end
+      end
+
+      def utc?
+        value.respond_to?(:utc?) ? value.utc? : value.to_time.utc?
       end
 
       class FormatError < ArgumentError

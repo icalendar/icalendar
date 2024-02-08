@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 =begin
   Copyright (C) 2008 Sean Dague
 
@@ -61,7 +63,7 @@ module Icalendar
     end
 
     def rrule
-      start = local_start.to_datetime
+      start = (respond_to?(:local_start_at) ? local_start_at : local_start).to_datetime
       # this is somewhat of a hack, but seems to work ok
       # assumes that no timezone transition is in law as "4th X of the month"
       # but only as 1st X, 2nd X, 3rd X, or Last X
@@ -76,7 +78,7 @@ module Icalendar
     end
 
     def dtstart
-      local_start.to_datetime.strftime '%Y%m%dT%H%M%S'
+      (respond_to?(:local_start_at) ? local_start_at : local_start).to_datetime.strftime '%Y%m%dT%H%M%S'
     end
   end
 

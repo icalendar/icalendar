@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'date'
 
 module Icalendar
@@ -7,6 +9,8 @@ module Icalendar
       FORMAT = '%Y%m%d'
 
       def initialize(value, params = {})
+        params.delete 'tzid'
+        params.delete 'x-tz-store'
         if value.is_a? String
           begin
             parsed_date = ::Date.strptime(value, FORMAT)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Icalendar
 
   module HasComponents
@@ -10,7 +12,7 @@ module Icalendar
     end
 
     def initialize(*args)
-      @custom_components = Hash.new { |h, k| h[k] = [] }
+      @custom_components = Hash.new
       super
     end
 
@@ -21,21 +23,36 @@ module Icalendar
       c
     end
 
+    def add_custom_component(component_name, c)
+      c.parent = self
+      yield c if block_given?
+      (custom_components[component_name.downcase.gsub("-", "_")] ||= []) << c
+      c
+    end
+
+    def custom_component(component_name)
+      custom_components[component_name.downcase.gsub("-", "_")] || []
+    end
+
+    METHOD_MISSING_ADD_REGEX = /^add_(x_\w+)$/.freeze
+    METHOD_MISSING_X_FLAG_REGEX = /^x_/.freeze
+
     def method_missing(method, *args, &block)
       method_name = method.to_s
-      if method_name =~ /^add_(x_\w+)$/
+      if method_name =~ METHOD_MISSING_ADD_REGEX
         component_name = $1
         custom = args.first || Component.new(component_name, component_name.upcase)
-        custom_components[component_name] << custom
-        yield custom if block_given?
-        custom
+        add_custom_component(component_name, custom, &block)
+      elsif method_name =~ METHOD_MISSING_X_FLAG_REGEX && custom_component(method_name).size > 0
+        custom_component method_name
       else
         super
       end
     end
 
     def respond_to_missing?(method_name, include_private = false)
-      method_name.to_s.start_with?('add_x_') || super
+      string_method = method_name.to_s
+      string_method.start_with?('add_x_') || custom_component(string_method).size > 0 || super
     end
 
     module ClassMethods

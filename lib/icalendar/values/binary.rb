@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'base64'
 
 module Icalendar
@@ -21,9 +23,11 @@ module Icalendar
 
       private
 
+      BASE_64_REGEX = /\A(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}==)\z/.freeze
+
       def base64?
         value.is_a?(String) &&
-            value =~ /\A(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}==)\z/
+            value =~ BASE_64_REGEX
       end
     end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Icalendar
 
   class Alarm < Component
@@ -22,6 +24,7 @@ module Icalendar
 
     def initialize
       super 'alarm'
+      self.action = 'DISPLAY'
     end
 
     def valid?(strict = false)

@@ -5,6 +5,15 @@ describe Icalendar::Parser do
   let(:source) { File.read File.join(File.dirname(__FILE__), 'fixtures', fn) }
 
   describe '#parse' do
+    context 'reversed_timezone.ics' do
+      let(:fn) { 'reversed_timezone.ics' }
+
+      it 'correctly parses the event timezone' do
+        event = subject.parse.first.events.first
+        expect(event.dtstart.utc_offset).to eq -25200
+      end
+    end
+
     context 'single_event.ics' do
       let(:fn) { 'single_event.ics' }
 
@@ -55,6 +64,25 @@ describe Icalendar::Parser do
         expect(events.count).to be 2
         expect(events.first.uid).to eq("bsuidfortestabc123")
         expect(events.last.uid).to eq("uid-1234-uid-4321")
+      end
+    end
+    context 'tzid_search.ics' do
+      let(:fn) { 'tzid_search.ics' }
+
+      it 'correctly sets the weird tzid' do
+        parsed = subject.parse
+        event = parsed.first.events.first
+        expect(event.dtstart.utc).to eq Time.parse("20180104T150000Z")
+      end
+    end
+    context 'custom_component.ics' do
+      let(:fn) { 'custom_component.ics' }
+
+      it 'correctly handles custom named components' do
+        parsed = subject.parse
+        calendar = parsed.first
+        expect(calendar.custom_component('x_event_series').size).to eq 1
+        expect(calendar.custom_component('X-EVENT-SERIES').size).to eq 1
       end
     end
   end

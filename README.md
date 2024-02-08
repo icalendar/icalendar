@@ -1,27 +1,10 @@
 iCalendar -- Internet calendaring, Ruby style
 ===
 
-[![Build Status](https://travis-ci.org/icalendar/icalendar.svg?branch=master)](https://travis-ci.org/icalendar/icalendar)
+[![Build Status](https://travis-ci.com/icalendar/icalendar.svg?branch=master)](https://travis-ci.com/icalendar/icalendar)
 [![Code Climate](https://codeclimate.com/github/icalendar/icalendar.png)](https://codeclimate.com/github/icalendar/icalendar)
 
 <http://github.com/icalendar/icalendar>
-
-2.x Status
----
-
-iCalendar 2.0 is under active development, and can be followed in the
-[master branch](https://github.com/icalendar/icalendar/tree/master).
-
-iCalendar 1.x (currently the 1.x branch) will still survive for a
-while, but will only be accepting bug fixes from this point forward
-unless someone else wants to take over more active maintainership of
-the 1.x series.
-
-### 2.0 Goals ###
-
-* Implements [RFC 5545](http://tools.ietf.org/html/rfc5545)
-* More obvious access to parameters and values
-* Cleaner & easier timezone support
 
 ### Upgrade from 1.x ###
 
@@ -132,7 +115,7 @@ cal.event do |e|
     a.attendee        = %w(mailto:me@my-domain.com mailto:me-too@my-domain.com) # one or more email recipients (required)
     a.append_attendee "mailto:me-three@my-domain.com"
     a.trigger         = "-PT15M" # 15 minutes before
-    a.append_attach   Icalendar::Values::Uri.new "ftp://host.com/novo-procs/felizano.exe", "fmttype" => "application/binary" # email attachments (optional)
+    a.append_attach   Icalendar::Values::Uri.new("ftp://host.com/novo-procs/felizano.exe", "fmttype" => "application/binary") # email attachments (optional)
   end
 
   e.alarm do |a|
@@ -237,7 +220,8 @@ end
 iCalendar has some basic support for creating VTIMEZONE blocks from timezone information pulled from `tzinfo`.
 You must require `tzinfo` support manually to take advantage.
 
-iCalendar has been tested and works with `tzinfo` versions 0.3 and 1.1
+iCalendar has been tested and works with `tzinfo` versions 0.3, 1.x, and 2.x. The `tzinfo-data` gem may also
+be required depending on your version of `tzinfo` and potentially your operating system.
 
 #### Example ####
 

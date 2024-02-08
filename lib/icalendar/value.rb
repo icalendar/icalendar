@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+
 require 'delegate'
 require 'icalendar/downcased_hash'
 
@@ -31,8 +34,11 @@ module Icalendar
       end
     end
 
+    VALUE_TYPE_GSUB_REGEX_1 = /\A.*::/.freeze
+    VALUE_TYPE_GSUB_REGEX_2 = /(?<!\A)[A-Z]/.freeze
+
     def self.value_type
-      name.gsub(/\A.*::/, '').gsub(/(?<!\A)[A-Z]/, '-\0').upcase
+      name.gsub(VALUE_TYPE_GSUB_REGEX_1, '').gsub(VALUE_TYPE_GSUB_REGEX_2, '-\0').upcase
     end
 
     def value_type
@@ -54,9 +60,11 @@ module Icalendar
       "#{name.to_s.gsub('_', '-').upcase}=#{param_value}"
     end
 
+    ESCAPE_PARAM_VALUE_REGEX = /[;:,]/.freeze
+
     def escape_param_value(value)
       v = value.to_s.gsub('"', "'")
-      v =~ /[;:,]/ ? %("#{v}") : v
+      v =~ ESCAPE_PARAM_VALUE_REGEX ? %("#{v}") : v
     end
 
   end
@@ -64,7 +72,7 @@ module Icalendar
 end
 
 # helpers; not actual iCalendar value type
-require_relative 'values/array'
+require_relative 'values/helpers/array'
 require_relative 'values/date_or_date_time'
 
 # iCalendar value types
