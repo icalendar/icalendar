@@ -1,10 +1,11 @@
 module Icalendar
 
-  class Availability < Component
-    optional_single_property :dtstamp, Icalendar::Values::DateTime
-    optional_single_property :uid
+  class Available < Component
+    required_property :dtstamp, Icalendar::Values::DateTime
+    required_property :uid
     # dtstart only required if calendar's method is nil
-    optional_single_property :dtstart, Icalendar::Values::DateTime
+    required_property :dtstart, Icalendar::Values::DateTime,
+                      ->(availability, dtstart) { !dtstart.nil? || !(availability.parent.nil? || availability.parent.ip_method.nil?) }
     optional_single_property :duration, Icalendar::Values::Duration
 
     optional_single_property :dtend, Icalendar::Values::DateTime
@@ -40,12 +41,9 @@ module Icalendar
     optional_property :rdate, Icalendar::Values::DateTime
 
     # component :alarm, false
-    component :available
 
     def initialize
-      super 'availability'
+      super 'available', 'AVAILABLE'
     end
-
   end
-
 end

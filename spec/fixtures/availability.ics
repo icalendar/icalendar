@@ -1,4 +1,5 @@
 BEGIN:VAVAILABILITY
+BEGIN:AVAILABLE
 DTSTAMP:20050118T211523Z
 UID:bsuidfortestabc123
 DTSTART;TZID=US-Mountain:20050120T170000
@@ -10,5 +11,6 @@ SUMMARY:This is a really long summary to test the method of unfolding lines
  \, so I'm just going to make it a whole bunch of lines.
 RDATE;TZID=US-Mountain:20050121T170000,20050122T170000
 X-TEST-COMPONENT;QTEST="Hello, World":Shouldn't double double quotes
+END:AVAILABLE
 END:VAVAILABILITY
 
