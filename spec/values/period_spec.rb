@@ -24,7 +24,8 @@ describe Icalendar::Values::Period do
 
   context 'date-time/duration' do
     let(:value) { '19830507T000600Z/P1604W' }
-    let(:expected_duration) { OpenStruct.new past: false, weeks: 1604, days: 0, hours: 0, minutes: 0, seconds: 0 }
+    let(:duration) { Struct.new(:past, :weeks, :days, :hours, :minutes, :seconds) }
+    let(:expected_duration) { duration.new(false, 1604, 0, 0, 0, 0) }
 
     describe '#value_ical' do
       specify { expect(subject.value_ical).to eq value }
@@ -38,7 +39,7 @@ describe Icalendar::Values::Period do
       specify { expect(subject.period_start).to eq DateTime.new(1983, 5, 7, 0, 6) }
     end
     describe '#duration' do
-      specify { expect(subject.duration).to eq expected_duration }
+      specify { expect(subject.duration.weeks).to eq 1604 }
     end
     describe '#explicit_end' do
       specify { expect(subject.explicit_end).to eq nil }

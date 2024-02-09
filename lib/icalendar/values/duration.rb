@@ -7,11 +7,13 @@ module Icalendar
 
     class Duration < Value
 
+      DURATION = Struct.new(:past, :weeks, :days, :hours, :minutes, :seconds)
+
       def initialize(value, params = {})
         if value.is_a? Icalendar::Values::Duration
           super value.value, params
         else
-          super OpenStruct.new(parse_fields value), params
+          super DURATION.new(*parse_fields(value).values_at(*DURATION.members)), params
         end
       end
 
