@@ -11,12 +11,14 @@ module Icalendar
       WEEKDAY = "(?:[+-]?\\d{1,2})?(?:#{DAYNAME})"
       MONTHDAY = '[+-]?\d{1,2}'
       YEARDAY = '[+-]?\d{1,3}'
+      RECUR = Struct.new(:frequency, :until, :count, :interval, :by_second, :by_minute, :by_hour, :by_day, :by_month_day, :by_year_day, :by_week_number, :by_month, :by_set_position, :week_start)
 
       def initialize(value, params = {})
         if value.is_a? Icalendar::Values::Recur
           super value.value, params
         else
-          super OpenStruct.new(parse_fields value), params
+          super  RECUR.new(*parse_fields(value).values_at(*RECUR.members)), params
+         
         end
       end
 

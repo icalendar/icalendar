@@ -5,11 +5,12 @@ require 'ostruct'
 module Icalendar
   module Values
     class UtcOffset < Value
+      UTCOFFSET = Struct.new(:behind, :hours, :minutes, :seconds)
       def initialize(value, params = {})
         if value.is_a? Icalendar::Values::UtcOffset
           value = value.value
         else
-          value = OpenStruct.new parse_fields(value)
+          value = UTCOFFSET.new(*parse_fields(value).values_at(*UTCOFFSET.members))
         end
         super value, params
       end

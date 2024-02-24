@@ -23,6 +23,7 @@ module Icalendar
     component :todo
     component :journal
     component :freebusy
+    component :availability
 
     def initialize
       super 'calendar'
