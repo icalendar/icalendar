@@ -1,7 +1,7 @@
 iCalendar -- Internet calendaring, Ruby style
 ===
 
-[![Build Status](https://travis-ci.com/icalendar/icalendar.svg?branch=master)](https://travis-ci.com/icalendar/icalendar)
+[![Ruby](https://github.com/icalendar/icalendar/actions/workflows/main.yml/badge.svg)](https://github.com/icalendar/icalendar/actions/workflows/main.yml)
 [![Code Climate](https://codeclimate.com/github/icalendar/icalendar.png)](https://codeclimate.com/github/icalendar/icalendar)
 
 <http://github.com/icalendar/icalendar>
