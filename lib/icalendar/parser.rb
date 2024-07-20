@@ -197,7 +197,7 @@ module Icalendar
         value = parts[:value]
       else
         parts = BAD_LINE_REGEX.match(input) unless strict?
-        parts or fail "Invalid iCalendar input line: #{input}"
+        parts or fail ParseError, "Invalid iCalendar input line: #{input}"
         # Non-strict and bad line so use a value of empty string
         value = ''
       end
@@ -226,6 +226,9 @@ module Icalendar
         params: params,
         value: value
       }
+    end
+
+    class ParseError < RuntimeError
     end
   end
 end
