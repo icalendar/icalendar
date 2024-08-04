@@ -1,5 +1,8 @@
 ## Unreleased
 
+ - Override Icalendar::Value.== so that value objects can be compared to each other.
+
+
 ## 2.10.2 - 2024-07-21
  - Raise Icalendar::Parser::ParseError on bad .ics file input instead of RuntimeError - Micah Geisel
  - Remove Ruby 3.0 from the test matrix - still should work for now with ice_cube < 0.17.0
