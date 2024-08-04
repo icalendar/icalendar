@@ -45,6 +45,14 @@ module Icalendar
       self.class.value_type
     end
 
+    def ==(other)
+      if other.is_a?(Icalendar::Value)
+        super(other.value) && ical_params == other.ical_params
+      else
+        super
+      end
+    end
+
     private
 
     def needs_value_type?(default_type)
