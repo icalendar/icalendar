@@ -12,6 +12,12 @@ end
 require 'timecop'
 require 'icalendar'
 
+if defined?(ActiveSupport)
+  # this has been default behavior for new Rails apps for a long time, and the
+  # only option once ActiveSupport goes to 8.x
+  ActiveSupport.to_time_preserves_timezone = true if ActiveSupport.respond_to?(:to_time_preserves_timezone=)
+end
+
 RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
