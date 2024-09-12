@@ -1,6 +1,7 @@
 ## Unreleased
 
  - Override Icalendar::Value.== so that value objects can be compared to each other.
+ - Correctly load activesupport before activesupport/time
 
 
 ## 2.10.2 - 2024-07-21
