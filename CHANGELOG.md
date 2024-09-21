@@ -1,8 +1,9 @@
 ## Unreleased
 
+## 2.10.3 - 2024-09-21
  - Override Icalendar::Value.== so that value objects can be compared to each other.
  - Correctly load activesupport before activesupport/time
-
+ - Load ostruct to address deprecation warning - aki77
 
 ## 2.10.2 - 2024-07-21
  - Raise Icalendar::Parser::ParseError on bad .ics file input instead of RuntimeError - Micah Geisel
