@@ -33,6 +33,7 @@ ActiveSupport is required for TimeWithZone support, but not required for general
 
   s.add_dependency 'base64'
   s.add_dependency 'ice_cube', '~> 0.16'
+  s.add_dependency 'logger'
   s.add_dependency 'ostruct'
 
   s.add_development_dependency 'rake', '~> 13.0'
