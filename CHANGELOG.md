@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 2.11.0 - 2025-04-12
+ - Require gems for ruby 3.4 that used to be in stdlib - Go Sueyoshi
+ - Refactor how timezone offsets are calculated - Pat Allan
+    - 'tzid' param is always returned as an array when accessing `ical_params` directly, rather than matching whatever the input parsed. ICS output remains unchanged
+
 ## 2.10.3 - 2024-09-21
  - Override Icalendar::Value.== so that value objects can be compared to each other.
  - Correctly load activesupport before activesupport/time
