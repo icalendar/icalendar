@@ -12,7 +12,7 @@ module Icalendar
         Icalendar::Offset::TimeZoneStore,
         Icalendar::Offset::ActiveSupportPartial,
         Icalendar::Offset::Null
-      ].collect { |klass| klass.new(tzid, value, timezone_store) }.detect(&:valid?)
+      ].lazy.map { |klass| klass.new(tzid, value, timezone_store) }.detect(&:valid?)
     end
 
     def initialize(tzid, value, timezone_store)
