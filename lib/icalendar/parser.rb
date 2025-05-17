@@ -105,7 +105,7 @@ module Icalendar
         ((multi_property && value =~ WRAP_IN_ARRAY_REGEX_1) || value =~ WRAP_IN_ARRAY_REGEX_2)
     end
 
-    GET_WRAPPER_CLASS_GSUB_REGEX = /(?:\A|-)(.)/.freeze
+    GET_WRAPPER_CLASS_GSUB_REGEX = /(?:\A|-|\s+)(.)/.freeze
 
     def get_wrapper_class(component, fields)
       klass = component.class.default_property_types[fields[:name]]
