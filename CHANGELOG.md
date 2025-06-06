@@ -1,5 +1,8 @@
 ## Unreleased
 
+## 2.11.1 - 2025-06-06
+ - Gracefully deal with malformed ics files that use spaces in the value parameter instead of hyphens
+
 ## 2.11.0 - 2025-04-12
  - Require gems for ruby 3.4 that used to be in stdlib - Go Sueyoshi
  - Refactor how timezone offsets are calculated - Pat Allan
