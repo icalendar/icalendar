@@ -113,7 +113,12 @@ module Icalendar
         klass_name = fields[:params].delete('value').first
         unless klass_name.upcase == klass.value_type
           klass_name = "Icalendar::Values::#{klass_name.downcase.gsub(GET_WRAPPER_CLASS_GSUB_REGEX) { |m| m[-1].upcase }}"
-          klass = Object.const_get klass_name if Object.const_defined?(klass_name)
+          begin
+            klass = Object.const_get klass_name if Object.const_defined?(klass_name)
+          rescue NameError => e
+            Icalendar.logger.error "NameError trying to find value type for #{component.name} | #{fields[:name]}: #{e.message}"
+            raise e if strict?
+          end
         end
       end
       klass
