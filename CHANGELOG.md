@@ -1,5 +1,6 @@
 ## Unreleased
 
+## 2.11.2 - 2025-06-21
 - Deal with more bad value parameter values by falling back to the property default type
 
 ## 2.11.1 - 2025-06-06
