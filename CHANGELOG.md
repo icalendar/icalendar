@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Deal with more bad value parameter values by falling back to the property default type
+
 ## 2.11.1 - 2025-06-06
  - Gracefully deal with malformed ics files that use spaces in the value parameter instead of hyphens
 

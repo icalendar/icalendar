@@ -116,4 +116,14 @@ describe Icalendar::Parser do
       expect(event.dtstart).to be_kind_of Icalendar::Values::Date
     end
   end
+
+  describe 'completely bad location value' do
+    let(:fn) { 'single_event_bad_location.ics' }
+
+    it 'falls back to string type for location' do
+      event = subject.parse.first.events.first
+      expect(event.location).to be_kind_of Icalendar::Values::Text
+      expect(event.location.value).to eq "1000 Main St Example, State 12345"
+    end
+  end
 end
