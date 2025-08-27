@@ -11,6 +11,7 @@ module Icalendar
         Icalendar::Offset::ActiveSupportExact,
         Icalendar::Offset::TimeZoneStore,
         Icalendar::Offset::ActiveSupportPartial,
+        Icalendar::Offset::WindowsToIana,
         Icalendar::Offset::Null
       ].lazy.map { |klass| klass.new(tzid, value, timezone_store) }.detect(&:valid?)
     end
@@ -36,7 +37,8 @@ module Icalendar
   end
 end
 
-require_relative "offset/active_support_exact"
-require_relative "offset/active_support_partial"
-require_relative "offset/null"
-require_relative "offset/time_zone_store"
+require_relative 'offset/active_support_exact'
+require_relative 'offset/active_support_partial'
+require_relative 'offset/null'
+require_relative 'offset/time_zone_store'
+require_relative 'offset/windows_to_iana'
