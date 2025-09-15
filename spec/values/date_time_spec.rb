@@ -17,7 +17,7 @@ describe Icalendar::Values::DateTime do
         expect(subject.value_ical).to eq value
       end
 
-      context 'local time' do
+      context 'tzid in IANA format' do
         let(:value) { '20140209T160652' }
         let(:params) { {'tzid' => 'America/Denver'} }
 
@@ -28,14 +28,15 @@ describe Icalendar::Values::DateTime do
         end
       end
 
-      context 'nonstandard format tzid local time' do
+      context 'tzid with partial match' do
         let(:value) { '20230901T230404' }
-        let(:params) { {'tzid' => 'Singapore Standard Time'} }
+        let(:params) { { 'tzid' => 'Singapore Time' } }
 
         it 'parses the value as local time' do
           expect(subject.value.hour).to eq 23
-          expect(subject.value.utc_offset).to eq 28800
+          expect(subject.value.utc_offset).to eq 28_800
           expect(subject.value.utc.hour).to eq 15
+          expect(subject.value.utc.minute).to eq 04
         end
 
         it 'updates the tzid' do
@@ -43,8 +44,24 @@ describe Icalendar::Values::DateTime do
           expect(subject.ical_params['tzid']).to eq ['Asia/Singapore']
         end
       end
-    end
 
+      context 'tzid in windows format' do
+        let(:value) { '20230901T230404' }
+        let(:params) { { 'tzid' => 'India Standard Time' } }
+
+        it 'parses the value as local time' do
+          expect(subject.value.hour).to eq 23
+          expect(subject.value.utc_offset).to eq 19_800
+          expect(subject.value.utc.hour).to eq 17
+          expect(subject.value.utc.minute).to eq 34
+        end
+
+        it 'updates the tzid' do
+          # use an array because that's how output from the parser will end up
+          expect(subject.ical_params['tzid']).to eq ['Asia/Kolkata']
+        end
+      end
+    end
   else
 
     context 'without ActiveSupport' do
@@ -63,9 +80,7 @@ describe Icalendar::Values::DateTime do
         end
       end
     end
-
   end
-
 
   context 'common tests' do
     it 'does not add any tzid parameter to output' do
