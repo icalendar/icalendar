@@ -30,13 +30,13 @@ describe Icalendar::Values::DateTime do
 
       context 'tzid with partial match' do
         let(:value) { '20230901T230404' }
-        let(:params) { { 'tzid' => 'Singapore Standard Time' } }
+        let(:params) { { 'tzid' => 'Singapore Time' } }
 
         it 'parses the value as local time' do
           expect(subject.value.hour).to eq 23
           expect(subject.value.utc_offset).to eq 28_800
           expect(subject.value.utc.hour).to eq 15
-          expect(subject.value.utc.minute).to eq 0o4
+          expect(subject.value.utc.minute).to eq 04
         end
 
         it 'updates the tzid' do

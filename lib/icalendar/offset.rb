@@ -10,8 +10,8 @@ module Icalendar
       [
         Icalendar::Offset::ActiveSupportExact,
         Icalendar::Offset::TimeZoneStore,
-        Icalendar::Offset::ActiveSupportPartial,
         Icalendar::Offset::WindowsToIana,
+        Icalendar::Offset::ActiveSupportPartial,
         Icalendar::Offset::Null
       ].lazy.map { |klass| klass.new(tzid, value, timezone_store) }.detect(&:valid?)
     end
