@@ -1,5 +1,8 @@
 ## Unreleased
 
+## 2.12.0 - 2025-09-26
+- Support timezone lookup by Windows names - Ronak Gothi
+
 ## 2.11.2 - 2025-06-21
 - Deal with more bad value parameter values by falling back to the property default type
 
