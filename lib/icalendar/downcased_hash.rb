@@ -29,6 +29,10 @@ module Icalendar
     def delete(key, &block)
       __getobj__.delete key.to_s.downcase, &block
     end
+
+    def merge(other_hash)
+      Icalendar::DowncasedHash.new(__getobj__.merge Icalendar::DowncasedHash(other_hash))
+    end
   end
 
   def self.DowncasedHash(base)

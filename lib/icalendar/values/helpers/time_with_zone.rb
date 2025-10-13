@@ -21,8 +21,9 @@ module Icalendar
 
         def initialize(value, params = {}, context = {})
           params = Icalendar::DowncasedHash(params)
+          context = Icalendar::DowncasedHash(context)
           @tz_utc = params['tzid'] == 'UTC'
-          @timezone_store = params.delete 'x-tz-store'
+          @timezone_store = context['timezone_store']
 
           offset = Icalendar::Offset.build(value, params, timezone_store)
 

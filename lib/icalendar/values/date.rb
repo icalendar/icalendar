@@ -10,7 +10,6 @@ module Icalendar
 
       def initialize(value, params = {}, *args)
         params.delete 'tzid'
-        params.delete 'x-tz-store'
         if value.is_a? String
           begin
             parsed_date = ::Date.strptime(value, FORMAT)
