@@ -8,10 +8,11 @@ module Icalendar
 
   class Value < ::SimpleDelegator
 
-    attr_accessor :ical_params
+    attr_accessor :ical_params, :context
 
-    def initialize(value, params = {})
+    def initialize(value, params = {}, context = {})
       @ical_params = Icalendar::DowncasedHash(params)
+      @context = Icalendar::DowncasedHash(context)
       super value
     end
 

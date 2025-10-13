@@ -11,12 +11,12 @@ module Icalendar
 
       FORMAT = '%H%M%S'
 
-      def initialize(value, params = {})
+      def initialize(value, params = {}, *args)
         if value.is_a? String
           params['tzid'] = 'UTC' if value.end_with? 'Z'
-          super ::DateTime.strptime(value, FORMAT).to_time, params
+          super ::DateTime.strptime(value, FORMAT).to_time, params, *args
         elsif value.respond_to? :to_time
-          super value.to_time, params
+          super value.to_time, params, *args
         else
           super
         end

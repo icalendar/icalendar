@@ -7,7 +7,7 @@ module Icalendar
 
       PERIOD_LAST_PART_REGEX = /\A[+-]?P.+\z/.freeze
 
-      def initialize(value, params = {})
+      def initialize(value, *args)
         parts = value.split '/'
         period_start = Icalendar::Values::DateTime.new parts.first
         if parts.last =~ PERIOD_LAST_PART_REGEX
@@ -15,7 +15,7 @@ module Icalendar
         else
           period_end = Icalendar::Values::DateTime.new parts.last
         end
-        super [period_start, period_end], params
+        super [period_start, period_end], *args
       end
 
       def value_ical
