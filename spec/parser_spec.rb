@@ -126,4 +126,18 @@ describe Icalendar::Parser do
       expect(event.location.value).to eq "1000 Main St Example, State 12345"
     end
   end
+
+  describe 'custom properties with tzid' do
+    let(:fn) { 'tz_store_param_bug.ics' }
+
+    it 'parses without error' do
+      expect(subject.parse.first).to be_a Icalendar::Calendar
+    end
+
+    it 'can be output to ics and re-parsed without error' do
+      cal = subject.parse.first
+      new_cal = Icalendar::Parser.new(cal.to_ical, false).parse.first
+      expect(new_cal).to be_a Icalendar::Calendar
+    end
+  end
 end
