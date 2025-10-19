@@ -11,7 +11,7 @@ module Icalendar
 
       FORMAT = '%Y%m%dT%H%M%S'
 
-      def initialize(value, params = {})
+      def initialize(value, params = {}, *args)
         if value.is_a? String
           params['tzid'] = 'UTC' if value.end_with? 'Z'
 
@@ -21,9 +21,9 @@ module Icalendar
             raise FormatError.new("Failed to parse \"#{value}\" - #{e.message}")
           end
 
-          super parsed_date, params
+          super parsed_date, params, *args
         elsif value.respond_to? :to_datetime
-          super value.to_datetime, params
+          super value.to_datetime, params, *args
         else
           super
         end

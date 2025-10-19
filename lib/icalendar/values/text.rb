@@ -3,12 +3,12 @@
 module Icalendar
   module Values
     class Text < Value
-      def initialize(value, params = {})
+      def initialize(value, *args)
         value = value.gsub('\n', "\n")
         value.gsub!('\,', ',')
         value.gsub!('\;', ';')
         value.gsub!('\\\\') { '\\' }
-        super value, params
+        super value, *args
       end
 
       VALUE_ICAL_CARRIAGE_RETURN_GSUB_REGEX = /\r?\n/.freeze

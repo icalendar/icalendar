@@ -19,17 +19,20 @@ module Icalendar
       module TimeWithZone
         attr_reader :tz_utc, :timezone_store
 
-        def initialize(value, params = {})
+        def initialize(value, params = {}, context = {})
           params = Icalendar::DowncasedHash(params)
+          context = Icalendar::DowncasedHash(context)
           @tz_utc = params['tzid'] == 'UTC'
-          @timezone_store = params.delete 'x-tz-store'
+          @timezone_store = context['timezone_store']
 
           offset = Icalendar::Offset.build(value, params, timezone_store)
 
-          @offset_value = offset&.normalized_value
-          params['tzid'] = offset.normalized_tzid if offset
+          unless offset.nil?
+            @offset_value = offset.normalized_value
+            params['tzid'] = offset.normalized_tzid
+          end
 
-          super (@offset_value || value), params
+          super (@offset_value || value), params, context
         end
 
         def __getobj__

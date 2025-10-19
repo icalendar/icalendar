@@ -7,9 +7,9 @@ module Icalendar
 
     class Uri < Value
 
-      def initialize(value, params = {})
+      def initialize(value, *args)
         parsed = URI.parse(value) rescue value
-        super parsed, params
+        super parsed, *args
       end
 
       def value_ical

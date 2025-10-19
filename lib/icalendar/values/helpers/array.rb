@@ -8,22 +8,23 @@ module Icalendar
 
         attr_reader :value_delimiter
 
-        def initialize(value, klass, params = {}, options = {})
-          @value_delimiter = options[:delimiter] || ','
+        def initialize(value, klass, params = {}, context = {})
+          context = Icalendar::DowncasedHash(context)
+          @value_delimiter = context['delimiter'] || ','
           mapped = if value.is_a? ::Array
                     value.map do |v|
                       if v.is_a? Icalendar::Values::Helpers::Array
-                        Icalendar::Values::Helpers::Array.new v.value, klass, v.ical_params, delimiter: v.value_delimiter
+                        Icalendar::Values::Helpers::Array.new v.value, klass, v.ical_params, context.merge(delimiter: v.value_delimiter)
                       elsif v.is_a? ::Array
-                        Icalendar::Values::Helpers::Array.new v, klass, params, delimiter: value_delimiter
+                        Icalendar::Values::Helpers::Array.new v, klass, params, context.merge(delimiter: value_delimiter)
                       elsif v.is_a? Icalendar::Value
                         v
                       else
-                        klass.new v, params
+                        klass.new v, params, context
                       end
                     end
                   else
-                    [klass.new(value, params)]
+                    [klass.new(value, params, context)]
                   end
           super mapped
         end

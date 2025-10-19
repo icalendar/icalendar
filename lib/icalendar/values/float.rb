@@ -5,8 +5,8 @@ module Icalendar
 
     class Float < Value
 
-      def initialize(value, params = {})
-        super value.to_f, params
+      def initialize(value, *args)
+        super value.to_f, *args
       end
 
       def value_ical

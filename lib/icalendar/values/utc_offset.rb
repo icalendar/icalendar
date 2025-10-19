@@ -5,13 +5,13 @@ require 'ostruct'
 module Icalendar
   module Values
     class UtcOffset < Value
-      def initialize(value, params = {})
+      def initialize(value, *args)
         if value.is_a? Icalendar::Values::UtcOffset
           value = value.value
         else
           value = OpenStruct.new parse_fields(value)
         end
-        super value, params
+        super value, *args
       end
 
       def behind?

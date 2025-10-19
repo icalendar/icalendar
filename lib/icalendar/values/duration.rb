@@ -7,11 +7,11 @@ module Icalendar
 
     class Duration < Value
 
-      def initialize(value, params = {})
+      def initialize(value, *args)
         if value.is_a? Icalendar::Values::Duration
-          super value.value, params
+          super value.value, *args
         else
-          super OpenStruct.new(parse_fields value), params
+          super OpenStruct.new(parse_fields value), *args
         end
       end
 

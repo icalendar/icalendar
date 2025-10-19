@@ -87,9 +87,10 @@ module Icalendar
         Icalendar::Values::Helpers::Array.new fields[:value].split(WRAP_PROPERTY_VALUE_SPLIT_REGEX),
                                      klass,
                                      fields[:params],
-                                     delimiter: delimiter
+                                     delimiter: delimiter,
+                                     timezone_store: timezone_store
       else
-        klass.new fields[:value], fields[:params]
+        klass.new fields[:value], fields[:params], timezone_store: timezone_store
       end
     rescue Icalendar::Values::DateTime::FormatError => fe
       raise fe if strict?
@@ -215,9 +216,6 @@ module Icalendar
           if param_value.size > 0
             param_value = param_value.gsub(PVALUE_GSUB_REGEX, '')
             params[param_name] << param_value
-            if param_name == 'tzid'
-              params['x-tz-store'] = timezone_store
-            end
           end
         end
       end
