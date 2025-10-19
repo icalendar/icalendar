@@ -1,5 +1,8 @@
 ## Unreleased
 
+## 2.12.1 - 2025-10-19
+- Fix a problem with invalid ics generation for calendars with custom properties that include a `tzid` parameter.
+
 ## 2.12.0 - 2025-09-26
 - Support timezone lookup by Windows names - Ronak Gothi
 
