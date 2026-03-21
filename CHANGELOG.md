@@ -1,5 +1,8 @@
 ## Unreleased
 
+## 2.12.2 - 2026-03-21
+- Fix a potential property injection issue through escaping control characters in URI values - Wes Ring
+
 ## 2.12.1 - 2025-10-19
 - Fix a problem with invalid ics generation for calendars with custom properties that include a `tzid` parameter.
 
