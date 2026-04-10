@@ -37,7 +37,7 @@ ActiveSupport is required for TimeWithZone support, but not required for general
   s.add_dependency 'ostruct'
 
   s.add_development_dependency 'rake', '~> 13.0'
-  s.add_development_dependency 'bundler', '~> 2.0'
+  s.add_development_dependency 'bundler'
 
   # test with all groups of tzinfo dependencies
   # tzinfo 2.x
