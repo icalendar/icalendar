@@ -172,13 +172,11 @@ module Icalendar
     private
 
     def map_property_value(value, klass, multi_valued, new_property)
-      params = {}
-      if new_property
-        params.merge!('VALUE': klass.value_type)
-      end
-      if value.nil? || value.is_a?(Icalendar::Value)
-        value
-      elsif value.is_a? ::Array
+      return value if value.nil? || value.is_a?(Icalendar::Value)
+      
+      params = new_property ? {'VALUE': klass.value_type} : {}
+        
+      if value.is_a? ::Array
         Icalendar::Values::Helpers::Array.new value, klass, params, {delimiter: (multi_valued ? ',' : ';')}
       else
         klass.new value, params
