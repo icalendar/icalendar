@@ -56,5 +56,4 @@ ActiveSupport is required for TimeWithZone support, but not required for general
   s.add_development_dependency 'rspec', '~> 3.8'
   s.add_development_dependency 'simplecov', '~> 0.16'
   s.add_development_dependency 'byebug'
-  s.add_development_dependency 'memory_profiler'
 end
