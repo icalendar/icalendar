@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 2.12.3 - 2026-05-13
+- Memory use optimization - Jared Menard
+- Run CI against Ruby 4.0 - Artem Chubchenko
+
 ## 2.12.2 - 2026-03-21
 - Fix a potential property injection issue through escaping control characters in URI values - Wes Ring
 
