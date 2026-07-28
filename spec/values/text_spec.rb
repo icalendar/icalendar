@@ -30,6 +30,39 @@ describe Icalendar::Values::Text do
     end
   end
 
+  describe 'unescape is the exact inverse of value_ical' do
+    bs = "\\"
+    {
+      'a literal backslash before n (windows path)' => ["C:#{bs}#{bs}next", "C:#{bs}next"],
+      'a UNC path with several backslashes'         => ["#{bs * 4}srv#{bs * 2}sh", "#{bs * 2}srv#{bs}sh"],
+      'an escaped backslash alone'                  => ["a#{bs}#{bs}b", "a#{bs}b"],
+      'an escaped comma'                            => ["a#{bs},b", 'a,b'],
+      'an escaped semicolon'                        => ["a#{bs};b", 'a;b'],
+      'a lowercase newline escape'                  => ["a#{bs}nb", "a\nb"],
+      'plain text without backslashes'              => ['plain summary text', 'plain summary text'],
+    }.each do |desc, (onwire, content)|
+      context "given #{desc}" do
+        subject { described_class.new onwire.dup }
+
+        it 'decodes to the original content' do
+          expect(subject.value).to eq content
+        end
+
+        it 'round-trips back to the on-wire form' do
+          expect(subject.value_ical).to eq onwire
+        end
+      end
+    end
+
+    it 'decodes a capital-N newline escape (RFC 5545 3.3.11)' do
+      expect(described_class.new("a#{bs}Nb").value).to eq "a\nb"
+    end
+
+    it 'leaves a backslash before a non-escape char untouched' do
+      expect(described_class.new("a#{bs}:b").value).to eq "a#{bs}:b"
+    end
+  end
+
   describe 'escapes parameter text properly' do
     subject { described_class.new escaped, {'param' => param_value} }
     context 'single value, no special characters' do
