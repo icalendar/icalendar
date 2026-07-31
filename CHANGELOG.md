@@ -1,5 +1,8 @@
 ## Unreleased
 
+## 2.12.4 - 2026-07-31
+- TEXT unescape fix - Vincent Gao
+
 ## 2.12.3 - 2026-05-13
 - Memory use optimization - Jared Menard
 - Run CI against Ruby 4.0 - Artem Chubchenko
