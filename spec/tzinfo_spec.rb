@@ -25,6 +25,49 @@ describe 'TZInfo::Timezone' do
     specify { expect(subject.standards.first.rrule.first.value_ical).to eq "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10" }
   end
 
+  describe 'transition onset' do
+    let(:date) { DateTime.new 2021, 7, 1 }
+
+    {
+      'Europe/Stockholm' => {
+        daylight: ['20210328T020000', '+0100', '20210328T010000Z'],
+        standard: ['20211031T030000', '+0200', '20211031T010000Z']
+      },
+      'Australia/Lord_Howe' => {
+        daylight: ['20211003T020000', '+1030', '20211002T153000Z'],
+        standard: ['20210404T020000', '+1100', '20210403T150000Z']
+      }
+    }.each do |identifier, transitions|
+      context identifier do
+        let(:tz) { TZInfo::Timezone.get identifier }
+
+        transitions.each do |kind, (local, offset, utc)|
+          it "serializes the #{kind} onset using the previous offset" do
+            calendar = Icalendar::Calendar.new
+            calendar.add_timezone subject
+            parsed = Icalendar::Calendar.parse(calendar.to_ical).first.timezones.first
+            component = parsed.public_send("#{kind}s").first
+
+            expect(component.dtstart.value_ical).to eq local
+            expect(component.tzoffsetfrom.value_ical).to eq offset
+            onset = DateTime.strptime("#{component.dtstart.value_ical}#{offset}", '%Y%m%dT%H%M%S%z')
+            expect(onset.new_offset(0).strftime('%Y%m%dT%H%M%SZ')).to eq utc
+          end
+        end
+      end
+    end
+
+    context 'when the clock change crosses midnight' do
+      let(:tz) { TZInfo::Timezone.get 'America/Santiago' }
+
+      it 'uses the previous-offset date for both DTSTART and the recurrence rule' do
+        standard = subject.standards.first
+        expect(standard.dtstart.value_ical).to eq '20210404T000000'
+        expect(standard.rrule.first.value_ical).to eq 'FREQ=YEARLY;BYDAY=1SU;BYMONTH=4'
+      end
+    end
+  end
+
   describe 'no end transition' do
     let(:tz) { TZInfo::Timezone.get 'Asia/Shanghai' }
     let(:date) { DateTime.now }
@@ -34,7 +77,7 @@ describe 'TZInfo::Timezone' do
 BEGIN:VTIMEZONE
 TZID:Asia/Shanghai
 BEGIN:STANDARD
-DTSTART:19910915T010000
+DTSTART:19910915T020000
 TZOFFSETFROM:+0900
 TZOFFSETTO:+0800
 TZNAME:CST

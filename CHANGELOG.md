@@ -1,4 +1,5 @@
 ## Unreleased
+- Generate timezone transition onsets and recurrence dates using the previous UTC offset.
 
 ## 2.12.4 - 2026-07-31
 - TEXT unescape fix - Vincent Gao
