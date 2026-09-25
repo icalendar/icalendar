@@ -6,8 +6,9 @@ require 'stringio'
 module Icalendar
 
   class Parser
-    attr_writer :component_class
+    attr_writer :component_class, :parse_depth_limit
     attr_reader :source, :strict, :timezone_store, :verbose
+    attr_accessor :parse_depth
 
     CLEAN_BAD_WRAPPING_GSUB_REGEX = /\r?\n[ \t]/.freeze
 
@@ -39,6 +40,7 @@ module Icalendar
       read_in_data
       @strict = strict
       @verbose = verbose
+      @parse_depth = 0
       @timezone_store = TimezoneStore.new
     end
 
@@ -139,9 +141,16 @@ module Icalendar
       @component_class ||= Icalendar::Calendar
     end
 
+    def parse_depth_limit
+      # a valid ics file should only have 3 levels. Leaving some room for non-compliant custom components
+      @parse_depth_limit ||= 5
+    end
+
     PARSE_COMPONENT_KLASS_NAME_GSUB_REGEX = /\AV/.freeze
 
     def parse_component(component)
+      self.parse_depth += 1
+      raise ParseError.new("ics file nested too deeply") if parse_depth > parse_depth_limit
       while (fields = next_fields)
         if fields[:name] == 'end'
           klass_name = fields[:value].gsub(PARSE_COMPONENT_KLASS_NAME_GSUB_REGEX, '').downcase.capitalize
@@ -161,6 +170,7 @@ module Icalendar
           parse_property component, fields
         end
       end
+      self.parse_depth -= 1
       component
     end
 
