@@ -87,6 +87,14 @@ describe Icalendar::Parser do
     end
   end
 
+  describe '#parse with invalid nesting' do
+    let(:fn) { 'invalid_nesting.ics' }
+
+    it 'raises a ParseError' do
+      expect { subject.parse }.to raise_error Icalendar::Parser::ParseError
+    end
+  end
+
   describe '#parse with bad line' do
     let(:fn) { 'single_event_bad_line.ics' }
 
