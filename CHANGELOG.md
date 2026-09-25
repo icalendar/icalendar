@@ -1,5 +1,9 @@
 ## Unreleased
-- Generate timezone transition onsets and recurrence dates using the previous UTC offset.
+
+## 2.12.5 - 2026-09-25
+- Generate timezone transition onsets and recurrence dates using the previous UTC offset. - Ben Abulafia
+- Limit parsing depth
+- Remove TZID from DATE values - Henry Blyth
 
 ## 2.12.4 - 2026-07-31
 - TEXT unescape fix - Vincent Gao
