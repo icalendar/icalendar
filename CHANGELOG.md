@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Replace OpenStruct with Structs in Duration, Recur and UtcOffset values and drop the ostruct dependency (#329). The parts keep the same readers and setters, but `#value` is now a Struct, so assigning an attribute that isn't one of its parts raises `NoMethodError`. - David Corson-Knowles
+
 ## 2.12.5 - 2026-09-25
 - Generate timezone transition onsets and recurrence dates using the previous UTC offset. - Ben Abulafia
 - Limit parsing depth

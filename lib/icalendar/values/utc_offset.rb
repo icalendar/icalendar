@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'ostruct'
-
 module Icalendar
   module Values
     class UtcOffset < Value
+      Parts = Struct.new(:behind, :hours, :minutes, :seconds)
+
       def initialize(value, *args)
         if value.is_a? Icalendar::Values::UtcOffset
           value = value.value
         else
-          value = OpenStruct.new parse_fields(value)
+          value = Parts.new(*parse_fields(value).values_at(*Parts.members))
         end
         super value, *args
       end

@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'ostruct'
 
 describe Icalendar::Values::Period do
 
@@ -24,7 +23,7 @@ describe Icalendar::Values::Period do
 
   context 'date-time/duration' do
     let(:value) { '19830507T000600Z/P1604W' }
-    let(:expected_duration) { OpenStruct.new past: false, weeks: 1604, days: 0, hours: 0, minutes: 0, seconds: 0 }
+    let(:expected_duration) { Icalendar::Values::Duration::Parts.new(false, 1604, 0, 0, 0, 0) }
 
     describe '#value_ical' do
       specify { expect(subject.value_ical).to eq value }
