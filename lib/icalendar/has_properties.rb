@@ -123,9 +123,9 @@ module Icalendar
         self.mutex_properties << properties
       end
 
-      def optional_property(prop, klass = Icalendar::Values::Text, suggested_single = false, new_property = false)
+      def optional_property(prop, klass = Icalendar::Values::Text, suggested_single = false, new_property = false, single_line = false)
         self.suggested_single_properties << prop if suggested_single
-        multi_property prop, klass, new_property
+        multi_property prop, klass, new_property, single_line
       end
 
       def single_property(prop, klass, new_property)
@@ -141,14 +141,16 @@ module Icalendar
         end
       end
 
-      def multi_property(prop, klass, new_property)
+      def multi_property(prop, klass, new_property, single_line = false)
         self.multiple_properties << prop.to_s
         self.default_property_types[prop.to_s] = klass
         property_var = "@#{prop}"
 
         define_method "#{prop}=" do |value|
           mapped = map_property_value value, klass, true, new_property
-          if mapped.is_a? Icalendar::Values::Helpers::Array
+          if single_line
+            instance_variable_set property_var, [mapped].compact
+          elsif mapped.is_a? Icalendar::Values::Helpers::Array
             instance_variable_set property_var, mapped.to_a.compact
           else
             instance_variable_set property_var, [mapped].compact

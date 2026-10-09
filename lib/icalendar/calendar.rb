@@ -12,7 +12,7 @@ module Icalendar
     optional_single_property :uid
     optional_single_property :last_modified, Icalendar::Values::DateTime, true
     optional_single_property :url, Icalendar::Values::Uri, true
-    optional_property :categories
+    optional_property :categories, Icalendar::Values::Text, false, false, true
     optional_single_property :refresh_interval, Icalendar::Values::Duration, true
     optional_single_property :source, Icalendar::Values::Uri, true
     optional_single_property :color

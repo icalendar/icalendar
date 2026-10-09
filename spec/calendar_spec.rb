@@ -52,6 +52,13 @@ describe Icalendar::Calendar do
     end
   end
 
+  describe '#categories' do
+    it 'renders multiple categories as a single comma-separated line' do
+      subject.categories = ['CAT A', 'CAT B']
+      expect(subject.to_ical).to include "CATEGORIES:CAT A,CAT B\r\n"
+    end
+  end
+
   context 'components' do
     let(:ical_component) { double 'Component', name: 'event', :'parent=' => nil }
 

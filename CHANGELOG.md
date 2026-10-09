@@ -1,4 +1,5 @@
 ## Unreleased
+- Generate `CATEGORIES` as a single comma-separated line instead of one line per value, matching how Google Calendar and Nextcloud expect it (#226). Setting `categories = [...]` now stores the joined value as one item, so code that reads `#categories` expecting one entry per category will see a single combined entry instead; `append_categories` is unaffected and still adds a separate line.
 
 ## 2.12.5 - 2026-09-25
 - Generate timezone transition onsets and recurrence dates using the previous UTC offset. - Ben Abulafia
