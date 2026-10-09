@@ -1,6 +1,8 @@
 ## Unreleased
 - Generate `CATEGORIES` as a single comma-separated line instead of one line per value, matching how Google Calendar and Nextcloud expect it (#226). Setting `categories = [...]` now stores the joined value as one item, so code that reads `#categories` expecting one entry per category will see a single combined entry instead; `append_categories` is unaffected and still adds a separate line.
 
+- Replace OpenStruct with Structs in Duration, Recur and UtcOffset values and drop the ostruct dependency (#329). The parts keep the same readers and setters, but `#value` is now a Struct, so assigning an attribute that isn't one of its parts raises `NoMethodError`. - David Corson-Knowles
+
 ## 2.12.5 - 2026-09-25
 - Generate timezone transition onsets and recurrence dates using the previous UTC offset. - Ben Abulafia
 - Limit parsing depth

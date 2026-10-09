@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'ostruct'
-
 module Icalendar
   module Values
 
@@ -11,12 +9,28 @@ module Icalendar
       WEEKDAY = "(?:[+-]?\\d{1,2})?(?:#{DAYNAME})"
       MONTHDAY = '[+-]?\d{1,2}'
       YEARDAY = '[+-]?\d{1,3}'
+      Parts = Struct.new(
+        :frequency,
+        :until,
+        :count,
+        :interval,
+        :by_second,
+        :by_minute,
+        :by_hour,
+        :by_day,
+        :by_month_day,
+        :by_year_day,
+        :by_week_number,
+        :by_month,
+        :by_set_position,
+        :week_start
+      )
 
       def initialize(value, *args)
         if value.is_a? Icalendar::Values::Recur
           super value.value, *args
         else
-          super OpenStruct.new(parse_fields value), *args
+          super Parts.new(*parse_fields(value).values_at(*Parts.members)), *args
         end
       end
 
