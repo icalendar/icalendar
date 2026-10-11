@@ -1,7 +1,9 @@
 ## Unreleased
-- Generate `CATEGORIES` as a single comma-separated line instead of one line per value, matching how Google Calendar and Nextcloud expect it (#226). Setting `categories = [...]` now stores the joined value as one item, so code that reads `#categories` expecting one entry per category will see a single combined entry instead; `append_categories` is unaffected and still adds a separate line.
 
+## 2.13.0 - 2026-10-11
+- Generate `CATEGORIES` as a single comma-separated line instead of one line per value, matching how Google Calendar and Nextcloud expect it (#226). Setting `categories = [...]` now stores the joined value as one item, so code that reads `#categories` expecting one entry per category will see a single combined entry instead; `append_categories` is unaffected and still adds a separate line. - Carlos Kvasir
 - Replace OpenStruct with Structs in Duration, Recur and UtcOffset values and drop the ostruct dependency (#329). Requires Ruby 2.5 or newer, for `Struct`'s `keyword_init:`. The parts keep the same readers and setters, but `#value` is now a Struct, so assigning an attribute that isn't one of its parts raises `NoMethodError`. - David Corson-Knowles
+- Correct negative fractional-hour TZInfo offsets - ac1982
 
 ## 2.12.5 - 2026-09-25
 - Generate timezone transition onsets and recurrence dates using the previous UTC offset. - Ben Abulafia
