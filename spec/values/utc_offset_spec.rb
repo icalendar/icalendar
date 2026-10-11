@@ -38,4 +38,22 @@ describe Icalendar::Values::UtcOffset do
       end
     end
   end
+
+  describe 'field access' do
+    subject { described_class.new '-0530' }
+
+    it 'is backed by a Struct of the offset parts' do
+      expect(subject.value).to be_a Icalendar::Values::UtcOffset::Parts
+      expect(subject.value.to_h).to eq(behind: true, hours: 5, minutes: 30, seconds: 0)
+    end
+
+    it 'writes parts through setters' do
+      subject.minutes = 45
+      expect(subject.value_ical).to eq '-0545'
+    end
+
+    it 'copies another offset' do
+      expect(described_class.new(subject).value_ical).to eq '-0530'
+    end
+  end
 end

@@ -64,4 +64,22 @@ describe Icalendar::Values::Duration do
       expect(subject.value_ical).to eq 'P4D'
     end
   end
+
+  describe 'field access' do
+    let(:value) { '-P1DT2H' }
+
+    it 'is backed by a Struct of the duration parts' do
+      expect(subject.value).to be_a Icalendar::Values::Duration::Parts
+      expect(subject.value.to_h).to eq(past: true, weeks: 0, days: 1, hours: 2, minutes: 0, seconds: 0)
+    end
+
+    it 'writes parts through setters' do
+      subject.hours = 3
+      expect(subject.value_ical).to eq '-P1DT3H'
+    end
+
+    it 'copies another duration' do
+      expect(described_class.new(subject).value_ical).to eq '-P1DT2H'
+    end
+  end
 end

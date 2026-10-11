@@ -56,4 +56,23 @@ describe Icalendar::Values::Recur do
       expect(subject.value_ical).to eq 'FREQ=DAILY;BYDAY=SU,SA;BYYEARDAY=1,34,56,240'
     end
   end
+
+  describe 'field access' do
+    let(:value) { 'FREQ=WEEKLY;COUNT=4;BYDAY=MO,WE,FR' }
+
+    it 'is backed by a Struct of the RRULE parts' do
+      expect(subject.value).to be_a Icalendar::Values::Recur::Parts
+      expect(subject.value.to_h).to include(frequency: 'WEEKLY', count: 4, by_day: %w(MO WE FR), until: nil)
+    end
+
+    it 'writes parts through setters' do
+      subject.frequency = 'DAILY'
+      subject.count = 2
+      expect(subject.value_ical).to eq 'FREQ=DAILY;COUNT=2;BYDAY=MO,WE,FR'
+    end
+
+    it 'copies another recur' do
+      expect(described_class.new(subject).value_ical).to eq subject.value_ical
+    end
+  end
 end
