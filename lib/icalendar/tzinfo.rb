@@ -86,7 +86,8 @@ module Icalendar
   module TimezoneOffset
     def ical_offset
       o = utc_total_offset
-      sprintf '%+-2.2d%2.2d', (o / 3600).to_i, ((o / 60) % 60).to_i
+      magnitude = o.abs
+      sprintf '%s%02d%02d', o < 0 ? '-' : '+', magnitude / 3600, (magnitude / 60) % 60
     end
   end
 end
