@@ -3,13 +3,13 @@
 module Icalendar
   module Values
     class UtcOffset < Value
-      Parts = Struct.new(:behind, :hours, :minutes, :seconds)
+      Parts = Struct.new(:behind, :hours, :minutes, :seconds, keyword_init: true)
 
       def initialize(value, *args)
         if value.is_a? Icalendar::Values::UtcOffset
           value = value.value
         else
-          value = Parts.new(*parse_fields(value).values_at(*Parts.members))
+          value = Parts.new(**parse_fields(value))
         end
         super value, *args
       end

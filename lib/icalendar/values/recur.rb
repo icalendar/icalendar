@@ -23,14 +23,15 @@ module Icalendar
         :by_week_number,
         :by_month,
         :by_set_position,
-        :week_start
+        :week_start,
+        keyword_init: true
       )
 
       def initialize(value, *args)
         if value.is_a? Icalendar::Values::Recur
           super value.value, *args
         else
-          super Parts.new(*parse_fields(value).values_at(*Parts.members)), *args
+          super Parts.new(**parse_fields(value)), *args
         end
       end
 
