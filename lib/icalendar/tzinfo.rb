@@ -112,8 +112,13 @@ module TZInfo
           anchors = [period.dst? ? period.start_transition : period.end_transition,
                      period.dst? ? period.end_transition : period.start_transition]
           first_year = anchors.map { |anchor| Icalendar::TransitionRuleSample.onset(anchor).year }.min
+          # Away from non-leap century years, weekday/leap-year patterns repeat
+          # every 28 years. This bounded sample does not predict timezone-law
+          # changes; window rules still require all seven monthday outcomes.
           year_count = 28
-          # UTC padding includes every onset in the complete local-year interval.
+          # transitions_up_to takes UTC bounds, while recurrence onsets use the
+          # previous offset's local time. Pad the query to include onsets near
+          # local New Year, then discard only the padding outside our local years.
           transitions = transitions_up_to(Time.utc(first_year + year_count, 1, 3),
                                           Time.utc(first_year - 1, 12, 30))
           transitions = transitions.select do |transition|

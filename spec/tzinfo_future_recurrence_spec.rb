@@ -67,6 +67,23 @@ describe 'TZInfo-generated calendar future transition semantics' do
     end
   end
 
+  it 'trims UTC query padding by local onset year, keeping both local boundaries' do
+    zone = TZInfo::Timezone.get('America/Santiago')
+    reference = DateTime.new(2026, 10, 7)
+    transition_type = Struct.new(:local_end)
+    before = transition_type.new(DateTime.new(2025, 12, 31, 23))
+    first = transition_type.new(DateTime.new(2026, 1, 1))
+    last = transition_type.new(DateTime.new(2053, 12, 31, 23))
+    after = transition_type.new(DateTime.new(2054, 1, 1))
+    expect(zone).to receive(:transitions_up_to).
+      with(Time.utc(2054, 1, 3), Time.utc(2025, 12, 30)).
+      and_return([before, first, last, after])
+    expect(Icalendar::TransitionRuleSample).to receive(:rules).
+      with([first, last], anything, 2026, 28).and_return(nil)
+
+    zone.ical_timezone(reference)
+  end
+
   it 'retains the legacy path when transitions_up_to is unavailable' do
     zone = TZInfo::Timezone.get('America/Santiago')
     reference = DateTime.new(2026, 10, 7)

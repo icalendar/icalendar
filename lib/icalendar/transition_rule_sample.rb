@@ -32,27 +32,23 @@ module Icalendar
           onset(grouped.fetch(year).find { |item| signature(item) == signature(anchor) })
         end
         start = onset(anchor)
-        ordinal = (start.day - 1) / 7 + 1
-        ordinal = -1 if ordinal > 3
-        ordinary = years.map do |year|
+        week_number = (start.day - 1) / 7 + 1
+        week_number = -1 if week_number > 3
+        ordinal_days = years.map do |year|
           days = (1..Date.new(year, start.month, -1).day).select do |day|
             Date.new(year, start.month, day).wday == start.wday
           end
-          days[ordinal == -1 ? -1 : ordinal - 1]
+          days[week_number == -1 ? -1 : week_number - 1]
         end
-        if dates.map(&:day) == ordinary
+        if dates.map(&:day) == ordinal_days
           anchor.rrule
         else
           days = dates.map(&:day).uniq.sort
           # Seeing all seven outcomes avoids inferring a window from sparse data.
           return unless days.length == 7 && days == (days.first..(days.first + 6)).to_a
-          return unless years.all? { |year| days.last <= Date.new(year, start.month, -1).day }
-          expected = years.map do |year|
-            matches = days.select { |day| Date.new(year, start.month, day).wday == start.wday }
-            return unless matches.length == 1
-            matches.first
-          end
-          return unless dates.map(&:day) == expected
+          # Matching signatures already fix the month and weekday for every
+          # date. Seven consecutive observed monthdays therefore identify the
+          # unique matching weekday in the window for every sampled year.
           ["FREQ=YEARLY;BYMONTH=#{start.month};BYDAY=#{start.strftime('%a').upcase[0, 2]};BYMONTHDAY=#{days.join(',')}"]
         end
       end
