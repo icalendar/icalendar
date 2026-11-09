@@ -101,12 +101,13 @@ module Icalendar
     def ical_components
       collection = []
       (self.class.components + custom_components.keys).each do |component_name|
-        components = send component_name
-        components.each do |component|
-          collection << component.to_ical
-        end
+        collection.concat ical_components_for(component_name)
       end
       collection.empty? ? nil : collection.join.chomp("\r\n")
+    end
+
+    def ical_components_for(component_name)
+      send(component_name).map(&:to_ical)
     end
 
     class << self

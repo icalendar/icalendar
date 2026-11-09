@@ -223,6 +223,23 @@ You must require `tzinfo` support manually to take advantage.
 iCalendar has been tested and works with `tzinfo` versions 0.3, 1.x, and 2.x. The `tzinfo-data` gem may also
 be required depending on your version of `tzinfo` and potentially your operating system.
 
+When serializing a calendar, identical `VTIMEZONE` definitions are written once.
+Definitions for the same timezone can also be consolidated when each observance
+has the same unbounded yearly month/ordinal-weekday rule, local onset clock,
+offsets and other properties, and its start is an occurrence of that rule. The
+earliest start is retained for each observance. For example, adding Brussels or
+Berlin for events in successive years produces one timezone whose rules cover
+both years. The calendar's `timezones` collection and event-local dates are not
+changed.
+
+Conflicting offsets, different rules, bounded recurrences and more complex
+historical definitions are preserved separately rather than guessed. This does
+not infer timezone law, expand an arbitrary recurrence horizon or invent `UNTIL`
+values. For genuinely different historical regimes, supply a single valid
+`VTIMEZONE` covering the required range. An observance with a known effective
+end requires an explicit UTC `UNTIL` as described in
+[RFC 5545 section 3.6.5](https://www.rfc-editor.org/rfc/rfc5545#section-3.6.5).
+
 #### Example ####
 
 ```ruby
