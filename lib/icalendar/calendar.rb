@@ -24,6 +24,26 @@ module Icalendar
     component :journal
     component :freebusy
 
+    module MergesTimezones
+      # Adds a timezone (add_timezone calls this), merging it into any timezone
+      # already in the calendar with the same TZID so that each TZID is output
+      # once. Returns the timezone that is in the calendar, which is the
+      # existing one after a merge.
+      #
+      # Timezones added with add_component or directly to #timezones (as the
+      # parser does) are not merged.
+      def timezone(tz = nil)
+        tz ||= Icalendar::Timezone.new
+        tz.parent = self
+        yield tz if block_given?
+        return tz if timezones.any? { |existing| existing.equal? tz }
+
+        existing = timezones.find { |candidate| !tz.tzid.nil? && candidate.tzid.to_s == tz.tzid.to_s }
+        existing ? existing.merge!(tz) : add_component(tz)
+      end
+    end
+    prepend MergesTimezones
+
     def initialize
       super 'calendar'
       self.prodid = 'icalendar-ruby'
