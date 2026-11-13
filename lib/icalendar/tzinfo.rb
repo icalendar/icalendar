@@ -106,13 +106,6 @@ module TZInfo
       end
     end
 
-    # Generate a single timezone whose observances describe every local time
-    # from first_date through last_date, including rule changes in between.
-    #
-    # The observances in effect at last_date are the same as ical_timezone
-    # generates, recurring indefinitely. Earlier transitions are folded into
-    # those when they follow the same rule, and otherwise become observances
-    # that end (with an UTC UNTIL) when the rules changed.
     def ical_timezone_for_range(first_date, last_date, dst = Timezone.default_dst)
       first, last = [ical_local(first_date), ical_local(last_date)].sort
       timezone = ical_timezone(last, dst)

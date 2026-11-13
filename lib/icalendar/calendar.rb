@@ -24,65 +24,6 @@ module Icalendar
     component :journal
     component :freebusy
 
-    module MergesTimezones
-      # Adds a timezone (add_timezone calls this), merging it into any timezone
-      # already in the calendar with the same TZID so that each TZID is output
-      # once. Returns the timezone that is in the calendar, which is the
-      # existing one after a merge.
-      #
-      # Timezones added with add_component or directly to #timezones (as the
-      # parser does) are not merged.
-      def timezone(tz = nil)
-        tz ||= Icalendar::Timezone.new
-        tz.parent = self
-        yield tz if block_given?
-        return tz if timezones.any? { |existing| existing.equal? tz }
-
-        existing = timezones.find { |candidate| !tz.tzid.nil? && candidate.tzid.to_s == tz.tzid.to_s }
-        existing ? existing.merge!(tz) : add_component(tz)
-      end
-    end
-    prepend MergesTimezones
-
-    # Regenerates each timezone whose TZID is a TZInfo identifier so that it
-    # describes every local date the events use that TZID for: DTSTART, DTEND,
-    # RECURRENCE-ID, RDATE, EXDATE and RRULE UNTIL. Timezones with the same
-    # TZID are replaced by one, at the position of the first. A timezone is
-    # added at the end for each TZInfo identifier the events use that the
-    # calendar has no timezone for.
-    #
-    # Timezones are left as they are when their TZID is not a TZInfo
-    # identifier or no event uses it, and nothing changes unless
-    # icalendar/tzinfo has been required.
-    def rebuild_timezones
-      return self unless defined?(TZInfo::Timezone) &&
-                         TZInfo::Timezone.method_defined?(:ical_timezone_for_range)
-
-      dates = event_dates_by_tzid
-      rebuilt = {}
-      kept = timezones.each_with_object([]) do |tz, list|
-        tzid = tz.tzid.nil? ? nil : tz.tzid.to_s
-        next list << tz unless dates.key?(tzid)
-        next if rebuilt.key?(tzid)
-
-        zone = tzinfo_timezone(tzid)
-        next list << tz if zone.nil?
-
-        list << (rebuilt[tzid] = timezone_for_dates(zone, dates[tzid]))
-      end
-
-      # TZIDs used by events without a timezone in the calendar
-      present = timezones.map { |tz| tz.tzid.to_s unless tz.tzid.nil? }
-      dates.each do |tzid, tz_dates|
-        next if present.include?(tzid)
-        zone = tzinfo_timezone(tzid)
-        kept << timezone_for_dates(zone, tz_dates) unless zone.nil?
-      end
-
-      timezones.replace kept
-      self
-    end
-
     def initialize
       super 'calendar'
       self.prodid = 'icalendar-ruby'
@@ -129,6 +70,48 @@ module Icalendar
       self.ip_method = 'DECLINECOUNTER'
       self
     end
+
+   module MergesTimezones
+      def timezone(tz = nil)
+        tz ||= Icalendar::Timezone.new
+        tz.parent = self
+        yield tz if block_given?
+        return tz if timezones.any? { |existing| existing.equal? tz }
+
+        existing = timezones.find { |candidate| !tz.tzid.nil? && candidate.tzid.to_s == tz.tzid.to_s }
+        existing ? existing.merge!(tz) : add_component(tz)
+      end
+
+      def rebuild_timezones
+        return self unless defined?(TZInfo::Timezone) &&
+                          TZInfo::Timezone.method_defined?(:ical_timezone_for_range)
+
+        dates = event_dates_by_tzid
+        rebuilt = {}
+        kept = timezones.each_with_object([]) do |tz, list|
+          tzid = tz.tzid.nil? ? nil : tz.tzid.to_s
+          next list << tz unless dates.key?(tzid)
+          next if rebuilt.key?(tzid)
+
+          zone = tzinfo_timezone(tzid)
+          next list << tz if zone.nil?
+
+          list << (rebuilt[tzid] = timezone_for_dates(zone, dates[tzid]))
+        end
+
+        # TZIDs used by events without a timezone in the calendar
+        present = timezones.map { |tz| tz.tzid.to_s unless tz.tzid.nil? }
+        dates.each do |tzid, tz_dates|
+          next if present.include?(tzid)
+          zone = tzinfo_timezone(tzid)
+          kept << timezone_for_dates(zone, tz_dates) unless zone.nil?
+        end
+
+        timezones.replace kept
+        self
+      end
+    end
+    prepend MergesTimezones
 
     private
 

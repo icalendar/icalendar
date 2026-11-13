@@ -51,6 +51,7 @@ ActiveSupport is required for TimeWithZone support, but not required for general
   # s.add_development_dependency 'tzinfo', '~> 0.3'
   # end tzinfo
 
+  s.add_development_dependency 'irb'
   s.add_development_dependency 'timecop', '~> 0.9'
   s.add_development_dependency 'rspec', '~> 3.8'
   s.add_development_dependency 'simplecov', '~> 0.16'
