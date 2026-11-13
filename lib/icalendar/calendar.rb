@@ -44,6 +44,45 @@ module Icalendar
     end
     prepend MergesTimezones
 
+    # Regenerates each timezone whose TZID is a TZInfo identifier so that it
+    # describes every local date the events use that TZID for: DTSTART, DTEND,
+    # RECURRENCE-ID, RDATE, EXDATE and RRULE UNTIL. Timezones with the same
+    # TZID are replaced by one, at the position of the first. A timezone is
+    # added at the end for each TZInfo identifier the events use that the
+    # calendar has no timezone for.
+    #
+    # Timezones are left as they are when their TZID is not a TZInfo
+    # identifier or no event uses it, and nothing changes unless
+    # icalendar/tzinfo has been required.
+    def rebuild_timezones
+      return self unless defined?(TZInfo::Timezone) &&
+                         TZInfo::Timezone.method_defined?(:ical_timezone_for_range)
+
+      dates = event_dates_by_tzid
+      rebuilt = {}
+      kept = timezones.each_with_object([]) do |tz, list|
+        tzid = tz.tzid.nil? ? nil : tz.tzid.to_s
+        next list << tz unless dates.key?(tzid)
+        next if rebuilt.key?(tzid)
+
+        zone = tzinfo_timezone(tzid)
+        next list << tz if zone.nil?
+
+        list << (rebuilt[tzid] = timezone_for_dates(zone, dates[tzid]))
+      end
+
+      # TZIDs used by events without a timezone in the calendar
+      present = timezones.map { |tz| tz.tzid.to_s unless tz.tzid.nil? }
+      dates.each do |tzid, tz_dates|
+        next if present.include?(tzid)
+        zone = tzinfo_timezone(tzid)
+        kept << timezone_for_dates(zone, tz_dates) unless zone.nil?
+      end
+
+      timezones.replace kept
+      self
+    end
+
     def initialize
       super 'calendar'
       self.prodid = 'icalendar-ruby'
@@ -89,6 +128,62 @@ module Icalendar
     def decline_counter
       self.ip_method = 'DECLINECOUNTER'
       self
+    end
+
+    private
+
+    # Local wall-clock times for each TZID used by the events. An RRULE UNTIL
+    # in UTC is a lambda converting it to local time once the zone is known.
+    def event_dates_by_tzid
+      events.each_with_object(Hash.new { |hash, key| hash[key] = [] }) do |event, dates|
+        values = [event.dtstart, event.dtend, event.recurrence_id, *event.rdate, *event.exdate]
+        each_date_value(values) do |value|
+          tzid = Array(value.ical_params['tzid']).first
+          dates[tzid.to_s] << wall_clock(value.to_datetime) unless tzid.nil?
+        end
+
+        tzid = event.dtstart && Array(event.dtstart.ical_params['tzid']).first
+        next if tzid.nil?
+        event.rrule.each do |rule|
+          next if rule.until.nil?
+          dates[tzid.to_s] << rrule_until(rule.until)
+        end
+      end
+    end
+
+    def timezone_for_dates(zone, dates)
+      locals = dates.map { |date| date.respond_to?(:call) ? date.call(zone) : date }
+      zone.ical_timezone_for_range(locals.min, locals.max).tap { |tz| tz.parent = self }
+    end
+
+    def each_date_value(values, &block)
+      values.each do |value|
+        if value.is_a?(Icalendar::Values::Helpers::Array)
+          each_date_value value.value, &block
+        elsif value.is_a?(Icalendar::Value)
+          yield value
+        end
+      end
+    end
+
+    def rrule_until(value)
+      parsed = Icalendar::Values::DateOrDateTime.new(value).call
+      if parsed.is_a?(Icalendar::Values::Date)
+        date = parsed.value
+        return ::DateTime.new(date.year, date.month, date.day, 23, 59, 59)
+      end
+      return wall_clock(parsed.to_datetime) unless value.end_with?('Z')
+      ->(zone) { wall_clock(zone.utc_to_local(parsed.to_time.utc).to_datetime) }
+    end
+
+    def wall_clock(datetime)
+      ::DateTime.new(datetime.year, datetime.month, datetime.day, datetime.hour, datetime.min, datetime.sec)
+    end
+
+    def tzinfo_timezone(identifier)
+      TZInfo::Timezone.get identifier
+    rescue TZInfo::InvalidTimezoneIdentifier
+      nil
     end
 
   end

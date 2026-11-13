@@ -270,6 +270,21 @@ cal.add_timezone tz.ical_timezone_for_range(first_event_start, last_event_end)
 Hand-built timezones that share a TZID have their `DAYLIGHT` and `STANDARD` observances combined.
 Timezones added with `add_component` or appended to `cal.timezones` (as the parser does) are not merged.
 
+`rebuild_timezones` regenerates a calendar's timezones from the dates its events use them for,
+for example to replace the duplicate or out-of-date VTIMEZONEs of a parsed file:
+
+```ruby
+require 'icalendar/tzinfo'
+
+cal = Icalendar::Calendar.parse(File.read('calendar.ics')).first
+cal.rebuild_timezones
+```
+
+Each timezone whose TZID is a TZInfo identifier is replaced by one generated to cover the event
+`DTSTART`, `DTEND`, `RECURRENCE-ID`, `RDATE`, `EXDATE` and `RRULE` `UNTIL` dates with that TZID.
+A timezone is also added for each TZInfo identifier the events use that the calendar has no
+timezone for. Timezones with any other TZID, or that no event uses, are left as they are.
+
 
 Parsing iCalendars
 ---
