@@ -1,4 +1,7 @@
 ## Unreleased
+- Merge timezones with the same TZID when adding them to a calendar, so each TZID is output once with DAYLIGHT and STANDARD observances covering every added date, including rule changes between them (#205). Adds `TZInfo::Timezone#ical_timezone_for_range`. `add_timezone` now returns the timezone in the calendar, which is the existing one after a merge.
+- Add `Calendar#rebuild_timezones` to regenerate timezones with TZInfo identifiers from the dates the calendar's events use them for, adding any that are missing, such as to replace duplicate VTIMEZONEs parsed from a file.
+- Evaluate a timezone observance's RRULE UNTIL as UTC, so its last occurrence east of UTC is not dropped.
 
 ## 2.13.0 - 2026-10-11
 - Generate `CATEGORIES` as a single comma-separated line instead of one line per value, matching how Google Calendar and Nextcloud expect it (#226). Setting `categories = [...]` now stores the joined value as one item, so code that reads `#categories` expecting one entry per category will see a single combined entry instead; `append_categories` is unaffected and still adds a separate line. - Carlos Kvasir

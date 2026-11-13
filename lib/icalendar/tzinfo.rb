@@ -43,6 +43,7 @@
 
 require 'tzinfo'
 require_relative 'transition_rule_sample'
+require_relative 'timezone_history'
 begin
   require 'tzinfo/data'
 rescue LoadError
@@ -97,7 +98,41 @@ end
 module TZInfo
   class Timezone
     def ical_timezone(date, dst = Timezone.default_dst)
-      period = period_for_local(date, dst)
+      local = ical_local(date)
+      ical_timezone_for_period(period_for_local(local, dst)).tap do |timezone|
+        timezone.tzinfo_source = Icalendar::Timezone::TzinfoSource.new(
+          identifier: identifier, first: local, last: local, dst: dst
+        )
+      end
+    end
+
+    def ical_timezone_for_range(first_date, last_date, dst = Timezone.default_dst)
+      first, last = [ical_local(first_date), ical_local(last_date)].sort
+      timezone = ical_timezone(last, dst)
+      timezone.tzinfo_source.first = first
+
+      first_period = period_for_local(first, dst)
+      last_period = period_for_local(last, dst)
+      return timezone if first_period == last_period || last_period.start_transition.nil?
+      # TZInfo 0.3 has no transitions_up_to; only the last period is described.
+      return timezone unless respond_to?(:transitions_up_to)
+
+      # Times before the zone's first transition are not described.
+      lower = (first_period.start_transition || first_period.end_transition).at
+      historic = transitions_up_to(last_period.start_transition.at, lower)
+      Icalendar::TimezoneHistory.new(timezone, historic).apply
+      timezone
+    end
+
+    private
+
+    # Wall-clock local time, without any UTC offset the caller's value carries.
+    def ical_local(date)
+      date = date.to_datetime
+      DateTime.new(date.year, date.month, date.day, date.hour, date.min, date.sec + date.sec_fraction)
+    end
+
+    def ical_timezone_for_period(period)
       timezone = Icalendar::Timezone.new
       timezone.tzid = identifier
       if period.start_transition.nil?
