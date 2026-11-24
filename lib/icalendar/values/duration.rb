@@ -28,6 +28,7 @@ module Icalendar
         builder << "#{hours}H" if hours > 0
         builder << "#{minutes}M" if minutes > 0
         builder << "#{seconds}S" if seconds > 0
+        builder << 'T0S' unless days > 0 || time?
         builder.join
       end
 

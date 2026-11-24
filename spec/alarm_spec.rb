@@ -2,6 +2,33 @@ require 'spec_helper'
 
 describe Icalendar::Alarm do
 
+  describe 'zero-offset alarm serialization' do
+    %w[START END].each do |reference|
+      it "preserves a trigger at the event #{reference.downcase} on round trip" do
+        input = <<~ICAL
+          BEGIN:VCALENDAR
+          VERSION:2.0
+          PRODID:-//icalendar test//EN
+          BEGIN:VEVENT
+          UID:zero-offset-alarm
+          DTSTAMP:20261125T090000Z
+          DTSTART:20261125T090000Z
+          DTEND:20261125T100000Z
+          BEGIN:VALARM
+          ACTION:DISPLAY
+          DESCRIPTION:Reminder
+          TRIGGER;RELATED=#{reference}:PT0S
+          END:VALARM
+          END:VEVENT
+          END:VCALENDAR
+        ICAL
+        calendar = Icalendar::Calendar.parse(input).first
+
+        expect(calendar.to_ical).to include "TRIGGER;RELATED=#{reference}:PT0S\r\n"
+      end
+    end
+  end
+
   # currently no behavior in Alarm not tested other places
   describe '#valid?' do
     subject do

@@ -57,6 +57,24 @@ describe Icalendar::Values::Duration do
     specify { expect(subject.value_ical).to eq value }
   end
 
+  describe 'zero duration serialization' do
+    %w[PT0S PT0M PT0H P0D P0W P0DT0H0M0S +PT0S].each do |input|
+      it "serializes #{input} as a zero-second duration" do
+        expect(described_class.new(input).value_ical).to eq 'PT0S'
+      end
+    end
+
+    it 'preserves the sign of a negative zero duration' do
+      expect(described_class.new('-PT0S').value_ical).to eq '-PT0S'
+    end
+
+    it 'serializes a duration whose last nonzero part was cleared' do
+      duration = described_class.new 'PT5M'
+      duration.minutes = 0
+      expect(duration.value_ical).to eq 'PT0S'
+    end
+  end
+
   describe '#days=' do
     let(:value) { 'P3D' }
     it 'can set the number of days' do
