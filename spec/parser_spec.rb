@@ -12,6 +12,13 @@ describe Icalendar::Parser do
         event = subject.parse.first.events.first
         expect(event.dtstart.utc_offset).to eq -25200
       end
+
+      it 'resolves a shared TZID within each calendar' do
+        other_calendar = source.gsub('-0700', '-0500')
+        calendars = Icalendar::Calendar.parse(source + other_calendar)
+        offsets = calendars.map { |cal| cal.events.first.dtstart.utc_offset }
+        expect(offsets).to eq [-25200, -18000]
+      end
     end
 
     context 'single_event.ics' do
