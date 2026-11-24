@@ -1,4 +1,5 @@
 ## Unreleased
+- Serialize zero durations as `PT0S` instead of the invalid `P`, preserving zero-offset alarm triggers.
 
 ## 2.14.0 - 2026-11-21
 - Merge timezones with the same TZID when adding them to a calendar, so each TZID is output once with DAYLIGHT and STANDARD observances covering every added date, including rule changes between them (#205). Adds `TZInfo::Timezone#ical_timezone_for_range`. `add_timezone` now returns the timezone in the calendar, which is the existing one after a merge.
