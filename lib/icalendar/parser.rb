@@ -49,6 +49,8 @@ module Icalendar
       while (fields = next_fields)
         component = component_class.new
         if fields[:name] == 'begin' && fields[:value].downcase == component.ical_name.downcase
+          # Earlier calendars may still need their store to resolve forward TZID references.
+          @timezone_store = TimezoneStore.new if component.is_a?(Calendar) && !components.empty?
           components << parse_component(component)
         end
       end
